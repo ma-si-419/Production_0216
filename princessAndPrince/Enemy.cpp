@@ -5,6 +5,7 @@
 #include "Blood.h"
 #include "Exp.h"
 #include "Gold.h"
+#include "TreasureBox.h"
 #include "SceneMain.h"
 #include<memory>
 namespace
@@ -40,35 +41,35 @@ void Enemy::Init(int kinds)
 	m_pos.x = GetRand(1000) - 200;
 	m_pos.y = GetRand(1000) - 200;
 	m_radius = Game::kRadius;
-	if (kinds == (int)goblin)
+	if (kinds == static_cast<int>(goblin))
 	{
 		m_hp = 2;
 		m_atk = 1;
 		m_spd = 0.1f;
 		m_kind = goblin;
 	}
-	if (kinds == (int)boar)
+	if (kinds == static_cast<int>(boar))
 	{
 		m_hp = 3;
 		m_atk = 1;
 		m_spd = 0.2f;
 		m_kind = boar;
 	}
-	if (kinds == (int)doragon)
+	if (kinds == static_cast<int>(doragon))
 	{
 		m_hp = 4;
 		m_atk = 1;
 		m_spd = 0.3f;
 		m_kind = doragon;
 	}
-	if (kinds == (int)skeleton)
+	if (kinds == static_cast<int>(skeleton))
 	{
 		m_hp = 5;
 		m_atk = 1;
 		m_spd = 0.4f;
 		m_kind = skeleton;
 	}
-	if (kinds == (int)snowman)
+	if (kinds == static_cast<int>(snowman))
 	{
 		m_hp = 6;
 		m_atk = 1;
@@ -104,24 +105,27 @@ void Enemy::Update()
 					//血のメモリの確保
 					std::shared_ptr<Blood> pBlood
 					 = std::make_shared<Blood>();
-					//経験値のメモリの確保
-					std::shared_ptr<Exp> pExp
-						= std::make_shared<Exp>();
-					//お金のメモリ確保
-					std::shared_ptr<Gold> pGold
-						= std::make_shared<Gold>();
 					//血を落とす処理
 					pBlood->Init(m_pos);
 					m_pMain->AddItem(pBlood);
+					//経験値のメモリの確保
+					std::shared_ptr<Exp> pExp
+						= std::make_shared<Exp>();
 					//経験値を落とす処理
 					pExp->Init(m_pos);
 					m_pMain->AddItem(pExp);
+					//お金のメモリ確保
+					std::shared_ptr<Gold> pGold
+						= std::make_shared<Gold>();
 					//お金を落とす処理
 					pGold->Init(m_pos);
 					m_pMain->AddItem(pGold);
 					if (GetRand(100) < kDropProb)
 					{
-
+						//宝箱のメモリ確保
+						std::shared_ptr<TreasureBox>pTreasure
+							= std::make_shared<TreasureBox>();
+						//メインに宝箱を生成する関数を作成する
 					}
 
 					//存在するフラッグをfalseにする

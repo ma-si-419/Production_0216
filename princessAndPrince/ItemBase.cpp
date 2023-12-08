@@ -10,7 +10,6 @@ ItemBase::ItemBase() :
 	m_kind(Game::kEmpty),
 	m_pos(0, 0),
 	m_isExist(false),
-	m_hp(1),
 	m_colScale(kColScale)
 {
 }

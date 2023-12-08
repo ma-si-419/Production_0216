@@ -40,13 +40,20 @@ void Application::Run()
 
 		Pad pad;
 
-		while (ProcessMessage() != -1) {
+		while (ProcessMessage() != -1) 
+		{
+			// このフレームの開始時刻を覚えておく
+			LONGLONG start = GetNowHiPerformanceCount();
 			ClearDrawScreen();
 
 			pad.Update();
 			sceneManager.Update(pad);
 			sceneManager.Draw();
-
+			// FPS60に固定する
+			while (GetNowHiPerformanceCount() - start < 16667)
+			{
+				// 16.66ミリ秒(16667マイクロ秒)経過するまで待つ
+			}
 			ScreenFlip();
 		}
 	}

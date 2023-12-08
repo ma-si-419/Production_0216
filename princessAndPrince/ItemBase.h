@@ -24,8 +24,7 @@ public:
 	Game::ItemKinds GetKind() { return m_kind; }
 	//取得したアイテムを消す関数
 	void DeleteItem() { m_isExist = false; }
-	//宝箱の体力の減らす
-	void SubHp() { m_hp--; }
+
 protected:
 	//表示位置
 	Vec2 m_pos;
@@ -37,9 +36,8 @@ protected:
 	Game::ItemKinds m_kind;
 	//存在しているかどうか
 	bool m_isExist;
-	//宝箱の体力
-	int m_hp;
 	//当たり判定の大きさ
 	int m_colScale;
+
 };
 

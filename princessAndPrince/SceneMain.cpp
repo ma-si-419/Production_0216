@@ -149,15 +149,8 @@ void SceneMain::Update(Pad& pad)
 				item->Update();
 				if (playerCircle.IsCollsion(item->GetColCircle()))
 				{
-					if (item->GetKind() != Game::kTreasure)
-					{
-						m_pPlayer->PickUpItem(item->GetKind());
-						item->DeleteItem();
-					}
-					else
-					{
-						item->SubHp();
-					}
+					m_pPlayer->PickUpItem(item->GetKind());
+					item->DeleteItem();
 				}
 			}
 		}
