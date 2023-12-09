@@ -9,6 +9,7 @@
 
 #include "MagicBase.h"
 #include "Blood.h"
+#include "TreasureBox.h"
 #include "Player.h"
 #include "Princess.h"
 #include "Enemy.h"
@@ -172,6 +173,25 @@ void SceneMain::Update(Pad& pad)
 			}
 		}
 	}
+	for (auto& treasure : m_pTreasure)
+	{
+		//itemがnullじゃない場合
+		if (treasure)
+		{
+			//アイテムが存在している場合
+			if (treasure->IsExist())
+			{
+				treasure->Update();
+				//当たり判定処理を作成する
+				//魔法とプレイヤー
+
+			}
+			else
+			{
+				treasure = nullptr;
+			}
+		}
+	}
 }
 
 void SceneMain::Draw()
@@ -256,6 +276,22 @@ bool SceneMain::AddMagic(MagicBase* pMagic)
 		if (m_pMagic[i]) continue;
 		//ここに来たということはm_pShot[i] == nullptr
 		m_pMagic[i] = pMagic;
+		//登録したら終了
+		return true;
+	}
+	//ここに来た、ということはm_pShotにポインタを登録できなかった
+	return false;
+}
+
+bool SceneMain::AddTreasure(TreasureBox* pTreasure)
+{
+	//魔法の配列の長さ
+	for (int i = 0; i < m_pTreasure.size(); i++)
+	{
+		//使用中なら次のチェックへ
+		if (m_pTreasure[i]) continue;
+		//ここに来たということはm_pShot[i] == nullptr
+		m_pTreasure[i] = pTreasure;
 		//登録したら終了
 		return true;
 	}

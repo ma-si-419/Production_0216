@@ -22,9 +22,11 @@ public:
 	int GetHp() { return m_hp; }
 	//宝箱の中身を出す
 	void OpenTreasure();
+	//存在しているかどうかを返す
+	bool IsExist() { return m_isExist; }
 private:
 	//SceneMainのポインタ
-	SceneMain* m_pSceneMain;
+	SceneMain* m_pMain;
 	//表示位置
 	Vec2 m_pos;
 	//グラフィックハンドル

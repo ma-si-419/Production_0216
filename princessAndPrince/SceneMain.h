@@ -12,6 +12,7 @@ class ItemBase;
 class UI;
 class SceneManager;
 class MagicBase;
+class TreasureBox;
 
 class SceneMain : public Scene
 {
@@ -33,6 +34,8 @@ public:
 	bool AddItem(std::shared_ptr<ItemBase> pItem);
 
 	bool AddMagic(MagicBase* pMagic);
+
+	bool AddTreasure(TreasureBox* pTreasure);
 
 	bool createEnemy();
 private:
@@ -61,8 +64,8 @@ private:
 	vector<shared_ptr<ItemBase>> m_pItem;
 	//魔法
 	vector<MagicBase*> m_pMagic;
-	// 配列のサイズは実行時に決める(今回はコンストラクタ)
-//	vector<EnemyBase*> m_pEnemy;
+	//宝箱
+	vector<TreasureBox*> m_pTreasure;
 	//音楽が複数個流れないように
 	bool m_isMusicFlag;
 	//魔女に触れて、判定を出るまでに何度も同じ処理をしないために
