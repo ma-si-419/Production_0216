@@ -123,8 +123,8 @@ void Enemy::Update()
 					if (GetRand(100) < kDropProb)
 					{
 						//•ó” ‚Ìƒƒ‚ƒŠŠm•Û
-						std::shared_ptr<TreasureBox>pTreasure
-							= std::make_shared<TreasureBox>();
+						std::shared_ptr<TreasureBox> pTreasure
+							= std::make_shared<TreasureBox>(m_pMain);
 						//ƒƒCƒ“‚É•ó” ‚ğ¶¬‚·‚éŠÖ”‚ğì¬‚·‚é
 					}
 

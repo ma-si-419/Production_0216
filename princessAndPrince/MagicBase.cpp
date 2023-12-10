@@ -12,7 +12,7 @@ namespace
 	//風魔法を出す時にプレイヤーから座標をずらす時に使う
 	constexpr float kShiftPosX = 50;
 	//風魔法の円運動の大きくなる速度
-	constexpr float kWindSpeed = 0.12f;
+	constexpr float kWindSpeed = 0.1f;
 	//風魔法が回る速度
 	constexpr float kWindSpinSpeed = 0.05f;
 
@@ -108,6 +108,8 @@ void MagicBase::Update()
 		m_isExist = false;
 	else if (Game::kScreenWidth + m_scale < m_magicPos.x)
 		m_isExist = false;
+	m_circleCol.SetCenter(m_magicPos, kMagicScale);
+
 }
 
 void MagicBase::Draw()
@@ -124,4 +126,5 @@ void MagicBase::Draw()
 			m_magicPos.x + m_scale / 2, m_magicPos.y + m_scale / 2,
 			GetColor(0, 255, 0), true);
 	}
+	m_circleCol.Draw(kMagicScale,0,0);
 }

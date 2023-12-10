@@ -16,7 +16,6 @@ public:
 	void Update();
 	//•`‰æˆ—
 	void Draw();
-	
 	//‘¶İ‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©”»’f‚·‚é
 	bool IsExist() { return m_isExist; }
 	//“–‚½‚è”»’è‚ğæ“¾‚·‚é

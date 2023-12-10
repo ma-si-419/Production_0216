@@ -40,7 +40,7 @@ namespace
 	//真下を向いている場合の時の数値
 	constexpr float kDownAngle = 4.71f;
 	//魔法を打つ間隔
-	constexpr int kMagicInterval = 50;
+	constexpr int kMagicInterval = 40;
 	//同時に出す風魔法の数
 	constexpr int kWindVol = 2;
 }
@@ -100,7 +100,7 @@ void Princess::Update()
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
 	//魔法を打っている最中
-	if (m_isMagic)
+	if (!m_isMagic)
 	{
 		m_MagicCount++;
 		//ボタンの押されている状況をとる

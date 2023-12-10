@@ -106,9 +106,7 @@ void SceneMain::Update(Pad& pad)
 //		PlaySoundFile("data/sound/mainBgm.mp3", DX_PLAYTYPE_LOOP);
 //		m_flag = false;
 //	}
-
-	CircleCol playerCircle = m_pPlayer->GetColCircle();
-	CircleCol princessCircle = m_pPrincess->GetColCircle();
+	//エネミーのアップデート
 	for (auto& enemy : m_pEnemy)
 	{
 		if (enemy)
@@ -118,22 +116,57 @@ void SceneMain::Update(Pad& pad)
 			{
 				enemy->Update();
 				//プレイヤーとエネミーがぶつかったとき
-				if (!m_pPlayer->GetDeathFlag() && playerCircle.IsCollsion(enemy->GetColCircle()))
+				if (!m_pPlayer->GetDeathFlag() &&
+					IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()))
 				{
 					enemy->OnDamage(*m_pPlayer);
 					m_pPlayer->OnDamage(*enemy);
 				}
 				//魔女とエネミーがぶつかったとき
-				if (princessCircle.IsCollsion(enemy->GetColCircle()))
+				if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle()))
 				{
 					m_pPrincess->OnDamage(*enemy);
 				}
+			}
+			for (auto& magic : m_pMagic)
+			{
+				//itemがnullじゃない場合
+				if (magic)
+				{
+					//アイテムが存在している場合
+					if (magic->IsExist())
+					{
+						if (IsCollision(magic->GetCircleCol(), enemy->GetColCircle()))
+						{
+							enemy->OnDamage(*m_pPlayer);
+						}
+
+					}
+				}
+			}
+		}
+	}
+	for (auto& magic : m_pMagic)
+	{
+		//魔法がnullじゃなく
+		if (magic)
+		{
+			//存在しないフラグが立っているとき
+			if (!magic->IsExist())
+			{
+				//魔法のポインタを消す
+				magic = nullptr;
+			}
+			else
+			{
+				magic->Update();
+
 			}
 		}
 	}
 
 	//魔女とPlayerがぶつかった時
-	if (princessCircle.IsCollsion(playerCircle) &&
+	if (IsCollision(m_pPlayer->GetColCircle(), m_pPrincess->GetColCircle()) &&
 		!m_pPrincess->IsMagic())
 	{
 		m_pPlayer->GiveBlood(m_pPrincess);
@@ -148,28 +181,11 @@ void SceneMain::Update(Pad& pad)
 			if (item->IsExist())
 			{
 				item->Update();
-				if (playerCircle.IsCollsion(item->GetColCircle()))
+				if (IsCollision(m_pPlayer->GetColCircle(), item->GetColCircle()))
 				{
 					m_pPlayer->PickUpItem(item->GetKind());
 					item->DeleteItem();
 				}
-			}
-		}
-	}
-	for (auto& magic : m_pMagic)
-	{
-		//itemがnullじゃない場合
-		if (magic)
-		{
-			//アイテムが存在している場合
-			if (magic->IsExist())
-			{
-				magic->Update();
-
-			}
-			else
-			{
-				magic = nullptr;
 			}
 		}
 	}
@@ -296,6 +312,15 @@ bool SceneMain::AddTreasure(TreasureBox* pTreasure)
 		return true;
 	}
 	//ここに来た、ということはm_pShotにポインタを登録できなかった
+	return false;
+}
+
+bool SceneMain::IsCollision(CircleCol col1, CircleCol col2)
+{
+	if (col1.IsCollsion(col2))
+	{
+		return true;
+	}
 	return false;
 }
 

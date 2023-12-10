@@ -13,6 +13,7 @@ class UI;
 class SceneManager;
 class MagicBase;
 class TreasureBox;
+class CircleCol;
 
 class SceneMain : public Scene
 {
@@ -36,6 +37,8 @@ public:
 	bool AddMagic(MagicBase* pMagic);
 
 	bool AddTreasure(TreasureBox* pTreasure);
+
+	bool IsCollision(CircleCol col1, CircleCol col2);
 
 	bool createEnemy();
 private:
