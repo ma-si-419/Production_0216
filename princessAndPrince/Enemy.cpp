@@ -26,7 +26,7 @@ namespace
 }
 Enemy::Enemy(SceneMain* pMain, Player* pPlayer) :
 	m_targetPos(Game::kScreenWidth / 2, Game::kScreenHeight / 2),
-	m_isExist(true),
+	m_nowState(Game::kNormal),
 	m_pPlayer(pPlayer),
 	m_pMain(pMain)
 {
@@ -80,9 +80,8 @@ void Enemy::Init(int kinds)
 
 void Enemy::Update()
 {
-	//できるならポインタ自体を消したい
-	//存在している敵のみUpdateする(仮処理)
-	if (m_isExist)
+	//状態がkDeleteじゃない場合のみ動く
+	if (m_nowState != Game::kDelete)
 	{
 		//アニメーションの更新処理
 		m_animFrame++;
@@ -128,8 +127,8 @@ void Enemy::Update()
 						//メインに宝箱を生成する関数を作成する
 					}
 
-					//存在するフラッグをfalseにする
-					m_isExist = false;
+					//状態を変化させる
+					m_nowState = Game::kDelete;
 				}
 			}
 		}
@@ -151,7 +150,8 @@ void Enemy::Update()
 }
 void Enemy::Draw()
 {
-	if (m_isExist)
+	//状態がkDeleteじゃない場合のみ動かす
+	if (m_nowState != Game::kDelete)
 	{
 
 		int animEle = m_animFrame / kAnimFrameNum;
@@ -171,10 +171,14 @@ void Enemy::Draw()
 	}
 }
 
-void Enemy::OnDamage(Player& player)
+void Enemy::HitPlayer(Player& player)
 {
 	m_knockBack = player.GetPos() - m_pos;
 	m_knockBack.Normalize();
 	m_knockBack *= kKnockBackScale;
 	m_hp -= player.GetAtk() - m_def;
+}
+
+void Enemy::HitMagic(MagicBase& magic)
+{
 }

@@ -24,6 +24,8 @@ public:
 	Game::ItemKinds GetKind() { return m_kind; }
 	//取得したアイテムを消す関数
 	void DeleteItem() { m_isExist = false; }
+	//状態を管理するenum
+	Game::State m_nowState;
 
 protected:
 	//表示位置

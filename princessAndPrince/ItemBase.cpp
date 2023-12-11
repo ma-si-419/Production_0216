@@ -10,7 +10,8 @@ ItemBase::ItemBase() :
 	m_kind(Game::kEmpty),
 	m_pos(0, 0),
 	m_isExist(false),
-	m_colScale(kColScale)
+	m_colScale(kColScale),
+	m_nowState(Game::kNormal)
 {
 }
 

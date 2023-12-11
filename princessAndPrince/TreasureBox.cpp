@@ -20,7 +20,7 @@ TreasureBox::~TreasureBox()
 
 void TreasureBox::Init(Vec2 pos)
 {
-	m_isExist = true;
+	m_nowState = Game::kNormal;
 	//全部同じ位置に出てしまわないように少しばらけさせる
 	m_pos.x = pos.x + GetRand(30) - 15;
 	m_pos.y = pos.y + GetRand(30) - 15;
@@ -89,8 +89,9 @@ void TreasureBox::Update()
 
 
 
-		//存在しているフラグをfalseにする
-		m_isExist = false;
+		//状態を変化させる
+		m_nowState = Game::kDelete;
+		
 	}
 }
 

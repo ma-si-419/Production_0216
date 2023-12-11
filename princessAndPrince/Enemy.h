@@ -4,6 +4,7 @@
 #include "Character.h"
 class Player;
 class SceneMain;
+class MagicBase;
 class Enemy : public Character
 {
 public:
@@ -25,12 +26,14 @@ public:
 	void Update();
 	//描画処理
 	void Draw();
-	//敵が存在しているかどうかを判断する
-	bool IsExist() { return m_isExist; }
 	//プレイヤーとぶつかった際の処理
-	void OnDamage(Player& player);
+	void HitPlayer(Player& player);
+	//魔法とぶつかったときの処理
+	void HitMagic(MagicBase& magic);
 	//プリンセスとぶつかった際のノックバック
 	void HitPrincess(Vec2 knockBack) { m_knockBack = knockBack; }
+	//状態を管理する
+	Game::State m_nowState;
 private:
 	//SceneMainのポインタをもつ
 	SceneMain* m_pMain;
@@ -42,8 +45,6 @@ private:
 	Kinds m_kind;
 	//動く方向
 	Vec2 m_moveVec;
-	//存在しているかフラグ
-	bool m_isExist;
 	//左を向いているかフラグ
 	bool m_isLeftFlag;
 };

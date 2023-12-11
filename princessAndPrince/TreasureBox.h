@@ -22,8 +22,8 @@ public:
 	int GetHp() { return m_hp; }
 	//宝箱の中身を出す
 	void OpenTreasure();
-	//存在しているかどうかを返す
-	bool IsExist() { return m_isExist; }
+	//状態を管理する
+	Game::State m_nowState;
 private:
 	//SceneMainのポインタ
 	SceneMain* m_pMain;

@@ -32,4 +32,13 @@ namespace Game
 		kTreasure,//宝箱
 		kPortion,//回復アイテム
 	};
+	/*状態を管理するenum*/
+	enum State
+	{
+		kNormal,//基本的な状態
+		kHit,//ぶつかった状態(めり込んでぶつかり、処理が複数行われないため)
+		kHitMagic,//魔法にぶつかったときの状態
+		kDelete//死んでいる状態
+	};
+
 }
