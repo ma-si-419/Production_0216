@@ -117,8 +117,8 @@ void SceneMain::Update(Pad& pad)
 			{
 				enemy->Update();
 				//プレイヤーとエネミーがぶつかったとき
-				if (!m_pPlayer->GetDeathFlag() &&//プレイヤーが死んでいないときに
-					IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle())&&//プレイヤーとエネミーがぶつかったら
+				if (m_pPlayer->m_nowState != Game::kDelete &&//プレイヤーが死んでいないときに
+					IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&//プレイヤーとエネミーがぶつかったら
 					enemy->m_nowState == Game::kNormal)//エネミーがkNormalの状態のときのみ
 				{
 					//エネミーのダメージ処理を行う
@@ -134,49 +134,49 @@ void SceneMain::Update(Pad& pad)
 					//魔女のダメージ処理を行う,エネミーのノックバックを行う
 					m_pPrincess->OnDamage(*enemy);
 				}
-			}
-			//エネミーとプレイヤーが離れたら(ぶつかったときの処理が複数回行われないために)
-			if(IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle())&&
-				enemy->m_nowState == Game::kHit)
-			{
-				//エネミーの状態をkNormalに変化させる
-				enemy->m_nowState = Game::kNormal;
-			}
-			for (auto& magic : m_pMagic)
-			{
-
-				if (magic &&//magicがnullじゃない場合
-					IsCollision(magic->GetCircleCol(), enemy->GetColCircle())&&//MagicとEnemyがぶつかったら
-					enemy->m_nowState != Game::kHitMagic)//状態がkHitMagicじゃなかったら
+				//エネミーとプレイヤーが離れたら(ぶつかったときの処理が複数回行われないために)
+				if (IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&
+					enemy->m_nowState == Game::kHit)
 				{
-					//魔法のダメージ処理を行う
-					enemy->HitPlayer(*m_pPlayer);
-					enemy->m_nowState == Game::kHitMagic;
+					//エネミーの状態をkNormalに変化させる
+					enemy->m_nowState = Game::kNormal;
 				}
-				//魔法とエネミーがぶつかっていない場合
-				else if (magic && !IsCollision(magic->GetCircleCol(), enemy->GetColCircle()))
+				for (auto& magic : m_pMagic)
 				{
-					//;状態をkNormalに戻す
-					enemy->m_nowState == Game::kNormal;
-				}
 
+					if (magic &&//magicがnullじゃない場合
+						IsCollision(magic->GetCircleCol(), enemy->GetColCircle()) &&//MagicとEnemyがぶつかったら
+						enemy->m_nowState != Game::kHitMagic)//状態がkHitMagicじゃなかったら
+					{
+						//魔法のダメージ処理を行う
+						enemy->HitMagic(magic);
+						enemy->m_nowState == Game::kHitMagic;
+					}
+					//魔法とエネミーがぶつかっていない場合
+					else if (magic && !IsCollision(magic->GetCircleCol(), enemy->GetColCircle()))
+					{
+						//;状態をkNormalに戻す
+						enemy->m_nowState == Game::kNormal;
+					}
+
+				}
 			}
 		}
 	}
 
-	
+
 	for (auto& magic : m_pMagic)
 	{
 		//魔法がnullじゃなく
 		if (magic)
 		{
-			//存在するフラグが立っているとき
-			if (magic->IsExist())
+			//状態がデリートになっていないとき
+			if (magic->m_nowState != Game::kDelete)
 			{
 				//魔法の更新処理を行う
 				magic->Update();
 			}
-			else//存在しないフラグが立っているとき
+			else//状態がデリートになったとき
 			{
 				//魔法のポインタを消す
 				magic = nullptr;
@@ -204,7 +204,7 @@ void SceneMain::Update(Pad& pad)
 				if (IsCollision(m_pPlayer->GetColCircle(), item->GetColCircle()))
 				{
 					m_pPlayer->PickUpItem(item->GetKind());
-					item->DeleteItem();
+					item->m_nowState = Game::kDelete;
 				}
 			}
 		}
@@ -257,7 +257,7 @@ void SceneMain::Draw()
 		if (magic)
 		{
 			//アイテムが存在している場合
-			if (magic->IsExist())
+			if (magic->m_nowState != Game::kDelete)
 			{
 				magic->Draw();
 
@@ -293,7 +293,7 @@ bool SceneMain::createEnemy()
 		//使用中なら次のチェックへ
 		if (m_pEnemy[i]) continue;
 		//ここに来たということはm_pShot[i] == nullptr
-		m_pEnemy[i] = make_shared<Enemy>(this, m_pPlayer);
+		m_pEnemy[i] = make_shared<Enemy>(this);
 		m_pEnemy[i]->SetHandle(m_enemyHandle);
 		m_pEnemy[i]->Init(GetRand(4));
 		//登録したら終了

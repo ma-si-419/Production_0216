@@ -22,8 +22,6 @@ public:
 	virtual CircleCol GetColCircle() { return m_circleCol; }
 	//自分のアイテムの種類を取得する
 	Game::ItemKinds GetKind() { return m_kind; }
-	//取得したアイテムを消す関数
-	void DeleteItem() { m_isExist = false; }
 	//状態を管理するenum
 	Game::State m_nowState;
 

@@ -43,7 +43,6 @@ Player::Player() :
 	m_isMove(false),
 	m_hpBarWidth(0),
 	m_bloodBarWidth(0),
-	m_deathFlag(false),
 	m_lastPad(0),
 	m_maxBlood(kMaxBlood),
 	m_nowBlood(0),
@@ -60,6 +59,8 @@ Player::Player() :
 	m_animFrame = kAnimFrameNum;
 	//円の半径を設定
 	m_radius = Game::kRadius;
+	//状態を初期化
+	m_nowState = Game::kNormal;
 }
 
 Player::~Player()
@@ -81,7 +82,7 @@ void Player::Update()
 	// パッドの十字キーを使用してプレイヤーを移動させる
 	int pad = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 	//倒れているときは徐々に回復するようにする
-	if (m_deathFlag)
+	if (m_nowState == Game::kDelete)
 	{
 		//少しずつ回復するようにする
 		m_nowHp += GetHealRate();
@@ -144,12 +145,12 @@ void Player::Update()
 		{
 			//現在の体力が最大値よりも大きくならないように
 			m_nowHp = m_hp;
-			//倒れているフラグをfalseにする
-			m_deathFlag = false;
+			//状態をkNormalに変化させる
+			m_nowState = Game::kNormal;
 		}
 	}
 	//体力が0の時は動けないようにする
-	if (m_nowHp > 0 && !m_deathFlag)
+	if (m_nowHp > 0 && m_nowState != Game::kDelete)
 	{
 
 
@@ -316,8 +317,8 @@ void Player::OnDamage(Enemy enemy)
 	if (m_nowHp <= 0)
 	{
 		m_nowHp = 0;
-		//倒れているフラグをtrueにする
-		m_deathFlag = true;
+		//状態をkDeleteに変化させる
+		m_nowState = Game::kDelete;
 		//倒れた座標を保存する
 		m_deathPos = m_pos;
 	}

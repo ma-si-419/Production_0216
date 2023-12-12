@@ -3,8 +3,10 @@
 #include "DxLib.h"
 namespace
 {
-	//基本的な魔法の攻撃力
-	constexpr int kMagicAttack = 3;
+	//基本的な炎魔法の攻撃力
+	constexpr float kFireAttack = 2;
+	//基本的な風魔法の攻撃力
+	constexpr float kWindAttack = 0.5;
 	//基本的な魔法の大きさ
 	constexpr float kMagicScale = 20;
 	//基本的な炎魔法のスピード
@@ -20,7 +22,7 @@ namespace
 
 MagicBase::MagicBase(Princess* pPrincess) :
 	//コンストラクタ時に存在しているフラグを立てる
-	m_isExist(true),
+	m_nowState(Game::kNormal),
 	//プリンセスのポインタを入れる
 	m_pPrincess(pPrincess),
 	//移動ベクトルの初期化
@@ -28,8 +30,10 @@ MagicBase::MagicBase(Princess* pPrincess) :
 	//ポジションの初期化
 	m_princessPos(0, 0),
 	m_magicPos(0,0),
-	//攻撃力の初期化
-	m_atk(kMagicAttack),
+	//炎魔法の攻撃力の初期化
+	m_fireAtk(kFireAttack),
+	//風魔法の攻撃力の初期化
+	m_windAtk(kWindAttack),
 	//魔法の大きさの初期化
 	m_scale(kMagicScale),
 	//最初に撃っている魔法を炎にする
@@ -100,14 +104,14 @@ void MagicBase::Update()
 	}
 	// 縦軸の移動制限
 	if (m_magicPos.y < 0 - m_scale)
-		m_isExist = false;
+		m_nowState = Game::kDelete;
 	else if (Game::kScreenHeight + m_scale < m_magicPos.y)
-		m_isExist = false;
+		m_nowState = Game::kDelete;
 	// 横軸の移動制限
 	if (m_magicPos.x < 0 - m_scale)
-		m_isExist = false;
+		m_nowState = Game::kDelete;
 	else if (Game::kScreenWidth + m_scale < m_magicPos.x)
-		m_isExist = false;
+		m_nowState = Game::kDelete;
 	m_circleCol.SetCenter(m_magicPos, kMagicScale);
 
 }
@@ -127,4 +131,16 @@ void MagicBase::Draw()
 			GetColor(0, 255, 0), true);
 	}
 	m_circleCol.Draw(kMagicScale,0,0);
+}
+
+float MagicBase::GetAtk()
+{
+	if (m_isFire)
+	{
+		return m_fireAtk;
+	}
+	else
+	{
+		return m_windAtk;
+	}
 }

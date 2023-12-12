@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Enemy.h"
 #include "Player.h"
+#include "MagicBase.h"
 #include "DxLib.h"
 #include "Blood.h"
 #include "Exp.h"
@@ -24,13 +25,12 @@ namespace
 	//エネミーが宝箱を落とす確率(Max100)
 	constexpr int kDropProb = 20;
 }
-Enemy::Enemy(SceneMain* pMain, Player* pPlayer) :
+Enemy::Enemy(SceneMain* pMain) :
 	m_targetPos(Game::kScreenWidth / 2, Game::kScreenHeight / 2),
-	m_nowState(Game::kNormal),
-	m_pPlayer(pPlayer),
 	m_pMain(pMain)
 {
 	m_animFrame = 0;
+	m_nowState = Game::kNormal;
 }
 Enemy::~Enemy()
 {
@@ -86,6 +86,7 @@ void Enemy::Update()
 		//アニメーションの更新処理
 		m_animFrame++;
 		if (kAnimFrameCycle <= m_animFrame)	m_animFrame = 0;
+		//ノックバック処理
 		if (m_knockBack.x != 0 || m_knockBack.y != 0)
 		{
 			//ノックバックする時間カウント
@@ -103,7 +104,7 @@ void Enemy::Update()
 				{
 					//血のメモリの確保
 					std::shared_ptr<Blood> pBlood
-					 = std::make_shared<Blood>();
+						= std::make_shared<Blood>();
 					//血を落とす処理
 					pBlood->Init(m_pos);
 					m_pMain->AddItem(pBlood);
@@ -126,7 +127,6 @@ void Enemy::Update()
 							= std::make_shared<TreasureBox>(m_pMain);
 						//メインに宝箱を生成する関数を作成する
 					}
-
 					//状態を変化させる
 					m_nowState = Game::kDelete;
 				}
@@ -179,6 +179,41 @@ void Enemy::HitPlayer(Player& player)
 	m_hp -= player.GetAtk() - m_def;
 }
 
-void Enemy::HitMagic(MagicBase& magic)
+void Enemy::HitMagic(MagicBase* magic)
 {
+	m_hp -= magic->GetAtk();
+	//もし魔法が炎魔法だったら
+	if (magic->GetMagicKind())
+	{
+		//ぶつかった魔法を消す
+		magic->m_nowState = Game::kDelete;
+	}
+	if (m_hp < 0)
+	{//血のメモリの確保
+		std::shared_ptr<Blood> pBlood
+			= std::make_shared<Blood>();
+		//血を落とす処理
+		pBlood->Init(m_pos);
+		m_pMain->AddItem(pBlood);
+		//経験値のメモリの確保
+		std::shared_ptr<Exp> pExp
+			= std::make_shared<Exp>();
+		//経験値を落とす処理
+		pExp->Init(m_pos);
+		m_pMain->AddItem(pExp);
+		//お金のメモリ確保
+		std::shared_ptr<Gold> pGold
+			= std::make_shared<Gold>();
+		//お金を落とす処理
+		pGold->Init(m_pos);
+		m_pMain->AddItem(pGold);
+		if (GetRand(100) < kDropProb)
+		{
+			//宝箱のメモリ確保
+			std::shared_ptr<TreasureBox> pTreasure
+				= std::make_shared<TreasureBox>(m_pMain);
+			//メインに宝箱を生成する関数を作成する
+		}
+		m_nowState = Game::kDelete;
+	}
 }

@@ -16,10 +16,14 @@ public:
 	void Update();
 	//描画処理
 	void Draw();
-	//存在しているかどうか判断する
-	bool IsExist() { return m_isExist; }
 	//当たり判定を取得する
 	CircleCol GetCircleCol() { return m_circleCol; }
+	//攻撃力を取得する
+	float GetAtk();
+	//状態を管理する
+	Game::State m_nowState;
+	//魔法の種類を取得する
+	bool GetMagicKind() { return m_isFire; }
 private:
 	//プリンセスのポインタを保存する変数
 	Princess* m_pPrincess;
@@ -29,12 +33,12 @@ private:
 	Vec2 m_magicPos;
 	//魔法の向かうベクトル
 	Vec2 m_moveVec;
-	//存在しているかどうか
-	bool m_isExist;
 	//円形の当たり判定
 	CircleCol m_circleCol;
-	//魔法の攻撃力
-	int m_atk;
+	//炎魔法の攻撃力
+	float m_fireAtk;
+	//風魔法の攻撃力
+	float m_windAtk;
 	//魔法の大きさ
 	float m_scale;
 	//魔法の種類

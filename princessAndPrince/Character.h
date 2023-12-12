@@ -24,6 +24,8 @@ public:
 	virtual int GetAtk() { return m_atk; }
 	//“–‚½‚è”»’è‚ğæ“¾‚·‚é
 	virtual CircleCol GetColCircle() { return m_circleCol; }
+	//ó‘Ô‚ğŠÇ—‚·‚é
+	Game::State m_nowState;
 protected:
 	/*ƒƒ“ƒo•Ï”*/
 	//UŒ‚—Í
