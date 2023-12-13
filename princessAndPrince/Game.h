@@ -29,7 +29,6 @@ namespace Game
 		kExp,//経験値
 		kGold,//お金
 		kBlood,//魔女を動かす血
-		kTreasure,//宝箱
 		kPortion,//回復アイテム
 	};
 	/*状態を管理するenum*/

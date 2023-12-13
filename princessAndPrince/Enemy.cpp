@@ -23,11 +23,14 @@ namespace
 	//ノックバックの大きさ
 	constexpr int kKnockBackScale = 4;
 	//エネミーが宝箱を落とす確率(Max100)
-	constexpr int kDropProb = 20;
+	constexpr int kDropProb = 30;
+	//マジックにヒットするインターバル
+	constexpr int kHitMagicInterval = 30;
 }
 Enemy::Enemy(SceneMain* pMain) :
 	m_targetPos(Game::kScreenWidth / 2, Game::kScreenHeight / 2),
-	m_pMain(pMain)
+	m_pMain(pMain),
+	m_hitMagicCount(0)
 {
 	m_animFrame = 0;
 	m_nowState = Game::kNormal;
@@ -43,35 +46,35 @@ void Enemy::Init(int kinds)
 	m_radius = Game::kRadius;
 	if (kinds == static_cast<int>(goblin))
 	{
-		m_hp = 2;
+		m_hp = 10;
 		m_atk = 1;
 		m_spd = 0.1f;
 		m_kind = goblin;
 	}
 	if (kinds == static_cast<int>(boar))
 	{
-		m_hp = 3;
+		m_hp = 15;
 		m_atk = 1;
 		m_spd = 0.2f;
 		m_kind = boar;
 	}
 	if (kinds == static_cast<int>(doragon))
 	{
-		m_hp = 4;
+		m_hp = 20;
 		m_atk = 1;
 		m_spd = 0.3f;
 		m_kind = doragon;
 	}
 	if (kinds == static_cast<int>(skeleton))
 	{
-		m_hp = 5;
+		m_hp = 25;
 		m_atk = 1;
 		m_spd = 0.4f;
 		m_kind = skeleton;
 	}
 	if (kinds == static_cast<int>(snowman))
 	{
-		m_hp = 6;
+		m_hp = 30;
 		m_atk = 1;
 		m_spd = 0.5f;
 		m_kind = snowman;
@@ -122,14 +125,23 @@ void Enemy::Update()
 					m_pMain->AddItem(pGold);
 					if (GetRand(100) < kDropProb)
 					{
-						//宝箱のメモリ確保
-						std::shared_ptr<TreasureBox> pTreasure
-							= std::make_shared<TreasureBox>(m_pMain);
+						m_pTreasureBox = new TreasureBox(m_pMain);
+						m_pTreasureBox->Init(m_pos);
 						//メインに宝箱を生成する関数を作成する
+						m_pMain->AddTreasure(m_pTreasureBox);
 					}
 					//状態を変化させる
 					m_nowState = Game::kDelete;
 				}
+			}
+		}
+		if (m_nowState == Game::kHitMagic)
+		{
+			m_hitMagicCount++;
+			if (m_hitMagicCount > kHitMagicInterval)
+			{
+				m_nowState = Game::kNormal;
+				m_hitMagicCount = 0;
 			}
 		}
 		m_moveVec = m_targetPos - m_pos;
@@ -188,6 +200,7 @@ void Enemy::HitMagic(MagicBase* magic)
 		//ぶつかった魔法を消す
 		magic->m_nowState = Game::kDelete;
 	}
+	//魔法で死んだ場合の処理をここに入れておく
 	if (m_hp < 0)
 	{//血のメモリの確保
 		std::shared_ptr<Blood> pBlood

@@ -20,10 +20,17 @@ public:
 	void SubHp() { m_hp--; }
 	//宝箱の体力を減らす
 	int GetHp() { return m_hp; }
-	//宝箱の中身を出す
-	void OpenTreasure();
+	//Playerとぶつかったとき
+	void HitPlayer();
+	//魔法とぶつかったとき
+	void HitMagic();
+	//自分の場所を返す
+	Vec2 GetPos() { return m_pos; }
+	//当たり判定を返す
+	CircleCol GetColCircle() { return m_circleCol; }
 	//状態を管理する
 	Game::State m_nowState;
+
 private:
 	//SceneMainのポインタ
 	SceneMain* m_pMain;

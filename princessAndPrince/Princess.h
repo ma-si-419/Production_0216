@@ -16,7 +16,7 @@ public:
 	void Update();
 	void Draw() const;
 	//ダメージを食らったときの処理
-	void OnDamage(Enemy& enemy);
+	void HitEnemy(Enemy& enemy);
 	//現在のHpの割合計算する関数
 	float GetHpRate() { return m_nowHp / m_hp; }
 	//現在持っている血の量の割合を計算する

@@ -17,15 +17,20 @@
 #include "UI.h"
 namespace
 {
+	//アイテムの最大数
 	constexpr int kMaxItem = 256;
+	//同時に存在する魔法の最大数
 	constexpr int kMaxMagicValue = 32;
+	//持てる血の量の最大数
 	constexpr float kMaxBlood = 10;
+	//エネミーが生まれるインターバル(仮処理)
 	constexpr int kEnemyPopInterval = 50;
+	//宝箱の同時に存在する最大数
+	constexpr int kMaxTreasureBox = 16;
 }
 SceneMain::SceneMain(SceneManager& manager) :
 	Scene(manager),
 	m_isMusicFlag(true),
-	m_isTouch(false),
 	m_enemyPopTimeCount(0)
 {
 	//プレイヤーのグラフィックのロード
@@ -50,6 +55,8 @@ SceneMain::SceneMain(SceneManager& manager) :
 	m_pItem.resize(kMaxItem);
 	//魔法の最大数を設定
 	m_pMagic.resize(kMaxMagicValue);
+	//宝箱の最大数を設定
+	m_pTreasure.resize(kMaxTreasureBox);
 	//UIのコンストラクタ
 	m_pUi = new UI(m_pPlayer);
 	for (auto& enemy : m_pEnemy)
@@ -119,12 +126,12 @@ void SceneMain::Update(Pad& pad)
 				//プレイヤーとエネミーがぶつかったとき
 				if (m_pPlayer->m_nowState != Game::kDelete &&//プレイヤーが死んでいないときに
 					IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&//プレイヤーとエネミーがぶつかったら
-					enemy->m_nowState == Game::kNormal)//エネミーがkNormalの状態のときのみ
+					enemy->m_nowState != Game::kDelete)//エネミーがkDeleteじゃないときのみ
 				{
 					//エネミーのダメージ処理を行う
 					enemy->HitPlayer(*m_pPlayer);
 					//プレイヤーのダメージ処理を行う
-					m_pPlayer->OnDamage(*enemy);
+					m_pPlayer->HitEnemy(*enemy);
 					//エネミーの状態を推移させる
 					enemy->m_nowState == Game::kHit;
 				}
@@ -132,7 +139,7 @@ void SceneMain::Update(Pad& pad)
 				if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle()))
 				{
 					//魔女のダメージ処理を行う,エネミーのノックバックを行う
-					m_pPrincess->OnDamage(*enemy);
+					m_pPrincess->HitEnemy(*enemy);
 				}
 				//エネミーとプレイヤーが離れたら(ぶつかったときの処理が複数回行われないために)
 				if (IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&
@@ -148,17 +155,11 @@ void SceneMain::Update(Pad& pad)
 						IsCollision(magic->GetCircleCol(), enemy->GetColCircle()) &&//MagicとEnemyがぶつかったら
 						enemy->m_nowState != Game::kHitMagic)//状態がkHitMagicじゃなかったら
 					{
+						//エネミーの状態を変化させる
+						enemy->m_nowState = Game::kHitMagic;
 						//魔法のダメージ処理を行う
-						enemy->HitMagic(magic);
-						enemy->m_nowState == Game::kHitMagic;
+						enemy->HitMagic(magic);					
 					}
-					//魔法とエネミーがぶつかっていない場合
-					else if (magic && !IsCollision(magic->GetCircleCol(), enemy->GetColCircle()))
-					{
-						//;状態をkNormalに戻す
-						enemy->m_nowState == Game::kNormal;
-					}
-
 				}
 			}
 		}
@@ -190,7 +191,6 @@ void SceneMain::Update(Pad& pad)
 		!m_pPrincess->IsMagic())
 	{
 		m_pPlayer->GiveBlood(m_pPrincess);
-		m_isTouch = true;
 	}
 	for (auto& item : m_pItem)
 	{
@@ -219,6 +219,10 @@ void SceneMain::Update(Pad& pad)
 			{
 				treasure->Update();
 				//当たり判定処理を作成する
+				if (IsCollision(m_pPlayer->GetColCircle(), treasure->GetColCircle()))
+				{
+					m_pPlayer->HitTreasure(treasure);
+				}
 				//魔法とプレイヤー
 
 			}
@@ -261,6 +265,18 @@ void SceneMain::Draw()
 			{
 				magic->Draw();
 
+			}
+		}
+	}
+	for (auto& treasure : m_pTreasure)
+	{
+		//itemがnullじゃない場合
+		if (treasure)
+		{
+			//アイテムが存在している場合
+			if (treasure->m_nowState == Game::kNormal)
+			{
+				treasure->Draw();
 			}
 		}
 	}

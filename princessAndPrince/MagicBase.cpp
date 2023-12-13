@@ -4,9 +4,9 @@
 namespace
 {
 	//基本的な炎魔法の攻撃力
-	constexpr float kFireAttack = 2;
+	constexpr float kFireAttack = 3;
 	//基本的な風魔法の攻撃力
-	constexpr float kWindAttack = 0.5;
+	constexpr float kWindAttack = 1;
 	//基本的な魔法の大きさ
 	constexpr float kMagicScale = 20;
 	//基本的な炎魔法のスピード
@@ -14,9 +14,9 @@ namespace
 	//風魔法を出す時にプレイヤーから座標をずらす時に使う
 	constexpr float kShiftPosX = 50;
 	//風魔法の円運動の大きくなる速度
-	constexpr float kWindSpeed = 0.1f;
+	constexpr float kWindSpeed = 0.3f;
 	//風魔法が回る速度
-	constexpr float kWindSpinSpeed = 0.05f;
+	constexpr float kWindSpinSpeed = 0.1f;
 
 }
 

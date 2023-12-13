@@ -71,8 +71,6 @@ private:
 	vector<TreasureBox*> m_pTreasure;
 	//音楽が複数個流れないように
 	bool m_isMusicFlag;
-	//魔女に触れて、判定を出るまでに何度も同じ処理をしないために
-	bool m_isTouch;
 	//敵の出現間隔
 	int m_enemyPopTimeCount;
 };

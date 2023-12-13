@@ -4,6 +4,7 @@
 #include "Character.h"
 class Princess;
 class Enemy;
+class TreasureBox;
 class Player : public Character
 {
 
@@ -16,7 +17,9 @@ public:
 	void Draw() const;
 
 	//“G‚É‚Ô‚Â‚©‚Á‚½Û‚Ìˆ—
-	void OnDamage(Enemy enemy);
+	void HitEnemy(Enemy enemy);
+	//•ó” ‚É‚Ô‚Â‚©‚Á‚½‚Æ‚«‚Ìˆ—
+	void HitTreasure(TreasureBox* treasureBox);
 	//Œ»İ‚ÌHp‚ÌŠ„‡ŒvZ‚·‚éŠÖ”
 	float GetHpRate() { return m_nowHp / m_hp; }
 	//‰ñ•œ—Ê‚ğŒvZ‚·‚é

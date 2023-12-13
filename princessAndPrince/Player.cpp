@@ -4,6 +4,7 @@
 #include "Pad.h"
 #include "SceneMain.h"
 #include "CircleCol.h"
+#include "TreasureBox.h"
 #include "Enemy.h"
 #include "Princess.h"
 
@@ -70,8 +71,8 @@ Player::~Player()
 
 void Player::Init()
 {
-	m_atk = 3;
-	m_hp = 10;
+	m_atk = 10;
+	m_hp = 20;
 	m_spd = 3.0f;
 	m_def = 0;
 	m_nowHp = m_hp;
@@ -307,7 +308,7 @@ void Player::Draw() const
 #endif
 }
 
-void Player::OnDamage(Enemy enemy)
+void Player::HitEnemy(Enemy enemy)
 {
 	m_knockBack = enemy.GetPos() - m_pos;
 	m_knockBack.Normalize();
@@ -322,6 +323,12 @@ void Player::OnDamage(Enemy enemy)
 		//“|‚ê‚½À•W‚ð•Û‘¶‚·‚é
 		m_deathPos = m_pos;
 	}
+}
+void Player::HitTreasure(TreasureBox* treasureBox)
+{
+	m_knockBack = treasureBox->GetPos() - m_pos;
+	m_knockBack.Normalize();
+	m_knockBack *= kKnockBackScale * (GetRand(3) + 3);
 }
 void Player::PickUpItem(Game::ItemKinds kind)
 {

@@ -100,7 +100,7 @@ void Princess::Update()
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
 	//–‚–@‚ğ‘Å‚Á‚Ä‚¢‚éÅ’†
-	if (!m_isMagic)
+	if (m_isMagic)
 	{
 		m_MagicCount++;
 		//ƒ{ƒ^ƒ“‚Ì‰Ÿ‚³‚ê‚Ä‚¢‚éó‹µ‚ğ‚Æ‚é
@@ -241,7 +241,7 @@ void Princess::Draw() const
 #endif
 }
 
-void Princess::OnDamage(Enemy& enemy)
+void Princess::HitEnemy(Enemy& enemy)
 {
 	Vec2 knockBack;
 	knockBack = m_pos - enemy.GetPos();
