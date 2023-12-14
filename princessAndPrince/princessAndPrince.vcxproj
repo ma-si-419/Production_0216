@@ -150,6 +150,7 @@
     <ClCompile Include="ItemBase.cpp" />
     <ClCompile Include="MagicBase.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MyString.cpp" />
     <ClCompile Include="Pad.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Portion.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="SceneMain.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneSelect.cpp" />
+    <ClCompile Include="SceneShop.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="TreasureBox.cpp" />
     <ClCompile Include="UI.cpp" />
@@ -175,6 +177,7 @@
     <ClInclude Include="Gold.h" />
     <ClInclude Include="ItemBase.h" />
     <ClInclude Include="MagicBase.h" />
+    <ClInclude Include="MyString.h" />
     <ClInclude Include="Pad.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Portion.h" />
@@ -183,6 +186,7 @@
     <ClInclude Include="SceneMain.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneSelect.h" />
+    <ClInclude Include="SceneShop.h" />
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="TreasureBox.h" />
     <ClInclude Include="UI.h" />

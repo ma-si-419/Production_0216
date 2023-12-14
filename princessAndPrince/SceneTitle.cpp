@@ -2,12 +2,11 @@
 #include "SceneManager.h"
 #include "DxLib.h"
 #include "Game.h"
-#include "SceneMain.h"
-SceneTitle::SceneTitle(SceneManager& manager):
+#include "SceneSelect.h"
+SceneTitle::SceneTitle(SceneManager& manager) :
 	Scene(manager),
-	m_handle(0)
+	m_isKeyDown(false)
 {
-	m_handle = LoadGraph("data/Image/_Start.png");
 }
 
 SceneTitle::~SceneTitle()
@@ -22,14 +21,25 @@ void SceneTitle::Update(Pad& pad)
 {
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
-	if (m_input.Buttons[12])
+	//Aボタンが連続で押されないように
+	if (!m_input.Buttons[12])
 	{
-		m_manager.ChangeScene(std::make_shared<SceneMain>(m_manager));
+		m_isKeyDown = true;
+	}
+	//Aボタンが押されたら
+	if (m_input.Buttons[12] && m_isKeyDown)
+	{
+		m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
 	}
 }
 
 void SceneTitle::Draw()
 {
-	DrawString(Game::kScreenWidth / 2, Game::kScreenHeight / 2,
-					"姫と王子",GetColor(255,255,255), true);
+	int DrawWidth = GetDrawStringWidth("姫と王子", -1);
+
+	DrawString((Game::kScreenWidth - DrawWidth) / 2, Game::kScreenHeight / 2,
+		"姫と王子", GetColor(255, 255, 255), true);
+	DrawWidth = GetDrawStringWidth("PRESS START BUTTON", -1);
+	DrawString((Game::kScreenWidth - DrawWidth) / 2, 500,
+		"PRESS START BUTTON", GetColor(255, 255, 255), true);
 }

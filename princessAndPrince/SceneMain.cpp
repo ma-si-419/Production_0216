@@ -6,6 +6,7 @@
 #include "SceneMain.h"
 #include "SceneTitle.h"
 #include "SceneManager.h"
+#include "MyString.h"
 
 #include "MagicBase.h"
 #include "Blood.h"
@@ -18,7 +19,7 @@
 namespace
 {
 	//アイテムの最大数
-	constexpr int kMaxItem = 256;
+	constexpr int kMaxItem = 1024;
 	//同時に存在する魔法の最大数
 	constexpr int kMaxMagicValue = 32;
 	//持てる血の量の最大数
@@ -27,6 +28,8 @@ namespace
 	constexpr int kEnemyPopInterval = 50;
 	//宝箱の同時に存在する最大数
 	constexpr int kMaxTreasureBox = 16;
+	//配列のサイズ
+	constexpr int kArraySize = 81;
 }
 SceneMain::SceneMain(SceneManager& manager) :
 	Scene(manager),
@@ -59,13 +62,6 @@ SceneMain::SceneMain(SceneManager& manager) :
 	m_pTreasure.resize(kMaxTreasureBox);
 	//UIのコンストラクタ
 	m_pUi = new UI(m_pPlayer);
-	for (auto& enemy : m_pEnemy)
-	{
-		////Enemyのコンストラクタ
-		//enemy = std::make_shared<Enemy>(this, m_pPlayer);
-		//Enemyのメンバ変数にアクセス
-		/*enemy->SetHandle(m_enemyHandle);*/
-	}
 }
 
 SceneMain::~SceneMain()
@@ -74,13 +70,32 @@ SceneMain::~SceneMain()
 
 void SceneMain::Init()
 {
+	{
+		//ファイルを開く
+		std::ifstream ifs("data/File/EnemyInfo.txt");
+		//帰ってきた値を返す配列
+		vector<string> tempS;
+		//配列を作成
+		char str[kArraySize];
+		//成功したら一行ずつ読み込む
+		while (ifs.getline(str, kArraySize))
+		{
+			std::cout << "#" << str << std::endl;
+			//分割
+			tempS = MyString::split(str, ",");
+			popEnemy tempEnemy;
+			tempEnemy.enemyKind = std::stoi(tempS[0]);
+			tempEnemy.popTime = std::stof(tempS[1]);
+			m_popEnemyList.push(tempEnemy);
+		}
+		//ファイルを閉じる
+		ifs.close();
+
+	}
 	m_pPlayer->Init();
 	m_pPrincess->Init();
 }
 
-void SceneMain::End()
-{
-}
 
 void SceneMain::Update(Pad& pad)
 {
@@ -102,8 +117,6 @@ void SceneMain::Update(Pad& pad)
 		m_enemyPopTimeCount = 0;
 		//エネミーを出現させる
 		createEnemy();
-
-
 	}
 	m_pPlayer->Update();
 	m_pPrincess->Update();
@@ -158,7 +171,7 @@ void SceneMain::Update(Pad& pad)
 						//エネミーの状態を変化させる
 						enemy->m_nowState = Game::kHitMagic;
 						//魔法のダメージ処理を行う
-						enemy->HitMagic(magic);					
+						enemy->HitMagic(magic);
 					}
 				}
 			}
@@ -215,7 +228,7 @@ void SceneMain::Update(Pad& pad)
 		if (treasure)
 		{
 			//アイテムが存在している場合
-			if (treasure->m_nowState == Game::kNormal)
+			if (treasure->m_nowState != Game::kDelete)
 			{
 				treasure->Update();
 				//プレイヤーとぶつかったら

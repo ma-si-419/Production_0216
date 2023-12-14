@@ -17,5 +17,7 @@ public:
 private:
 	//タイトル画像
 	int m_handle;
+	//連続でキーが押されないようにするための変数
+	bool m_isKeyDown;
 };
 

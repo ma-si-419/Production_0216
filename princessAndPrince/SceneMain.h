@@ -2,6 +2,7 @@
 #include"Scene.h"
 #include <vector>
 #include<memory>
+#include<stack>
 using namespace std;
 
 class Player;
@@ -13,7 +14,11 @@ class UI;
 class MagicBase;
 class TreasureBox;
 class CircleCol;
-
+struct popEnemy
+{
+	int enemyKind;
+	float popTime;
+};
 class SceneMain : public Scene
 {
 public:
@@ -21,7 +26,6 @@ public:
 	virtual ~SceneMain();
 
 	void Init();
-	void End();
 
 	void Update(Pad& pad);
 	void Draw();
@@ -40,11 +44,6 @@ public:
 	bool IsCollision(CircleCol col1, CircleCol col2);
 
 	bool createEnemy();
-private:
-	// 敵キャラクターの生成
-//	void createEnemyLeft();
-//	void createEnemyRight();
-//	void createEnemyToPlayer();
 
 private:
 	// グラフィックのハンドル
@@ -72,4 +71,46 @@ private:
 	bool m_isMusicFlag;
 	//敵の出現間隔
 	int m_enemyPopTimeCount;
+	//敵の出現情報を管理する構造体をいれるスタック
+	stack<popEnemy> m_popEnemyList;
+	//struct popEnemy
+	//{
+	//	Enemy e;
+	//	float popTime;
+	//};
+	
 };
+//
+////出現する敵の種類の順番
+//struct popEnemy
+//{
+//	int kind;
+//	float popTime;
+//};
+//
+//class Map1
+//{
+//	int temp;
+//	stack<popEnemy> m_popEnemyList;
+//
+//	Map1()
+//	{
+//		//1
+//		temp.e = new Enemy();
+//		temp.popTime = 2.1f;
+//		//push
+//		m_popEnemyList.push(temp);
+//		//2
+//		temp.e = new Enemy();
+//		temp.popTime = 2.1f;
+//		//push
+//		m_popEnemyList.push(temp);
+//
+//		//pos
+//		temp = m_popEnemyList.pop();
+//		temp.popTime;
+//		temp.e;
+//	}
+//
+//
+//};

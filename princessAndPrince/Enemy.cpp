@@ -26,6 +26,8 @@ namespace
 	constexpr int kDropProb = 30;
 	//マジックにヒットするインターバル
 	constexpr int kHitMagicInterval = 30;
+	//生まれる方向の最大数
+	constexpr int kMaxDir = 3;
 }
 Enemy::Enemy(SceneMain* pMain) :
 	m_targetPos(Game::kScreenWidth / 2, Game::kScreenHeight / 2),
@@ -41,8 +43,32 @@ Enemy::~Enemy()
 void Enemy::Init(int kinds)
 {
 	m_animFrame = 0;
-	m_pos.x = GetRand(1000) - 200;
-	m_pos.y = GetRand(1000) - 200;
+	int bornPos = GetRand(3);
+	switch (bornPos)
+	{
+		//左方向から出てくる
+	case 0:
+		m_pos.x = 0;
+		m_pos.y = GetRand(Game::kScreenHeight);
+		break;
+		//上方向から出てくる
+	case 1:
+		m_pos.x = GetRand(Game::kScreenWidth);
+		m_pos.y = 0;
+		break;
+		//右方向から出てくる
+	case 2:
+		m_pos.x = Game::kScreenWidth;
+		m_pos.y = GetRand(Game::kScreenHeight);
+		break;
+		//下方向から出てくる
+	case 3:
+		m_pos.x = GetRand(Game::kScreenWidth);
+		m_pos.y = Game::kScreenHeight;
+		break;
+	default:
+		break;
+	}
 	m_radius = Game::kRadius;
 	if (kinds == static_cast<int>(goblin))
 	{

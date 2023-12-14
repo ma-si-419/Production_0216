@@ -39,5 +39,4 @@ namespace Game
 		kHitMagic,//–‚–@‚É‚Ô‚Â‚©‚Á‚½‚Æ‚«‚Ìó‘Ô
 		kDelete//€‚ñ‚Å‚¢‚éó‘Ô
 	};
-
 }
