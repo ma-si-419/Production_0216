@@ -46,5 +46,7 @@ private:
 	int m_hp;
 	//当たり判定の大きさ
 	int m_colScale;
+	//魔法に当たったときにカウントする変数
+	int m_magicCount;
 };
 

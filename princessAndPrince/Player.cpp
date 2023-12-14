@@ -353,6 +353,9 @@ void Player::PickUpItem(Game::ItemKinds kind)
 			m_nowBlood++;
 		}
 		break;
+	case Game::kPortion:
+		//プレイヤーの体力を全回復させる
+		m_nowHp = m_hp;
 	}
 }
 

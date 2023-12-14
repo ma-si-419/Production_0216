@@ -218,12 +218,22 @@ void SceneMain::Update(Pad& pad)
 			if (treasure->m_nowState == Game::kNormal)
 			{
 				treasure->Update();
-				//当たり判定処理を作成する
+				//プレイヤーとぶつかったら
 				if (IsCollision(m_pPlayer->GetColCircle(), treasure->GetColCircle()))
 				{
 					m_pPlayer->HitTreasure(treasure);
+					treasure->HitPlayer();
 				}
-				//魔法とプレイヤー
+				//魔法ととぶつかったら
+				for (auto& magic : m_pMagic)
+				{
+					if (magic &&//magicがnullじゃなかったら
+						IsCollision(magic->GetCircleCol(), treasure->GetColCircle()))
+					{
+						treasure->HitMagic();
+						treasure->m_nowState = Game::kHitMagic;
+					}
+				}
 
 			}
 			else//アイテムが存在しない状態になったら

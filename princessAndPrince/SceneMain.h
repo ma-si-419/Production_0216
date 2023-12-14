@@ -10,7 +10,6 @@ class Vec2;
 class Enemy;
 class ItemBase;
 class UI;
-class SceneManager;
 class MagicBase;
 class TreasureBox;
 class CircleCol;

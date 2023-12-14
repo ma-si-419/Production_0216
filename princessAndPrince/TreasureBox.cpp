@@ -3,6 +3,7 @@
 #include "Blood.h"
 #include "Exp.h"
 #include "Gold.h"
+#include "Portion.h"
 #include "SceneMain.h"
 namespace
 {
@@ -14,6 +15,8 @@ namespace
 	constexpr int kDropExp = 5;
 	//グラフィックの半分の大きさ
 	constexpr int kHalfGraphSize = 20;
+	//魔法にヒットするインターバル
+	constexpr int kHitMagicInterval = 30;
 }
 TreasureBox::TreasureBox(SceneMain* sceneMain) :
 	m_pMain(sceneMain),
@@ -57,6 +60,15 @@ void TreasureBox::Init(Vec2 pos)
 
 void TreasureBox::Update()
 {
+	if (m_nowState == Game::kHitMagic)
+	{
+		m_magicCount++;
+		if (m_magicCount > kHitMagicInterval)
+		{
+			m_nowState = Game::kNormal;
+			m_magicCount = 0;
+		}
+	}
 	m_circleCol.SetCenter(m_pos, m_colScale);
 	if (m_hp < 0)
 	{
@@ -105,6 +117,13 @@ void TreasureBox::Update()
 		else if (randomNumber == 3)
 		{
 			//体力回復アイテムを落とす処理を作る
+			//お金のメモリ確保
+			std::shared_ptr<Portion> pPortion
+				= std::make_shared<Portion>();
+			//お金の初期化処理
+			pPortion->Init(m_pos);
+			//お金を落とす処理
+			m_pMain->AddItem(pPortion);
 		}
 
 
@@ -129,10 +148,11 @@ void TreasureBox::Draw()
 
 void TreasureBox::HitPlayer()
 {
-
+	m_hp--;
+	//ノックバック処理を入れる
 }
 
 void TreasureBox::HitMagic()
 {
-
+	m_hp--;
 }

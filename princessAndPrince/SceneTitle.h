@@ -17,7 +17,5 @@ public:
 private:
 	//タイトル画像
 	int m_handle;
-	//SceneManagerのポインタ
-	SceneManager* m_pManager;
 };
 

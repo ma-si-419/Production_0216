@@ -20,7 +20,9 @@ void SceneTitle::Init()
 
 void SceneTitle::Update(Pad& pad)
 {
-	if (CheckHitKey(KEY_INPUT_Z))
+	XINPUT_STATE m_input;
+	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
+	if (m_input.Buttons[12])
 	{
 		m_manager.ChangeScene(std::make_shared<SceneMain>(m_manager));
 	}
@@ -28,5 +30,6 @@ void SceneTitle::Update(Pad& pad)
 
 void SceneTitle::Draw()
 {
-	DrawGraph(225, 200, m_handle,true);
+	DrawString(Game::kScreenWidth / 2, Game::kScreenHeight / 2,
+					"•P‚Æ‰¤Žq",GetColor(255,255,255), true);
 }
