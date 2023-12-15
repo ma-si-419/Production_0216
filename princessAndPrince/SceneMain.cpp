@@ -131,7 +131,7 @@ void SceneMain::Update(Pad& pad)
 	if (!m_popEnemyList.empty())
 	{
 		m_enemyPopTimeCount++;
-		if (m_enemyPopTimeCount > m_nextEnemyPopTime)
+		if (m_enemyPopTimeCount > m_nextEnemyPopTime * 20)
 		{
 			//ƒJƒEƒ“ƒg‚ğ‰Šú‰»
 			m_enemyPopTimeCount = 0;
