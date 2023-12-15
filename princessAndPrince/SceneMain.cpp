@@ -139,7 +139,7 @@ void SceneMain::Update(Pad& pad)
 				//プレイヤーとエネミーがぶつかったとき
 				if (m_pPlayer->m_nowState != Game::kDelete &&//プレイヤーが死んでいないときに
 					IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&//プレイヤーとエネミーがぶつかったら
-					enemy->m_nowState != Game::kDelete)//エネミーがkDeleteじゃないときのみ
+					enemy->m_nowState != Game::kHit)//エネミーがkDeleteじゃないときのみ
 				{
 					//エネミーのダメージ処理を行う
 					enemy->HitPlayer(*m_pPlayer);
@@ -334,7 +334,7 @@ bool SceneMain::createEnemy()
 		//ここに来たということはm_pShot[i] == nullptr
 		m_pEnemy[i] = make_shared<Enemy>(this);
 		m_pEnemy[i]->SetHandle(m_enemyHandle);
-		m_pEnemy[i]->Init(GetRand(4));
+		m_pEnemy[i]->Init(GetRand(8));
 		//登録したら終了
 		return true;
 	}

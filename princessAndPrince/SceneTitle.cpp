@@ -26,7 +26,7 @@ void SceneTitle::Update(Pad& pad)
 	{
 		m_isKeyDown = true;
 	}
-	//Aボタンが押されたら
+	 //Aボタンが押されたら
 	if (m_input.Buttons[12] && m_isKeyDown)
 	{
 		m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));

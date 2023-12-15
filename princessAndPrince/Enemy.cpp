@@ -28,6 +28,10 @@ namespace
 	constexpr int kHitMagicInterval = 30;
 	//生まれる方向の最大数
 	constexpr int kMaxDir = 3;
+	//ボスのサイズ
+	constexpr float kBossSize = 3.0f;
+	//通常の敵のサイズ
+	constexpr float kEnemySize = 1.0f;
 }
 Enemy::Enemy(SceneMain* pMain) :
 	m_targetPos(Game::kScreenWidth / 2, Game::kScreenHeight / 2),
@@ -70,40 +74,116 @@ void Enemy::Init(int kinds)
 		break;
 	}
 	m_radius = Game::kRadius;
+	////////////////////////////
+	/*エネミーのステータス設定*/
+	////////////////////////////
 	if (kinds == static_cast<int>(goblin))
 	{
-		m_hp = 10;
-		m_atk = 1;
-		m_spd = 0.1f;
-		m_kind = goblin;
-	}
-	if (kinds == static_cast<int>(boar))
-	{
 		m_hp = 15;
-		m_atk = 1;
+		m_atk = 2;
 		m_spd = 0.2f;
-		m_kind = boar;
+		m_scale = kEnemySize;
+		m_srcY = 0;
+		m_kind = goblin;
+		m_isBoss = false;
 	}
-	if (kinds == static_cast<int>(doragon))
+	else if (kinds == static_cast<int>(boar))
 	{
-		m_hp = 20;
-		m_atk = 1;
-		m_spd = 0.3f;
-		m_kind = doragon;
-	}
-	if (kinds == static_cast<int>(skeleton))
-	{
-		m_hp = 25;
+		m_hp = 7;
 		m_atk = 1;
 		m_spd = 0.4f;
-		m_kind = skeleton;
+		m_scale = kEnemySize;
+		m_srcY = 1;
+		m_kind = boar;
+		m_isBoss = false;
+
 	}
-	if (kinds == static_cast<int>(snowman))
+	else if (kinds == static_cast<int>(doragon))
 	{
-		m_hp = 30;
-		m_atk = 1;
-		m_spd = 0.5f;
+		m_hp = 20;
+		m_atk = 10;
+		m_spd = 0.1f;
+		m_scale = kEnemySize;
+		m_srcY = 2;
+		m_kind = doragon;
+		m_isBoss = false;
+
+	}
+	else if (kinds == static_cast<int>(skeleton))
+	{
+		m_hp = 15;
+		m_atk = 3;
+		m_spd = 0.3f;
+		m_scale = kEnemySize;
+		m_srcY = 3;
+		m_kind = skeleton;
+		m_isBoss = false;
+
+	}
+	else if (kinds == static_cast<int>(snowman))
+	{
+		m_hp = 50;
+		m_atk = 5;
+		m_spd = 0.1f;
+		m_scale = kEnemySize;
+		m_srcY = 4;
 		m_kind = snowman;
+		m_isBoss = false;
+
+	}
+	else if (kinds == static_cast<int>(bossGoblin))
+	{
+		m_hp = 45;
+		m_atk = 4;
+		m_spd = 0.2f;
+		m_scale = kBossSize;
+		m_srcY = 0;
+		m_kind = bossGoblin;
+		m_isBoss = true;
+	}
+	else if (kinds == static_cast<int>(bossBoar))
+	{
+		m_hp = 21;
+		m_atk = 3;
+		m_spd = 0.4f;
+		m_scale = kBossSize;
+		m_srcY = 1;
+		m_kind = bossBoar;
+		m_isBoss = true;
+
+	}
+	else if (kinds == static_cast<int>(bossDoragon))
+	{
+		m_hp = 60;
+		m_atk = 25;
+		m_spd = 0.1f;
+		m_scale = kBossSize;
+		m_srcY = 2;
+		m_kind = bossDoragon;
+		m_isBoss = true;
+
+	}
+	else if (kinds == static_cast<int>(bossSkeleton))
+	{
+		m_hp = 50;
+		m_atk = 7;
+		m_spd = 0.3f;
+		m_scale = kBossSize;
+		m_srcY = 3;
+		m_kind = skeleton;
+		m_isBoss = true;
+
+	}
+	else if (kinds == static_cast<int>(bossSnowman))
+	{
+		m_hp = 150;
+		m_atk = 12;
+		m_spd = 0.1f;
+		m_scale = kBossSize;
+		m_srcY = 4;
+		m_kind = bossSnowman;
+		m_isBoss = true;
+
 	}
 }
 
@@ -175,7 +255,7 @@ void Enemy::Update()
 		m_moveVec *= m_spd;
 		m_pos += m_moveVec;
 		m_pos -= m_knockBack;
-		m_circleCol.SetCenter(m_pos, m_radius);
+		m_circleCol.SetCenter(m_pos, m_radius * m_scale);
 		if (m_moveVec.x > 0)
 		{
 			m_isLeftFlag = false;
@@ -195,16 +275,16 @@ void Enemy::Draw()
 		int animEle = m_animFrame / kAnimFrameNum;
 
 		int srcX = kGraphWidth * kUseFrame[animEle];
-		int srcY = kGraphHeight * (int)m_kind;
+		int srcY = kGraphHeight * m_srcY;
 
 		DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
 			srcX, srcY,
 			kGraphWidth, kGraphHeight,
-			2.0,
+			2.0 * m_scale,
 			0.0,
 			m_handle, true, m_isLeftFlag);
 #ifdef _DEBUG
-		m_circleCol.Draw(m_radius, 0x0000ff, false);
+		m_circleCol.Draw(m_radius * m_scale, 0x0000ff, false);
 #endif
 	}
 }

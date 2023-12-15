@@ -15,7 +15,12 @@ public:
 		boar,
 		doragon,
 		skeleton,
-		snowman
+		snowman,
+		bossGoblin,
+		bossBoar,
+		bossDoragon,
+		bossSkeleton,
+		bossSnowman
 	};
 
 public:
@@ -48,5 +53,11 @@ private:
 	int m_hitMagicCount;
 	//宝箱のポインタ
 	TreasureBox* m_pTreasureBox;
+	//大きいキャラかどうかを判断する
+	bool m_isBoss;
+	//キャラの大きさ
+	float m_scale;
+	//使う画像のY座標を入れる
+	int m_srcY;
 };
 

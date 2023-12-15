@@ -73,12 +73,7 @@ private:
 	int m_enemyPopTimeCount;
 	//敵の出現情報を管理する構造体をいれるスタック
 	stack<popEnemy> m_popEnemyList;
-	//struct popEnemy
-	//{
-	//	Enemy e;
-	//	float popTime;
-	//};
-	
+
 };
 //
 ////出現する敵の種類の順番
