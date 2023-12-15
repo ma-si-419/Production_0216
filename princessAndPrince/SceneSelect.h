@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+class Player;
 class SceneSelect : public Scene
 {
 public:

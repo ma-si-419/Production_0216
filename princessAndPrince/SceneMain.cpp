@@ -6,6 +6,7 @@
 #include "SceneMain.h"
 #include "SceneTitle.h"
 #include "SceneManager.h"
+#include "SceneSelect.h"
 #include "MyString.h"
 
 #include "MagicBase.h"
@@ -28,13 +29,23 @@ namespace
 	constexpr int kEnemyPopInterval = 50;
 	//宝箱の同時に存在する最大数
 	constexpr int kMaxTreasureBox = 16;
+	//敵の最大数
+	constexpr int kMaxEnemy = 256;
 	//配列のサイズ
 	constexpr int kArraySize = 81;
+	//クリアした後の時間
+	constexpr int kClearTime = 90;
+	//倒すボスの数(仮実装)
+	constexpr int kBossCount = 2;
 }
 SceneMain::SceneMain(SceneManager& manager) :
 	Scene(manager),
 	m_isMusicFlag(true),
-	m_enemyPopTimeCount(0)
+	m_enemyPopTimeCount(0),
+	m_clearFlag(false),
+	m_bossCount(kBossCount),
+	m_killBossCount(0),
+	m_clearTime(0)
 {
 	//プレイヤーのグラフィックのロード
 	m_playerHandle = LoadGraph("data/image/Monkey.png");
@@ -53,7 +64,7 @@ SceneMain::SceneMain(SceneManager& manager) :
 	//背景のグラフィックのロード
 	m_bgHandle = LoadGraph("data/image/_bg.png");
 	//敵の最大数を設定
-	m_pEnemy.resize(30);
+	m_pEnemy.resize(kMaxEnemy);
 	//アイテムの最大数を設定
 	m_pItem.resize(kMaxItem);
 	//魔法の最大数を設定
@@ -72,7 +83,7 @@ void SceneMain::Init()
 {
 	{
 		//ファイルを開く
-		std::ifstream ifs("data/File/EnemyInfo.txt");
+		std::ifstream ifs("./data/EnemyInfo.txt");
 		//帰ってきた値を返す配列
 		vector<string> tempS;
 		//配列を作成
@@ -80,7 +91,6 @@ void SceneMain::Init()
 		//成功したら一行ずつ読み込む
 		while (ifs.getline(str, kArraySize))
 		{
-			std::cout << "#" << str << std::endl;
 			//分割
 			tempS = MyString::split(str, ",");
 			popEnemy tempEnemy;
@@ -88,6 +98,12 @@ void SceneMain::Init()
 			tempEnemy.popTime = std::stof(tempS[1]);
 			m_popEnemyList.push(tempEnemy);
 		}
+		//最初に出てくるエネミーの情報を入れる
+		popEnemy firstEnemyInfo = m_popEnemyList.top();
+		m_nextEnemyPopTime = firstEnemyInfo.popTime;
+		m_nextEnemyKind = firstEnemyInfo.enemyKind;
+		//スタックの中の読み取った情報を消す
+		m_popEnemyList.pop();
 		//ファイルを閉じる
 		ifs.close();
 
@@ -99,6 +115,7 @@ void SceneMain::Init()
 
 void SceneMain::Update(Pad& pad)
 {
+
 	//シーン移動
 	if (m_pPrincess->IsDeath())
 	{
@@ -110,13 +127,22 @@ void SceneMain::Update(Pad& pad)
 		return;
 	}
 	//Enemyの数だけ回す後で仕様変更
-	m_enemyPopTimeCount++;
-	if (m_enemyPopTimeCount > kEnemyPopInterval)
+	//エネミーのスタックがなくなるまで回す
+	if (!m_popEnemyList.empty())
 	{
-		//カウントを初期化
-		m_enemyPopTimeCount = 0;
-		//エネミーを出現させる
-		createEnemy();
+		m_enemyPopTimeCount++;
+		if (m_enemyPopTimeCount > m_nextEnemyPopTime)
+		{
+			//カウントを初期化
+			m_enemyPopTimeCount = 0;
+			//エネミーを出現させる
+			CreateEnemy(m_nextEnemyKind);
+			//次に出てくるエネミーの情報を入れる
+			popEnemy temp = m_popEnemyList.top();
+			m_enemyPopTimeCount = temp.popTime;
+			m_nextEnemyKind = temp.enemyKind;
+			m_popEnemyList.pop();
+		}
 	}
 	m_pPlayer->Update();
 	m_pPrincess->Update();
@@ -255,6 +281,17 @@ void SceneMain::Update(Pad& pad)
 			}
 		}
 	}
+	//クリア判定
+	if (m_killBossCount >= m_bossCount)
+	{
+		m_clearTime++;
+
+		m_clearFlag = true;
+		if (m_clearTime > kClearTime)
+		{
+			m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+		}
+	}
 }
 
 void SceneMain::Draw()
@@ -306,6 +343,17 @@ void SceneMain::Draw()
 	m_pPrincess->Draw();
 	m_pPlayer->Draw();
 	m_pUi->Draw();
+	//クリアしたら
+	if (m_clearFlag)
+	{
+		int stringWidth = GetDrawStringWidth("ゲームクリア", -1);
+		DrawString((Game::kScreenWidth - stringWidth) / 2, 200, "ゲームクリア", GetColor(0, 0, 0));
+		DrawString(300, 500, "獲得経験値", GetColor(0, 0, 0));
+		DrawString(300, 600, "獲得ゴールド", GetColor(0, 0, 0));
+		DrawFormatString(600, 500, GetColor(0, 0, 0), "%d", m_pPlayer->GetGold());
+		DrawFormatString(600, 600, GetColor(0, 0, 0), "%d", m_pPlayer->GetExp());
+
+	}
 }
 
 bool SceneMain::AddItem(std::shared_ptr<ItemBase> pItem)
@@ -324,7 +372,7 @@ bool SceneMain::AddItem(std::shared_ptr<ItemBase> pItem)
 	return false;
 }
 
-bool SceneMain::createEnemy()
+bool SceneMain::CreateEnemy(int enemyKind)
 {
 	//アイテムの配列の長さだけfor文を回す
 	for (int i = 0; i < m_pEnemy.size(); i++)
@@ -334,7 +382,7 @@ bool SceneMain::createEnemy()
 		//ここに来たということはm_pShot[i] == nullptr
 		m_pEnemy[i] = make_shared<Enemy>(this);
 		m_pEnemy[i]->SetHandle(m_enemyHandle);
-		m_pEnemy[i]->Init(GetRand(8));
+		m_pEnemy[i]->Init(enemyKind);
 		//登録したら終了
 		return true;
 	}

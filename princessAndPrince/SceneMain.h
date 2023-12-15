@@ -36,15 +36,16 @@ public:
 	/// <param name="pItem">追加するアイテム</param>
 	/// <returns>特に意味はない</returns>
 	bool AddItem(std::shared_ptr<ItemBase> pItem);
-
+	//SceneMainに魔法を出す関数
 	bool AddMagic(MagicBase* pMagic);
-
+	//SceneMainに宝箱を出す関数
 	bool AddTreasure(TreasureBox* pTreasure);
-
+	//当たり判定を判定する関数
 	bool IsCollision(CircleCol col1, CircleCol col2);
-
-	bool createEnemy();
-
+	//敵を生成する関数
+	bool CreateEnemy(int enemyKind);
+	//倒したボスの数を数える
+	void CountKillBoss() { m_killBossCount++; };
 private:
 	// グラフィックのハンドル
 	int m_playerHandle;
@@ -73,7 +74,18 @@ private:
 	int m_enemyPopTimeCount;
 	//敵の出現情報を管理する構造体をいれるスタック
 	stack<popEnemy> m_popEnemyList;
-
+	//ボスの数を入れる変数
+	int m_bossCount;
+	//倒したボスの数を入れる変数
+	int m_killBossCount;
+	//ボスを倒した後の時間をカウントする変数
+	int m_clearTime;
+	//クリアしたかどうか判断する変数
+	bool m_clearFlag;
+	//次にモンスターが出てくるまでの時間
+	int m_nextEnemyPopTime;
+	//次に出てくるモンスターの種類
+	int m_nextEnemyKind;
 };
 //
 ////出現する敵の種類の順番

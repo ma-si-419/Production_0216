@@ -236,6 +236,10 @@ void Enemy::Update()
 						//ƒƒCƒ“‚É•ó” ‚ğ¶¬‚·‚éŠÖ”‚ğì¬‚·‚é
 						m_pMain->AddTreasure(m_pTreasureBox);
 					}
+					if (m_isBoss)
+					{
+						m_pMain->CountKillBoss();
+					}
 					//ó‘Ô‚ğ•Ï‰»‚³‚¹‚é
 					m_nowState = Game::kDelete;
 				}

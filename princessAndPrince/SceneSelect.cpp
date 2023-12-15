@@ -5,6 +5,7 @@
 #include "SceneMain.h"
 #include "SceneTitle.h"
 #include "SceneShop.h"
+#include "Player.h"
 namespace
 {
 	constexpr int kMaxSceneNum = 2;
