@@ -3,13 +3,14 @@
 // ゲーム全体で使用する定数を定義する
 namespace Game
 {
-	constexpr int kScreenWidth = 960;	// 画面の横幅
-	constexpr int kScreenHeight = 800;	// 画面の縦幅
+	constexpr int kPlayScreenWIdth = 960;	// プレイ画面の横幅
+	constexpr int kScreenWidth = 1600;		// 全画面の横幅
+	constexpr int kPlayScreenHeight = 960;	// 画面の縦幅
 
 	constexpr int kColorDepth = 32;		// 16 or 32
 
 	//基本的なキャラクターの円の大きさ
-	constexpr int kRadius = 24;
+	constexpr int kRadius = 48;
 	/*向いている方向を保持するenum*/
 	enum Dir
 	{

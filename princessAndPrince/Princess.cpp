@@ -43,6 +43,8 @@ namespace
 	constexpr int kMagicInterval = 40;
 	//同時に出す風魔法の数
 	constexpr int kWindVol = 2;
+	//キャラの拡大率
+	constexpr float kCharcterScale = 6.0f;
 }
 Princess::Princess(SceneMain* sceneMain) :
 	m_hpBarWidth(0),
@@ -58,8 +60,8 @@ Princess::Princess(SceneMain* sceneMain) :
 	m_isMagic(false),
 	m_pMain(sceneMain)
 {
-	m_pos.x = Game::kScreenWidth / 2;
-	m_pos.y = Game::kScreenHeight / 2;
+	m_pos.x = Game::kPlayScreenWIdth / 2;
+	m_pos.y = Game::kPlayScreenHeight / 2;
 	m_dir = Game::kDirDown;
 	m_animFrame = kAnimFrameNum;
 	m_radius = Game::kRadius;
@@ -196,17 +198,17 @@ void Princess::Draw() const
 		GetColor(0, 0, 0));
 	if (m_isFire)
 	{
-		DrawBox(0, 0, 100, 100, GetColor(255, 0, 0), true);
+		DrawBox(960, Game::kPlayScreenHeight - 100 , Game::kScreenWidth,Game::kPlayScreenHeight, GetColor(255, 0, 0), true);
 	}
 	else
 	{
-		DrawBox(0, 0, 100, 100, GetColor(0, 255, 0), true);
+		DrawBox(960, Game::kPlayScreenHeight - 100, Game::kScreenWidth, Game::kPlayScreenHeight, GetColor(0, 255, 0), true);
 	}
 	//画像のどこを切り取るかを指定して、切り取った画像を表示する
 	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
 		srcX, srcY,//切り取る位置
 		kGraphWidth, kGraphHeight,//切り取る大きさ
-		3.0,//拡大率
+		kCharcterScale,//拡大率
 		0.0,//回転率
 		m_handle, true, false);
 	//Hp等を見やすくするために後ろにBox作成

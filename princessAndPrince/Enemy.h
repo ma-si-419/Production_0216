@@ -59,5 +59,7 @@ private:
 	float m_scale;
 	//g‚¤‰æ‘œ‚ÌYÀ•W‚ğ“ü‚ê‚é
 	int m_srcY;
+	//ã“_‚Ì“–‚½‚è”»’è‚ğ‚Æ‚é
+	CircleCol m_weakCircle;
 };
 

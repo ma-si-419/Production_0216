@@ -105,12 +105,12 @@ void MagicBase::Update()
 	// c²‚ÌˆÚ“®§ŒÀ
 	if (m_magicPos.y < 0 - m_scale)
 		m_nowState = Game::kDelete;
-	else if (Game::kScreenHeight + m_scale < m_magicPos.y)
+	else if (Game::kPlayScreenHeight + m_scale < m_magicPos.y)
 		m_nowState = Game::kDelete;
 	// ‰¡²‚ÌˆÚ“®§ŒÀ
 	if (m_magicPos.x < 0 - m_scale)
 		m_nowState = Game::kDelete;
-	else if (Game::kScreenWidth + m_scale < m_magicPos.x)
+	else if (Game::kPlayScreenWIdth + m_scale < m_magicPos.x)
 		m_nowState = Game::kDelete;
 	m_circleCol.SetCenter(m_magicPos, kMagicScale);
 

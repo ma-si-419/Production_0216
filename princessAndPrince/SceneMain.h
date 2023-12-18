@@ -87,37 +87,3 @@ private:
 	//次に出てくるモンスターの種類
 	int m_nextEnemyKind;
 };
-//
-////出現する敵の種類の順番
-//struct popEnemy
-//{
-//	int kind;
-//	float popTime;
-//};
-//
-//class Map1
-//{
-//	int temp;
-//	stack<popEnemy> m_popEnemyList;
-//
-//	Map1()
-//	{
-//		//1
-//		temp.e = new Enemy();
-//		temp.popTime = 2.1f;
-//		//push
-//		m_popEnemyList.push(temp);
-//		//2
-//		temp.e = new Enemy();
-//		temp.popTime = 2.1f;
-//		//push
-//		m_popEnemyList.push(temp);
-//
-//		//pos
-//		temp = m_popEnemyList.pop();
-//		temp.popTime;
-//		temp.e;
-//	}
-//
-//
-//};

@@ -25,18 +25,18 @@ void ItemBase::Init(Vec2 pos)
 	m_pos.x = pos.x + GetRand(30) - 15;
 	m_pos.y = pos.y + GetRand(30) - 15;
 	//画面外に出てしまわないようにする
-	if (m_pos.x > Game::kScreenWidth)
+	if (m_pos.x > Game::kPlayScreenWIdth)
 	{
-		m_pos.x = Game::kScreenWidth;
+		m_pos.x = Game::kPlayScreenWIdth;
 	}
 	else if (m_pos.x < 0)
 	{
 		m_pos.x = 0;
 	}
 	//y座標も同じ処理を行う
-	if (m_pos.y > Game::kScreenHeight)
+	if (m_pos.y > Game::kPlayScreenHeight)
 	{
-		m_pos.y = Game::kScreenHeight;
+		m_pos.y = Game::kPlayScreenHeight;
 	}
 	else if (m_pos.y < 0)
 	{

@@ -9,8 +9,8 @@
 
 namespace
 {
-	constexpr int screen_width = 960;
-	constexpr int screen_height = 800;
+	constexpr int screen_width = 1600;
+	constexpr int screen_height = 960;
 }
 
 void Application::Terminate()

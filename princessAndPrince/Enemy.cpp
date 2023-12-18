@@ -34,7 +34,7 @@ namespace
 	constexpr float kEnemySize = 1.0f;
 }
 Enemy::Enemy(SceneMain* pMain) :
-	m_targetPos(Game::kScreenWidth / 2, Game::kScreenHeight / 2),
+	m_targetPos(Game::kPlayScreenWIdth / 2, Game::kPlayScreenHeight / 2),
 	m_pMain(pMain),
 	m_hitMagicCount(0)
 {
@@ -53,22 +53,22 @@ void Enemy::Init(int kinds)
 		//左方向から出てくる
 	case 0:
 		m_pos.x = 0;
-		m_pos.y = GetRand(Game::kScreenHeight);
+		m_pos.y = GetRand(Game::kPlayScreenHeight);
 		break;
 		//上方向から出てくる
 	case 1:
-		m_pos.x = GetRand(Game::kScreenWidth);
+		m_pos.x = GetRand(Game::kPlayScreenWIdth);
 		m_pos.y = 0;
 		break;
 		//右方向から出てくる
 	case 2:
-		m_pos.x = Game::kScreenWidth;
-		m_pos.y = GetRand(Game::kScreenHeight);
+		m_pos.x = Game::kPlayScreenWIdth;
+		m_pos.y = GetRand(Game::kPlayScreenHeight);
 		break;
 		//下方向から出てくる
 	case 3:
-		m_pos.x = GetRand(Game::kScreenWidth);
-		m_pos.y = Game::kScreenHeight;
+		m_pos.x = GetRand(Game::kPlayScreenWIdth);
+		m_pos.y = Game::kPlayScreenHeight;
 		break;
 	default:
 		break;
@@ -79,8 +79,8 @@ void Enemy::Init(int kinds)
 	////////////////////////////
 	if (kinds == static_cast<int>(goblin))
 	{
-		m_hp = 15;
-		m_atk = 2;
+		m_hp = 12;
+		m_atk = 3;
 		m_spd = 0.2f;
 		m_scale = kEnemySize;
 		m_srcY = 0;
@@ -133,8 +133,8 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(bossGoblin))
 	{
-		m_hp = 45;
-		m_atk = 4;
+		m_hp = 48;
+		m_atk = 6;
 		m_spd = 0.2f;
 		m_scale = kBossSize;
 		m_srcY = 0;
@@ -284,7 +284,7 @@ void Enemy::Draw()
 		DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
 			srcX, srcY,
 			kGraphWidth, kGraphHeight,
-			2.0 * m_scale,
+			4.0 * m_scale,
 			0.0,
 			m_handle, true, m_isLeftFlag);
 #ifdef _DEBUG

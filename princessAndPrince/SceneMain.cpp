@@ -15,7 +15,6 @@
 #include "Player.h"
 #include "Princess.h"
 #include "Enemy.h"
-#include "Bg.h"
 #include "UI.h"
 namespace
 {
@@ -36,7 +35,7 @@ namespace
 	//クリアした後の時間
 	constexpr int kClearTime = 90;
 	//倒すボスの数(仮実装)
-	constexpr int kBossCount = 2;
+	constexpr int kBossCount = 1;
 }
 SceneMain::SceneMain(SceneManager& manager) :
 	Scene(manager),
@@ -296,7 +295,10 @@ void SceneMain::Update(Pad& pad)
 
 void SceneMain::Draw()
 {
-	DrawGraph(0, 0, m_bgHandle, false);
+	//UIの表示（仮）
+	DrawBox(960, 0, Game::kScreenWidth, Game::kPlayScreenHeight, GetColor(100, 100, 100),true);
+	//プレイ画面の背景
+	DrawGraph(0, 0, m_bgHandle, true);
 	for (const auto& enemy : m_pEnemy)
 	{
 		if (enemy)
@@ -347,7 +349,7 @@ void SceneMain::Draw()
 	if (m_clearFlag)
 	{
 		int stringWidth = GetDrawStringWidth("ゲームクリア", -1);
-		DrawString((Game::kScreenWidth - stringWidth) / 2, 200, "ゲームクリア", GetColor(0, 0, 0));
+		DrawString((Game::kPlayScreenWIdth - stringWidth) / 2, 200, "ゲームクリア", GetColor(0, 0, 0));
 		DrawString(300, 500, "獲得経験値", GetColor(0, 0, 0));
 		DrawString(300, 600, "獲得ゴールド", GetColor(0, 0, 0));
 		DrawFormatString(600, 500, GetColor(0, 0, 0), "%d", m_pPlayer->GetGold());

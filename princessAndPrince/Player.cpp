@@ -38,6 +38,8 @@ namespace
 	constexpr float kMaxBlood = 10;
 	//バーの後ろに表示するBoxの余白の大きさ
 	constexpr int kBoxSpace = 3;
+	//キャラの拡大率
+	constexpr float kCharcterScale = 6.0f;
 }
 
 Player::Player() :
@@ -52,8 +54,8 @@ Player::Player() :
 	m_exp(0)
 {
 	//初期座標を魔女の隣に設定
-	m_pos.x = Game::kScreenWidth / 2 + 70;
-	m_pos.y = Game::kScreenHeight / 2;
+	m_pos.x = Game::kPlayScreenWIdth / 2 + 70;
+	m_pos.y = Game::kPlayScreenHeight / 2;
 	//最初の向きを下向きに設定
 	m_dir = Game::kDirDown;
 	//アニメーションの最初の画像を設定
@@ -71,10 +73,10 @@ Player::~Player()
 
 void Player::Init()
 {
-	m_atk = 10;
-	m_hp = 20;
+	m_atk = 2;
+	m_hp = 30;
 	m_spd = 3.0f;
-	m_def = 0;
+	m_def = 1;
 	m_nowHp = m_hp;
 }
 
@@ -215,15 +217,15 @@ void Player::Update()
 		//現在のポジションにノックバックの力を加える
 		m_pos -= m_knockBack;
 		// 縦軸の移動制限
-		if (m_pos.y < kGraphHalfHeight)
-			m_pos.y = kGraphHalfHeight;
-		else if (Game::kScreenHeight - kGraphHalfHeight < m_pos.y)
-			m_pos.y = Game::kScreenHeight - kGraphHalfHeight;
+		if (m_pos.y < kGraphHalfHeight * kCharcterScale)
+			m_pos.y = kGraphHalfHeight * kCharcterScale;
+		else if (Game::kPlayScreenHeight - (kGraphHalfHeight*kCharcterScale) < m_pos.y)
+			m_pos.y = Game::kPlayScreenHeight - (kGraphHalfHeight*kCharcterScale);
 		// 横軸の移動制限
-		if (m_pos.x < kGraphHalfWidth)
-			m_pos.x = kGraphHalfWidth;
-		else if (Game::kScreenWidth - kGraphHalfWidth < m_pos.x)
-			m_pos.x = Game::kScreenWidth - kGraphHalfWidth;
+		if (m_pos.x < kGraphHalfWidth*kCharcterScale)
+			m_pos.x = kGraphHalfWidth*kCharcterScale;
+		else if (Game::kPlayScreenWIdth - (kGraphHalfWidth*kCharcterScale) < m_pos.x)
+			m_pos.x = Game::kPlayScreenWIdth - (kGraphHalfWidth*kCharcterScale);
 
 		// 当たり判定の更新
 		m_circleCol.SetCenter(m_pos, m_radius);
@@ -269,7 +271,7 @@ void Player::Draw() const
 	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
 		srcX, srcY,
 		kGraphWidth, kGraphHeight,
-		3.0,
+		kCharcterScale,
 		0.0,
 		m_handle, true, false);
 	////////////////////
