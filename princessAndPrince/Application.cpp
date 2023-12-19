@@ -9,8 +9,8 @@
 
 namespace
 {
-	constexpr int screen_width = 1600;
-	constexpr int screen_height = 960;
+	constexpr int kScreenWidth = 1600;
+	constexpr int kScreenHeight = 960;
 }
 
 void Application::Terminate()
@@ -20,7 +20,7 @@ void Application::Terminate()
 
 bool Application::Init()
 {
-	windowSize_ = { screen_width,screen_height };
+	windowSize_ = { kScreenWidth,kScreenHeight };
 
 	ChangeWindowMode(true);	//îÒÉXÉNÉäÅ[Éì
 	SetGraphMode(windowSize_.w, windowSize_.h, 32);

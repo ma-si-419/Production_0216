@@ -32,11 +32,20 @@ namespace
 	constexpr float kBossSize = 3.0f;
 	//通常の敵のサイズ
 	constexpr float kEnemySize = 1.0f;
+	//弱点の当たり判定をずらすベクトル
+	constexpr int kShiftPosX = 20;
+	constexpr int kShiftPosY = 10;
+	//エフェクトを出す時間(後で消す)
+	constexpr int kEffectTime = 10;
+	//エフェクトの大きさ(仮実装)
+	constexpr int kEffectSize = 60;
 }
 Enemy::Enemy(SceneMain* pMain) :
 	m_targetPos(Game::kPlayScreenWIdth / 2, Game::kPlayScreenHeight / 2),
 	m_pMain(pMain),
-	m_hitMagicCount(0)
+	m_hitMagicCount(0),
+	m_isHitFlag(false),
+	m_effectCount(0)
 {
 	m_animFrame = 0;
 	m_nowState = Game::kNormal;
@@ -236,6 +245,7 @@ void Enemy::Update()
 						//メインに宝箱を生成する関数を作成する
 						m_pMain->AddTreasure(m_pTreasureBox);
 					}
+					//ボスだったらボスを倒したとシーンメインに伝える
 					if (m_isBoss)
 					{
 						m_pMain->CountKillBoss();
@@ -254,20 +264,32 @@ void Enemy::Update()
 				m_hitMagicCount = 0;
 			}
 		}
+		//移動量の計算
 		m_moveVec = m_targetPos - m_pos;
 		m_moveVec.Normalize();
 		m_moveVec *= m_spd;
+		//移動処理
 		m_pos += m_moveVec;
 		m_pos -= m_knockBack;
+		//当たり判定の更新
 		m_circleCol.SetCenter(m_pos, m_radius * m_scale);
+		//弱点のY座標の更新
+		m_weakPos.y = m_pos.y + kShiftPosY;
 		if (m_moveVec.x > 0)
 		{
 			m_isLeftFlag = false;
+			//弱点のX座標の更新
+			m_weakPos.x = m_pos.x - kShiftPosX;
 		}
 		else
 		{
 			m_isLeftFlag = true;
+			//弱点のX座標の更新
+			m_weakPos.x = m_pos.x + kShiftPosX;
+
 		}
+		//弱点当たり判定の更新
+		m_weakCircle.SetCenter(m_weakPos, m_radius * m_scale);
 	}
 }
 void Enemy::Draw()
@@ -287,23 +309,61 @@ void Enemy::Draw()
 			4.0 * m_scale,
 			0.0,
 			m_handle, true, m_isLeftFlag);
+		if (m_isHitFlag)
+		{
+			m_effectCount++;
+			if (m_isHitWeakFlag && m_effectCount < kEffectTime)
+			{
+				DrawBox(m_hitPos.x - kEffectSize / 2, m_hitPos.y - kEffectSize / 2,//始点座標
+					m_hitPos.x + kEffectSize / 2, m_hitPos.y + kEffectSize / 2,//終点座標
+					GetColor(255, 0, 0), true);
+			}
+			else if(!m_isHitWeakFlag && m_effectCount < kEffectTime)
+			{
+				DrawBox(m_hitPos.x - kEffectSize / 2, m_hitPos.y - kEffectSize / 2,//始点座標
+					m_hitPos.x + kEffectSize / 2, m_hitPos.y + kEffectSize / 2,//終点座標
+					GetColor(255, 255, 255), true);
+			}
+			if(m_effectCount > kEffectTime)
+			{
+				m_isHitFlag = false;
+				m_effectCount = 0;
+			}
+		}
 #ifdef _DEBUG
 		m_circleCol.Draw(m_radius * m_scale, 0x0000ff, false);
+		m_weakCircle.Draw(m_radius * m_scale, 0xff0000, false);
 #endif
 	}
 }
 
-void Enemy::HitPlayer(Player& player)
+void Enemy::HitPlayer(Player& player, bool weak)
 {
 	m_knockBack = player.GetPos() - m_pos;
 	m_knockBack.Normalize();
 	m_knockBack *= kKnockBackScale;
-	m_hp -= player.GetAtk() - m_def;
+	m_isHitFlag = true;
+	//中点を出す(衝突点の座標)
+	m_hitPos = (player.GetPos() + m_pos) / 2;
+	if (weak)
+	{
+		m_hp -= (player.GetAtk() - m_def) * 2;
+		m_isHitWeakFlag = true;
+	}
+	else
+	{
+		m_hp -= player.GetAtk() - m_def;
+		m_isHitWeakFlag = false;
+	}
 }
 
 void Enemy::HitMagic(MagicBase* magic)
 {
+	//体力を減らす
 	m_hp -= magic->GetAtk();
+	//ぶつかったときのエフェクトを出す
+	m_isHitFlag = true;
+	m_isHitWeakFlag = false;
 	//もし魔法が炎魔法だったら
 	if (magic->GetMagicKind())
 	{
@@ -332,10 +392,15 @@ void Enemy::HitMagic(MagicBase* magic)
 		m_pMain->AddItem(pGold);
 		if (GetRand(100) < kDropProb)
 		{
-			//宝箱のメモリ確保
-			std::shared_ptr<TreasureBox> pTreasure
-				= std::make_shared<TreasureBox>(m_pMain);
+			m_pTreasureBox = new TreasureBox(m_pMain);
+			m_pTreasureBox->Init(m_pos);
 			//メインに宝箱を生成する関数を作成する
+			m_pMain->AddTreasure(m_pTreasureBox);
+		}
+		//ボスを倒したらボスを倒したとシーンメインに教える
+		if (m_isBoss)
+		{
+			m_pMain->CountKillBoss();
 		}
 		m_nowState = Game::kDelete;
 	}

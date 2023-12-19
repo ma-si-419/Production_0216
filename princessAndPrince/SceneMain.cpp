@@ -16,6 +16,7 @@
 #include "Princess.h"
 #include "Enemy.h"
 #include "UI.h"
+#include "UserData.h"
 namespace
 {
 	//アイテムの最大数
@@ -167,9 +168,9 @@ void SceneMain::Update(Pad& pad)
 					enemy->m_nowState != Game::kHit)//エネミーがkDeleteじゃないときのみ
 				{
 					//エネミーのダメージ処理を行う
-					enemy->HitPlayer(*m_pPlayer);
+					enemy->HitPlayer(*m_pPlayer,IsCollision(m_pPlayer->GetColCircle(),enemy->GetWeakCircle()));
 					//プレイヤーのダメージ処理を行う
-					m_pPlayer->HitEnemy(*enemy);
+					m_pPlayer->HitEnemy(*enemy,IsCollision(m_pPlayer->GetColCircle(),enemy->GetWeakCircle()));
 					//エネミーの状態を推移させる
 					enemy->m_nowState == Game::kHit;
 				}
@@ -288,6 +289,8 @@ void SceneMain::Update(Pad& pad)
 		m_clearFlag = true;
 		if (m_clearTime > kClearTime)
 		{
+			UserData::userGold = m_pPlayer->GetGold();
+			UserData::userExp = m_pPlayer->GetExp();
 			m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
 		}
 	}
@@ -295,18 +298,10 @@ void SceneMain::Update(Pad& pad)
 
 void SceneMain::Draw()
 {
-	//UIの表示（仮）
-	DrawBox(960, 0, Game::kScreenWidth, Game::kPlayScreenHeight, GetColor(100, 100, 100),true);
+	
 	//プレイ画面の背景
 	DrawGraph(0, 0, m_bgHandle, true);
-	for (const auto& enemy : m_pEnemy)
-	{
-		if (enemy)
-		{
-			enemy->Draw();
-
-		}
-	}
+	
 	for (auto& item : m_pItem)
 	{
 		if (item)
@@ -342,8 +337,17 @@ void SceneMain::Draw()
 			}
 		}
 	}
-	m_pPrincess->Draw();
 	m_pPlayer->Draw();
+	for (const auto& enemy : m_pEnemy)
+	{
+		if (enemy)
+		{
+			enemy->Draw();
+
+		}
+	}
+	DrawBox(960, 0, Game::kScreenWidth, Game::kPlayScreenHeight, GetColor(100, 100, 100), true);
+	m_pPrincess->Draw();
 	m_pUi->Draw();
 	//クリアしたら
 	if (m_clearFlag)
@@ -356,6 +360,7 @@ void SceneMain::Draw()
 		DrawFormatString(600, 600, GetColor(0, 0, 0), "%d", m_pPlayer->GetExp());
 
 	}
+	//UIの表示（仮）
 }
 
 bool SceneMain::AddItem(std::shared_ptr<ItemBase> pItem)

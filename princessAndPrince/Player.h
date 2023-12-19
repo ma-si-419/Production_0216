@@ -17,7 +17,7 @@ public:
 	void Draw() const;
 
 	//“G‚É‚Ô‚Â‚©‚Á‚½Û‚Ìˆ—
-	void HitEnemy(Enemy enemy);
+	void HitEnemy(Enemy enemy,bool weak);
 	//•ó” ‚É‚Ô‚Â‚©‚Á‚½‚Æ‚«‚Ìˆ—
 	void HitTreasure(TreasureBox* treasureBox);
 	//Œ»İ‚ÌHp‚ÌŠ„‡ŒvZ‚·‚éŠÖ”

@@ -33,11 +33,13 @@ public:
 	//描画処理
 	void Draw();
 	//プレイヤーとぶつかった際の処理
-	void HitPlayer(Player& player);
+	void HitPlayer(Player& player,bool weak);
 	//魔法とぶつかったときの処理
 	void HitMagic(MagicBase* magic);
 	//プリンセスとぶつかった際のノックバック
 	void HitPrincess(Vec2 knockBack) { m_knockBack = knockBack; }
+	//弱点の当たり判定を返す
+	CircleCol GetWeakCircle() { return m_weakCircle; }
 private:
 	//SceneMainのポインタをもつ
 	SceneMain* m_pMain;
@@ -61,5 +63,15 @@ private:
 	int m_srcY;
 	//弱点の当たり判定をとる
 	CircleCol m_weakCircle;
+	//弱点の中心座標
+	Vec2 m_weakPos;
+	//あたったときにどのエフェクトを出すか判断する
+	bool m_isHitFlag;
+	//弱点に当たったかどうかを判断する
+	bool m_isHitWeakFlag;
+	//衝突した点の座標
+	Vec2 m_hitPos;
+	//エフェクトを出す時間をカウントする(後で消すかも)
+	int m_effectCount;
 };
 

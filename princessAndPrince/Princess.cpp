@@ -152,11 +152,11 @@ void Princess::Update()
 			}
 		}
 
-		//Aボタンが押されたら
 		//持っている血の量を減らしていく
 		m_nowBlood -= 0.02f;
 
 	}
+		//Aボタンが押されたら
 	if (m_input.Buttons[12] && !m_isLastKeyFlag || CheckHitKey(KEY_INPUT_Z))
 	{
 		//連続で切り替わらないように

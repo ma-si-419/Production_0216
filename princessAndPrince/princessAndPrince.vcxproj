@@ -162,6 +162,7 @@
     <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="TreasureBox.cpp" />
     <ClCompile Include="UI.cpp" />
+    <ClCompile Include="UserData.cpp" />
     <ClCompile Include="Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -188,6 +189,7 @@
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="TreasureBox.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="UserData.h" />
     <ClInclude Include="Vec2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -310,12 +310,21 @@ void Player::Draw() const
 #endif
 }
 
-void Player::HitEnemy(Enemy enemy)
+void Player::HitEnemy(Enemy enemy,bool weak)
 {
 	m_knockBack = enemy.GetPos() - m_pos;
 	m_knockBack.Normalize();
 	m_knockBack *= kKnockBackScale;
-	m_nowHp -= enemy.GetAtk() - m_def;
+	//弱点に当たっていたら
+	if (weak)
+	{
+		//受けるダメージを半分にする
+		m_nowHp -= (enemy.GetAtk() - m_def) / 2;
+	}
+	else//弱点に当たっていなかったらそのまま
+	{
+		m_nowHp -= enemy.GetAtk() - m_def;
+	}
 	//体力がマイナスにならないように
 	if (m_nowHp <= 0)
 	{

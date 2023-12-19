@@ -5,6 +5,7 @@
 #include "SceneMain.h"
 #include "SceneTitle.h"
 #include "SceneShop.h"
+#include "UserData.h"
 #include "Player.h"
 namespace
 {
@@ -85,6 +86,7 @@ void SceneSelect::Update(Pad& pad)
 void SceneSelect::Draw()
 {
 	DrawString(100, 100, "‚ ‚¢‚¤‚¦‚¨", GetColor(255, 255, 255));
+	DrawFormatString(300, 300, GetColor(255, 255, 255), "%d,%d",UserData::userGold,UserData::userExp);
 	DrawFormatString(200, 200, GetColor(255,255,255), "%d", m_selectNum);
 	switch (m_selectNum)
 	{
