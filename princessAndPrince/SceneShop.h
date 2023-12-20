@@ -28,5 +28,7 @@ public:
 	int m_playerItemPriceList[20];
 	//魔女のアイテムの値段の配列
 	int m_princessItemPriceList[20];
+	//連続でAボタンが押されないように
+	bool m_isAKeyDown;
 };
 

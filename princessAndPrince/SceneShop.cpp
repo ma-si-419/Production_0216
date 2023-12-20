@@ -18,7 +18,8 @@ SceneShop::SceneShop(SceneManager& manager) :
 	m_isKeyDown(false),
 	m_selectNum(0),
 	m_isSelectKeyDown(false),
-	m_loopCount(0)
+	m_loopCount(0),
+	m_isAKeyDown(true)
 {
 }
 
@@ -38,14 +39,14 @@ void SceneShop::Init()
 		//ê¨å˜ÇµÇΩÇÁàÍçsÇ∏Ç¬ì«Ç›çûÇﬁ
 		while (ifs.getline(str, kArraySize))
 		{
-			m_loopCount++;
 			//ï™äÑ
 			tempS = MyString::split(str, ",");
 			ItemPrice tempItem;
 			tempItem.playerItemPrice = std::stoi(tempS[0]);
 			tempItem.princessItemPrice = std::stof(tempS[1]);
-			m_playerItemPriceList[m_loopCount];
-			m_princessItemPriceList[m_loopCount];
+			m_playerItemPriceList[m_loopCount] = tempItem.playerItemPrice;
+			m_princessItemPriceList[m_loopCount] = tempItem.princessItemPrice;
+			m_loopCount++;
 		}
 	}
 }
@@ -83,6 +84,40 @@ void SceneShop::Update(Pad& pad)
 	if (m_input.Buttons[13])
 	{
 		m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+	}
+	//AÉ{É^ÉìÇ™âüÇ≥ÇÍÇΩÇÁ
+	if (m_input.Buttons[12] && m_isAKeyDown)
+	{
+		switch (m_selectNum)
+		{
+			switch (m_selectNum)
+			{
+			case 0:
+				UserData::userAtkLevel++;
+				m_isAKeyDown = false;
+				break;
+			case 1:
+				UserData::userDefLevel++;
+				m_isAKeyDown = false;
+				break;
+			case 2:
+				UserData::userSpdLevel++;
+				m_isAKeyDown = false;
+				break;
+			case 3:
+				UserData::userFireLevel++;
+				m_isAKeyDown = false;
+				break;
+			case 4:
+				UserData::userWindLevel++;
+				m_isAKeyDown = false;
+				break;
+			}
+		}
+	}
+	else
+	{
+		m_isAKeyDown = true;
 	}
 }
 
