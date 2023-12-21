@@ -1,6 +1,8 @@
 #pragma once
 #include "SceneMain.h"
 #include "SceneShop.h"
+#include "Player.h"
+#include "Princess.h"
 static class UserData
 {
 public:

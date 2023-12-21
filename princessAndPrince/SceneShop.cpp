@@ -12,6 +12,8 @@ namespace
 	constexpr int kMaxItemNum = 4;
 	//配列のサイズ
 	constexpr int kArraySize = 81;
+	//マックスレベル
+	constexpr int kMaxLevel = 19;
 }
 SceneShop::SceneShop(SceneManager& manager) :
 	Scene(manager),
@@ -19,7 +21,7 @@ SceneShop::SceneShop(SceneManager& manager) :
 	m_selectNum(0),
 	m_isSelectKeyDown(false),
 	m_loopCount(0),
-	m_isAKeyDown(true)
+	m_isAKeyDown(false)
 {
 }
 
@@ -90,32 +92,69 @@ void SceneShop::Update(Pad& pad)
 	{
 		switch (m_selectNum)
 		{
-			switch (m_selectNum)
+		case 0:
+			if (UserData::userAtkLevel < kMaxLevel)
 			{
-			case 0:
-				UserData::userAtkLevel++;
-				m_isAKeyDown = false;
-				break;
-			case 1:
-				UserData::userDefLevel++;
-				m_isAKeyDown = false;
-				break;
-			case 2:
-				UserData::userSpdLevel++;
-				m_isAKeyDown = false;
-				break;
-			case 3:
-				UserData::userFireLevel++;
-				m_isAKeyDown = false;
-				break;
-			case 4:
-				UserData::userWindLevel++;
-				m_isAKeyDown = false;
-				break;
+				//所持金が値段よりも大きかったら
+				if (UserData::userGold > m_playerItemPriceList[UserData::userAtkLevel])
+				{
+					UserData::userGold -= m_playerItemPriceList[UserData::userAtkLevel];
+					UserData::userAtkLevel++;
+				}
 			}
+			m_isAKeyDown = false;
+			break;
+		case 1:
+			if (UserData::userDefLevel < kMaxLevel)
+			{
+				//所持金が値段よりも大きかったら
+				if (UserData::userGold > m_playerItemPriceList[UserData::userDefLevel])
+				{
+					UserData::userGold -= m_playerItemPriceList[UserData::userDefLevel];
+					UserData::userDefLevel++;
+				}
+			}
+			m_isAKeyDown = false;
+			break;
+		case 2:
+			if (UserData::userSpdLevel < kMaxLevel)
+			{
+				//所持金が値段よりも大きかったら
+				if (UserData::userGold > m_playerItemPriceList[UserData::userSpdLevel])
+				{
+					UserData::userGold -= m_playerItemPriceList[UserData::userSpdLevel];
+					UserData::userSpdLevel++;
+				}
+			}
+			m_isAKeyDown = false;
+			break;
+		case 3:
+			if (UserData::userFireLevel < kMaxLevel)
+			{
+				//所持金が値段よりも大きかったら
+				if (UserData::userGold > m_playerItemPriceList[UserData::userFireLevel])
+				{
+					UserData::userGold -= m_playerItemPriceList[UserData::userFireLevel];
+					UserData::userFireLevel++;
+				}
+			}
+			m_isAKeyDown = false;
+			break;
+		case 4:
+			if (UserData::userWindLevel < kMaxLevel)
+			{
+				//所持金が値段よりも大きかったら
+				if (UserData::userGold > m_playerItemPriceList[UserData::userWindLevel])
+				{
+					UserData::userGold -= m_playerItemPriceList[UserData::userWindLevel];
+					UserData::userWindLevel++;
+				}
+			}
+			m_isAKeyDown = false;
+			break;
 		}
 	}
-	else
+	else if (!m_input.Buttons[12])
 	{
 		m_isAKeyDown = true;
 	}
@@ -123,17 +162,65 @@ void SceneShop::Update(Pad& pad)
 
 void SceneShop::Draw()
 {
+	//所持金を表示する
+	DrawFormatString(Game::kPlayScreenWIdth, 50, GetColor(255, 255, 255), "%d", UserData::userGold);
+	//仮実装
 	DrawString(200, 100, "攻撃力", GetColor(255, 255, 255), true);
 	DrawString(200, 200, "防御力", GetColor(255, 255, 255), true);
 	DrawString(200, 300, "移動速度", GetColor(255, 255, 255), true);
 	DrawString(200, 400, "ファイア", GetColor(255, 255, 255), true);
 	DrawString(200, 500, "タイフーン", GetColor(255, 255, 255), true);
-	
-	DrawFormatString(500, 100, GetColor(255, 255, 255),"%d", m_playerItemPriceList[UserData::userAtkLevel]);
-	DrawFormatString(500, 200, GetColor(255, 255, 255),"%d", m_playerItemPriceList[UserData::userDefLevel]);
-	DrawFormatString(500, 300, GetColor(255, 255, 255),"%d", m_playerItemPriceList[UserData::userSpdLevel]);
-	DrawFormatString(500, 400, GetColor(255, 255, 255),"%d", m_princessItemPriceList[UserData::userFireLevel]);
-	DrawFormatString(500, 500, GetColor(255, 255, 255),"%d", m_princessItemPriceList[UserData::userWindLevel]);
+
+	//攻撃レベルがマックスだったらMAXと表示する
+	if (UserData::userAtkLevel == kMaxLevel)
+	{
+		//MAXと表示する
+		DrawString(500, 100, "MAX", GetColor(255, 255, 255), false);
+	}
+	else
+	{
+		DrawFormatString(500, 100, GetColor(255, 255, 255), "%d", m_playerItemPriceList[UserData::userAtkLevel]);
+	}
+	//防御レベルがマックスだったらMAXと表示する
+	if (UserData::userDefLevel == kMaxLevel)
+	{
+		//MAXと表示する
+		DrawString(500, 200, "MAX", GetColor(255, 255, 255), false);
+	}
+	else
+	{
+		DrawFormatString(500, 200, GetColor(255, 255, 255), "%d", m_playerItemPriceList[UserData::userDefLevel]);
+	}
+	//移動速度のレベルがマックスだったらMAXと表示する
+	if (UserData::userSpdLevel == kMaxLevel)
+	{
+		//MAXと表示する
+		DrawString(500, 300, "MAX", GetColor(255, 255, 255), false);
+	}
+	else
+	{
+		DrawFormatString(500, 300, GetColor(255, 255, 255), "%d", m_playerItemPriceList[UserData::userSpdLevel]);
+	}
+	//炎魔法のレベルがマックスだったらMAXと表示する
+	if (UserData::userFireLevel == kMaxLevel)
+	{
+		//MAXと表示する
+		DrawString(500, 400, "MAX", GetColor(255, 255, 255), false);
+	}
+	else
+	{
+		DrawFormatString(500, 400, GetColor(255, 255, 255), "%d", m_princessItemPriceList[UserData::userFireLevel]);
+	}
+	//風魔法のレベルがマックスだったらMAXと表示する
+	if (UserData::userWindLevel == kMaxLevel)
+	{
+		//MAXと表示する
+		DrawString(500, 500, "MAX", GetColor(255, 255, 255), false);
+	}
+	else
+	{
+		DrawFormatString(500, 500, GetColor(255, 255, 255), "%d", m_princessItemPriceList[UserData::userWindLevel]);
+	}
 	switch (m_selectNum)
 	{
 	case 0:

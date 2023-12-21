@@ -45,7 +45,16 @@ Enemy::Enemy(SceneMain* pMain) :
 	m_pMain(pMain),
 	m_hitMagicCount(0),
 	m_isHitFlag(false),
-	m_effectCount(0)
+	m_effectCount(0),
+	m_haveGold(0),
+	m_haveExp(0),
+	m_isBoss(false),
+	m_isHitWeakFlag(false),
+	m_isLeftFlag(false),
+	m_kind(goblin),
+	m_pTreasureBox(nullptr),
+	m_scale(0.0f),
+	m_srcY(0)
 {
 	m_animFrame = 0;
 	m_nowState = Game::kNormal;
@@ -93,6 +102,8 @@ void Enemy::Init(int kinds)
 		m_spd = 0.2f;
 		m_scale = kEnemySize;
 		m_srcY = 0;
+		m_haveGold = 5;
+		m_haveExp = 2;
 		m_kind = goblin;
 		m_isBoss = false;
 	}
@@ -103,6 +114,8 @@ void Enemy::Init(int kinds)
 		m_spd = 0.4f;
 		m_scale = kEnemySize;
 		m_srcY = 1;
+		m_haveGold = 10;
+		m_haveExp = 2;
 		m_kind = boar;
 		m_isBoss = false;
 
@@ -115,6 +128,8 @@ void Enemy::Init(int kinds)
 		m_scale = kEnemySize;
 		m_srcY = 2;
 		m_kind = doragon;
+		m_haveGold = 50;
+		m_haveExp = 2;
 		m_isBoss = false;
 
 	}
@@ -126,6 +141,8 @@ void Enemy::Init(int kinds)
 		m_scale = kEnemySize;
 		m_srcY = 3;
 		m_kind = skeleton;
+		m_haveGold = 20;
+		m_haveExp = 2;
 		m_isBoss = false;
 
 	}
@@ -136,7 +153,9 @@ void Enemy::Init(int kinds)
 		m_spd = 0.1f;
 		m_scale = kEnemySize;
 		m_srcY = 4;
-		m_kind = snowman;
+		m_kind = snowman;		
+		m_haveGold = 50;
+		m_haveExp = 2;
 		m_isBoss = false;
 
 	}
@@ -148,6 +167,8 @@ void Enemy::Init(int kinds)
 		m_scale = kBossSize;
 		m_srcY = 0;
 		m_kind = bossGoblin;
+		m_haveGold = 100;
+		m_haveExp = 2;
 		m_isBoss = true;
 	}
 	else if (kinds == static_cast<int>(bossBoar))
@@ -158,6 +179,8 @@ void Enemy::Init(int kinds)
 		m_scale = kBossSize;
 		m_srcY = 1;
 		m_kind = bossBoar;
+		m_haveGold = 150;
+		m_haveExp = 2;
 		m_isBoss = true;
 
 	}
@@ -167,8 +190,10 @@ void Enemy::Init(int kinds)
 		m_atk = 25;
 		m_spd = 0.1f;
 		m_scale = kBossSize;
-		m_srcY = 2;
+		m_srcY = 2;		
 		m_kind = bossDoragon;
+		m_haveGold = 500;
+		m_haveExp = 2;
 		m_isBoss = true;
 
 	}
@@ -179,7 +204,9 @@ void Enemy::Init(int kinds)
 		m_spd = 0.3f;
 		m_scale = kBossSize;
 		m_srcY = 3;
-		m_kind = skeleton;
+		m_kind = bossSkeleton;		
+		m_haveGold = 300;
+		m_haveExp = 2;
 		m_isBoss = true;
 
 	}
@@ -190,7 +217,9 @@ void Enemy::Init(int kinds)
 		m_spd = 0.1f;
 		m_scale = kBossSize;
 		m_srcY = 4;
-		m_kind = bossSnowman;
+		m_kind = bossSnowman;		
+		m_haveGold = 1000;
+		m_haveExp = 2;
 		m_isBoss = true;
 
 	}
@@ -231,12 +260,14 @@ void Enemy::Update()
 						= std::make_shared<Exp>();
 					//経験値を落とす処理
 					pExp->Init(m_pos);
+					pExp->SetExp(m_haveExp);
 					m_pMain->AddItem(pExp);
 					//お金のメモリ確保
 					std::shared_ptr<Gold> pGold
 						= std::make_shared<Gold>();
 					//お金を落とす処理
 					pGold->Init(m_pos);
+					pGold->SetPrice(m_haveGold);
 					m_pMain->AddItem(pGold);
 					if (GetRand(100) < kDropProb)
 					{
@@ -382,12 +413,14 @@ void Enemy::HitMagic(MagicBase* magic)
 		std::shared_ptr<Exp> pExp
 			= std::make_shared<Exp>();
 		//経験値を落とす処理
+		pExp->SetExp(m_haveExp);
 		pExp->Init(m_pos);
 		m_pMain->AddItem(pExp);
 		//お金のメモリ確保
 		std::shared_ptr<Gold> pGold
 			= std::make_shared<Gold>();
 		//お金を落とす処理
+		pGold->SetPrice(m_haveGold);
 		pGold->Init(m_pos);
 		m_pMain->AddItem(pGold);
 		if (GetRand(100) < kDropProb)

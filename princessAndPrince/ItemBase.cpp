@@ -3,7 +3,7 @@
 #include"Player.h"
 namespace
 {
-	constexpr int kColScale = 10;
+	constexpr float kColScale = 10.0f;
 }
 ItemBase::ItemBase() :
 	m_handle(0),
@@ -11,7 +11,9 @@ ItemBase::ItemBase() :
 	m_pos(0, 0),
 	m_isExist(false),
 	m_colScale(kColScale),
-	m_nowState(Game::kNormal)
+	m_nowState(Game::kNormal),
+	m_haveExp(0),
+	m_haveGold(0)
 {
 }
 
@@ -22,8 +24,8 @@ ItemBase::~ItemBase()
 void ItemBase::Init(Vec2 pos)
 {
 	//全部同じ位置に出てしまわないように少しばらけさせる
-	m_pos.x = pos.x + GetRand(30) - 15;
-	m_pos.y = pos.y + GetRand(30) - 15;
+	m_pos.x = pos.x + GetRand(50) - 25;
+	m_pos.y = pos.y + GetRand(50) - 25;
 	//画面外に出てしまわないようにする
 	if (m_pos.x > Game::kPlayScreenWIdth)
 	{

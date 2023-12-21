@@ -2,9 +2,11 @@
 #include "Vec2.h"
 #include "CircleCol.h"
 #include "Character.h"
+#include <memory>
 class Princess;
 class Enemy;
 class TreasureBox;
+class ItemBase;
 class Player : public Character
 {
 
@@ -27,13 +29,13 @@ public:
 	//現在持っている血の量の割合を計算する
 	float GetBloodRate() { return m_nowBlood / m_maxBlood; }
 	//倒れているかどうかを取得する
-	bool GetDeathFlag() { return m_deathFlag; }
+	bool GetDeathFlag() { return m_isDeathFlag; }
 	//持っているゴールドの量を取得する
 	int GetGold() { return m_gold; }
 	//持っている経験値の量を取得する
 	int GetExp() { return m_exp; }
 	//アイテムを取得した時の処理
-	void PickUpItem(Game::ItemKinds kind);
+	void PickUpItem(std::shared_ptr<ItemBase> item);
 	//持っている血を渡す関数
 	void GiveBlood(Princess* princess);
 private:
@@ -54,7 +56,7 @@ private:
 	//持てる血の量
 	float m_maxBlood;
 	//現在倒れているかどうかフラグ
-	bool m_deathFlag;
+	bool m_isDeathFlag;
 	//前のフレーム度のキーを押していたか保存する変数
 	int m_lastPad;
 	//倒れた時の座標を入れる変数

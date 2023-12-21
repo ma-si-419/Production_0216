@@ -24,6 +24,14 @@ public:
 	Game::ItemKinds GetKind() { return m_kind; }
 	//状態を管理するenum
 	Game::State m_nowState;
+	//お金の量を取得する
+	int GetPrice() { return m_haveGold; }
+	//経験値の量を取得する
+	int GetExp() { return m_haveExp; }
+	//お金の量を設定する
+	void SetPrice(int gold) { m_haveGold = gold; }
+	//経験値の量を設定する
+	void SetExp(int exp) { m_haveExp = exp; }
 
 protected:
 	//表示位置
@@ -37,7 +45,11 @@ protected:
 	//存在しているかどうか
 	bool m_isExist;
 	//当たり判定の大きさ
-	int m_colScale;
+	float m_colScale;
+	//持っているお金の量
+	int m_haveGold;
+	//持っている経験値の量
+	int m_haveExp;
 
 };
 

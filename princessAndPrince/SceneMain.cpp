@@ -34,7 +34,7 @@ namespace
 	//配列のサイズ
 	constexpr int kArraySize = 81;
 	//クリアした後の時間
-	constexpr int kClearTime = 90;
+	constexpr int kClearTime = 180;
 	//倒すボスの数(仮実装)
 	constexpr int kBossCount = 1;
 }
@@ -45,7 +45,9 @@ SceneMain::SceneMain(SceneManager& manager) :
 	m_clearFlag(false),
 	m_bossCount(kBossCount),
 	m_killBossCount(0),
-	m_clearTime(0)
+	m_clearTime(0),
+	m_nextEnemyKind(0),
+	m_nextEnemyPopTime(0)
 {
 	//プレイヤーのグラフィックのロード
 	m_playerHandle = LoadGraph("data/image/Monkey.png");
@@ -242,7 +244,7 @@ void SceneMain::Update(Pad& pad)
 				item->Update();
 				if (IsCollision(m_pPlayer->GetColCircle(), item->GetColCircle()))
 				{
-					m_pPlayer->PickUpItem(item->GetKind());
+					m_pPlayer->PickUpItem(item);
 					item->m_nowState = Game::kDelete;
 				}
 			}
@@ -289,8 +291,8 @@ void SceneMain::Update(Pad& pad)
 		m_clearFlag = true;
 		if (m_clearTime > kClearTime)
 		{
-			UserData::userGold = m_pPlayer->GetGold();
-			UserData::userExp = m_pPlayer->GetExp();
+			UserData::userGold += m_pPlayer->GetGold();
+			UserData::userExp += m_pPlayer->GetExp();
 			m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
 		}
 	}

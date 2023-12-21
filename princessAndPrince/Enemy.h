@@ -73,5 +73,9 @@ private:
 	Vec2 m_hitPos;
 	//エフェクトを出す時間をカウントする(後で消すかも)
 	int m_effectCount;
+	//持っているお金の量
+	int m_haveGold;
+	//持っている経験値の量
+	int m_haveExp;
 };
 

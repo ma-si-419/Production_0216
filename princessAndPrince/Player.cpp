@@ -7,6 +7,8 @@
 #include "TreasureBox.h"
 #include "Enemy.h"
 #include "Princess.h"
+#include "ItemBase.h"
+#include "UserData.h"
 
 namespace
 {
@@ -51,7 +53,8 @@ Player::Player() :
 	m_nowBlood(0),
 	m_nowHp(m_hp),
 	m_gold(0),
-	m_exp(0)
+	m_exp(0),
+	m_isDeathFlag(false)
 {
 	//初期座標を魔女の隣に設定
 	m_pos.x = Game::kPlayScreenWIdth / 2 + 70;
@@ -73,10 +76,10 @@ Player::~Player()
 
 void Player::Init()
 {
-	m_atk = 2;
+	m_atk = 2 + (UserData::userAtkLevel * 2);
 	m_hp = 30;
-	m_spd = 3.0f;
-	m_def = 1;
+	m_spd = 3.0f + (UserData::userSpdLevel * 2);
+	m_def = 1 + (UserData::userDefLevel * 2);
 	m_nowHp = m_hp;
 }
 
@@ -201,7 +204,7 @@ void Player::Update()
 		// 正規化
 		move.Normalize();
 		// 長さの変更
-		move *= kSpeed;
+		move *= m_spd;
 		// 座標にベクトルを足す
 		m_pos += move;
 		//ノックバック処理
@@ -341,20 +344,20 @@ void Player::HitTreasure(TreasureBox* treasureBox)
 	m_knockBack.Normalize();
 	m_knockBack *= kKnockBackScale * (GetRand(3) + 3);
 }
-void Player::PickUpItem(Game::ItemKinds kind)
+void Player::PickUpItem(std::shared_ptr<ItemBase> item)
 {
-	switch (kind)
+	switch (item->GetKind())
 	{
 	case Game::kEmpty:
 		printfDx("バグ");
 		break;
 	case Game::kExp:
 		//持っている経験値量を増やす
-		m_exp++;
+		m_exp += item->GetExp();
 		break;
 	case Game::kGold:
 		//持っているお金を増やす
-		m_gold++;
+		m_gold += item->GetPrice();
 		break;
 	case Game::kBlood:
 		//プレイヤーの持つ血の量を増やす
