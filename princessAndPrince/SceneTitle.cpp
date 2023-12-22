@@ -37,9 +37,9 @@ void SceneTitle::Draw()
 {
 	int DrawWidth = GetDrawStringWidth("•P‚Æ‰¤Žq", -1);
 
-	DrawString((Game::kPlayScreenWIdth - DrawWidth) / 2, Game::kPlayScreenHeight / 2,
+	DrawString((Game::kPlayScreenWidth - DrawWidth) / 2, Game::kPlayScreenHeight / 2,
 		"•P‚Æ‰¤Žq", GetColor(255, 255, 255), true);
 	DrawWidth = GetDrawStringWidth("PRESS START BUTTON", -1);
-	DrawString((Game::kPlayScreenWIdth - DrawWidth) / 2, 500,
+	DrawString((Game::kPlayScreenWidth - DrawWidth) / 2, 500,
 		"PRESS START BUTTON", GetColor(255, 255, 255), true);
 }

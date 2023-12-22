@@ -3,6 +3,7 @@
 #include "SceneShop.h"
 #include "Player.h"
 #include "Princess.h"
+#include "UI.h"
 static class UserData
 {
 public:

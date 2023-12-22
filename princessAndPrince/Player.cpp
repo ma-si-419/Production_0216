@@ -57,7 +57,7 @@ Player::Player() :
 	m_isDeathFlag(false)
 {
 	//‰ŠúÀ•W‚ğ–‚—‚Ì—×‚Éİ’è
-	m_pos.x = Game::kPlayScreenWIdth / 2 + 70;
+	m_pos.x = Game::kPlayScreenWidth / 2 + 70;
 	m_pos.y = Game::kPlayScreenHeight / 2;
 	//Å‰‚ÌŒü‚«‚ğ‰ºŒü‚«‚Éİ’è
 	m_dir = Game::kDirDown;
@@ -76,10 +76,10 @@ Player::~Player()
 
 void Player::Init()
 {
-	m_atk = 2 + (UserData::userAtkLevel * 2);
+	m_atk = 2.0f + (UserData::userAtkLevel * 0.5f);
 	m_hp = 30;
-	m_spd = 3.0f + (UserData::userSpdLevel * 2);
-	m_def = 1 + (UserData::userDefLevel * 2);
+	m_spd = 2.0f + (UserData::userSpdLevel * 0.1f);
+	m_def = 1.0f + (UserData::userDefLevel * 0.3f);
 	m_nowHp = m_hp;
 }
 
@@ -227,8 +227,8 @@ void Player::Update()
 		// ‰¡²‚ÌˆÚ“®§ŒÀ
 		if (m_pos.x < kGraphHalfWidth*kCharcterScale)
 			m_pos.x = kGraphHalfWidth*kCharcterScale;
-		else if (Game::kPlayScreenWIdth - (kGraphHalfWidth*kCharcterScale) < m_pos.x)
-			m_pos.x = Game::kPlayScreenWIdth - (kGraphHalfWidth*kCharcterScale);
+		else if (Game::kPlayScreenWidth - (kGraphHalfWidth*kCharcterScale) < m_pos.x)
+			m_pos.x = Game::kPlayScreenWidth - (kGraphHalfWidth*kCharcterScale);
 
 		// “–‚½‚è”»’è‚ÌXV
 		m_circleCol.SetCenter(m_pos, m_radius);

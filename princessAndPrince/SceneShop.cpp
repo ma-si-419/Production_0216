@@ -96,7 +96,7 @@ void SceneShop::Update(Pad& pad)
 			if (UserData::userAtkLevel < kMaxLevel)
 			{
 				//所持金が値段よりも大きかったら
-				if (UserData::userGold > m_playerItemPriceList[UserData::userAtkLevel])
+				if (UserData::userGold >= m_playerItemPriceList[UserData::userAtkLevel])
 				{
 					UserData::userGold -= m_playerItemPriceList[UserData::userAtkLevel];
 					UserData::userAtkLevel++;
@@ -108,7 +108,7 @@ void SceneShop::Update(Pad& pad)
 			if (UserData::userDefLevel < kMaxLevel)
 			{
 				//所持金が値段よりも大きかったら
-				if (UserData::userGold > m_playerItemPriceList[UserData::userDefLevel])
+				if (UserData::userGold >= m_playerItemPriceList[UserData::userDefLevel])
 				{
 					UserData::userGold -= m_playerItemPriceList[UserData::userDefLevel];
 					UserData::userDefLevel++;
@@ -120,7 +120,7 @@ void SceneShop::Update(Pad& pad)
 			if (UserData::userSpdLevel < kMaxLevel)
 			{
 				//所持金が値段よりも大きかったら
-				if (UserData::userGold > m_playerItemPriceList[UserData::userSpdLevel])
+				if (UserData::userGold >= m_playerItemPriceList[UserData::userSpdLevel])
 				{
 					UserData::userGold -= m_playerItemPriceList[UserData::userSpdLevel];
 					UserData::userSpdLevel++;
@@ -132,7 +132,7 @@ void SceneShop::Update(Pad& pad)
 			if (UserData::userFireLevel < kMaxLevel)
 			{
 				//所持金が値段よりも大きかったら
-				if (UserData::userGold > m_playerItemPriceList[UserData::userFireLevel])
+				if (UserData::userGold >= m_playerItemPriceList[UserData::userFireLevel])
 				{
 					UserData::userGold -= m_playerItemPriceList[UserData::userFireLevel];
 					UserData::userFireLevel++;
@@ -144,7 +144,7 @@ void SceneShop::Update(Pad& pad)
 			if (UserData::userWindLevel < kMaxLevel)
 			{
 				//所持金が値段よりも大きかったら
-				if (UserData::userGold > m_playerItemPriceList[UserData::userWindLevel])
+				if (UserData::userGold >= m_playerItemPriceList[UserData::userWindLevel])
 				{
 					UserData::userGold -= m_playerItemPriceList[UserData::userWindLevel];
 					UserData::userWindLevel++;
@@ -163,7 +163,7 @@ void SceneShop::Update(Pad& pad)
 void SceneShop::Draw()
 {
 	//所持金を表示する
-	DrawFormatString(Game::kPlayScreenWIdth, 50, GetColor(255, 255, 255), "%d", UserData::userGold);
+	DrawFormatString(Game::kPlayScreenWidth, 50, GetColor(255, 255, 255), "%d", UserData::userGold);
 	//仮実装
 	DrawString(200, 100, "攻撃力", GetColor(255, 255, 255), true);
 	DrawString(200, 200, "防御力", GetColor(255, 255, 255), true);

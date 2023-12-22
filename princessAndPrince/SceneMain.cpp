@@ -34,9 +34,11 @@ namespace
 	//配列のサイズ
 	constexpr int kArraySize = 81;
 	//クリアした後の時間
-	constexpr int kClearTime = 180;
+	constexpr int kClearTime = 360;
 	//倒すボスの数(仮実装)
 	constexpr int kBossCount = 1;
+	//聖剣モードのゲージの最大量
+	constexpr float kMaxSpecialGauge = 100.0f;
 }
 SceneMain::SceneMain(SceneManager& manager) :
 	Scene(manager),
@@ -47,7 +49,8 @@ SceneMain::SceneMain(SceneManager& manager) :
 	m_killBossCount(0),
 	m_clearTime(0),
 	m_nextEnemyKind(0),
-	m_nextEnemyPopTime(0)
+	m_nextEnemyPopTime(0),
+	m_specialGauge(0.1f)
 {
 	//プレイヤーのグラフィックのロード
 	m_playerHandle = LoadGraph("data/image/Monkey.png");
@@ -74,7 +77,7 @@ SceneMain::SceneMain(SceneManager& manager) :
 	//宝箱の最大数を設定
 	m_pTreasure.resize(kMaxTreasureBox);
 	//UIのコンストラクタ
-	m_pUi = new UI(m_pPlayer);
+	m_pUi = new UI(m_pPlayer,m_pPrincess,this);
 }
 
 SceneMain::~SceneMain()
@@ -167,27 +170,24 @@ void SceneMain::Update(Pad& pad)
 				//プレイヤーとエネミーがぶつかったとき
 				if (m_pPlayer->m_nowState != Game::kDelete &&//プレイヤーが死んでいないときに
 					IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&//プレイヤーとエネミーがぶつかったら
-					enemy->m_nowState != Game::kHit)//エネミーがkDeleteじゃないときのみ
+					enemy->m_nowState != Game::kHitPlayer)//エネミーがkDeleteじゃないときのみ
 				{
 					//エネミーのダメージ処理を行う
 					enemy->HitPlayer(*m_pPlayer,IsCollision(m_pPlayer->GetColCircle(),enemy->GetWeakCircle()));
 					//プレイヤーのダメージ処理を行う
 					m_pPlayer->HitEnemy(*enemy,IsCollision(m_pPlayer->GetColCircle(),enemy->GetWeakCircle()));
+					//敵の攻撃力に応じてゲージを上昇させる
+					AddSpecialGauge(enemy->GetAtk() - m_pPlayer->GetDef());
+				
 					//エネミーの状態を推移させる
-					enemy->m_nowState == Game::kHit;
+					enemy->m_nowState = Game::kHitPlayer;
 				}
 				//魔女とエネミーがぶつかったとき
 				if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle()))
 				{
 					//魔女のダメージ処理を行う,エネミーのノックバックを行う
 					m_pPrincess->HitEnemy(*enemy);
-				}
-				//エネミーとプレイヤーが離れたら(ぶつかったときの処理が複数回行われないために)
-				if (IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&
-					enemy->m_nowState == Game::kHit)
-				{
-					//エネミーの状態をkNormalに変化させる
-					enemy->m_nowState = Game::kNormal;
+					AddSpecialGauge(enemy->GetAtk());
 				}
 				for (auto& magic : m_pMagic)
 				{
@@ -348,14 +348,13 @@ void SceneMain::Draw()
 
 		}
 	}
-	DrawBox(960, 0, Game::kScreenWidth, Game::kPlayScreenHeight, GetColor(100, 100, 100), true);
 	m_pPrincess->Draw();
 	m_pUi->Draw();
 	//クリアしたら
 	if (m_clearFlag)
 	{
 		int stringWidth = GetDrawStringWidth("ゲームクリア", -1);
-		DrawString((Game::kPlayScreenWIdth - stringWidth) / 2, 200, "ゲームクリア", GetColor(0, 0, 0));
+		DrawString((Game::kPlayScreenWidth - stringWidth) / 2, 200, "ゲームクリア", GetColor(0, 0, 0));
 		DrawString(300, 500, "獲得経験値", GetColor(0, 0, 0));
 		DrawString(300, 600, "獲得ゴールド", GetColor(0, 0, 0));
 		DrawFormatString(600, 500, GetColor(0, 0, 0), "%d", m_pPlayer->GetGold());

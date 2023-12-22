@@ -46,6 +46,10 @@ public:
 	bool CreateEnemy(int enemyKind);
 	//倒したボスの数を数える
 	void CountKillBoss() { m_killBossCount++; };
+	//聖剣モードのゲージをためる
+	void AddSpecialGauge(float gauge) { m_specialGauge += gauge; }
+	//聖剣モードのゲージのたまっている割合を返す
+	float GetSpecialGaugeRate() { return 100 / m_specialGauge; }
 private:
 	// グラフィックのハンドル
 	int m_playerHandle;
@@ -86,4 +90,6 @@ private:
 	int m_nextEnemyPopTime;
 	//次に出てくるモンスターの種類
 	int m_nextEnemyKind;
+	//聖剣モードのゲージ
+	float m_specialGauge;
 };

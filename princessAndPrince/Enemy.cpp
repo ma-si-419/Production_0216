@@ -26,10 +26,12 @@ namespace
 	constexpr int kDropProb = 30;
 	//マジックにヒットするインターバル
 	constexpr int kHitMagicInterval = 30;
+	//プレイヤーにヒットするインターバル
+	constexpr int kHitPlayerInterval = 8;
 	//生まれる方向の最大数
 	constexpr int kMaxDir = 3;
 	//ボスのサイズ
-	constexpr float kBossSize = 3.0f;
+	constexpr float kBossSize = 2.0f;
 	//通常の敵のサイズ
 	constexpr float kEnemySize = 1.0f;
 	//弱点の当たり判定をずらすベクトル
@@ -41,9 +43,9 @@ namespace
 	constexpr int kEffectSize = 60;
 }
 Enemy::Enemy(SceneMain* pMain) :
-	m_targetPos(Game::kPlayScreenWIdth / 2, Game::kPlayScreenHeight / 2),
+	m_targetPos(Game::kPlayScreenWidth / 2, Game::kPlayScreenHeight / 2),
 	m_pMain(pMain),
-	m_hitMagicCount(0),
+	m_hitCount(0),
 	m_isHitFlag(false),
 	m_effectCount(0),
 	m_haveGold(0),
@@ -75,17 +77,17 @@ void Enemy::Init(int kinds)
 		break;
 		//上方向から出てくる
 	case 1:
-		m_pos.x = GetRand(Game::kPlayScreenWIdth);
+		m_pos.x = GetRand(Game::kPlayScreenWidth);
 		m_pos.y = 0;
 		break;
 		//右方向から出てくる
 	case 2:
-		m_pos.x = Game::kPlayScreenWIdth;
+		m_pos.x = Game::kPlayScreenWidth;
 		m_pos.y = GetRand(Game::kPlayScreenHeight);
 		break;
 		//下方向から出てくる
 	case 3:
-		m_pos.x = GetRand(Game::kPlayScreenWIdth);
+		m_pos.x = GetRand(Game::kPlayScreenWidth);
 		m_pos.y = Game::kPlayScreenHeight;
 		break;
 	default:
@@ -98,7 +100,7 @@ void Enemy::Init(int kinds)
 	if (kinds == static_cast<int>(goblin))
 	{
 		m_hp = 12;
-		m_atk = 3;
+		m_atk = 3.0f;
 		m_spd = 0.2f;
 		m_scale = kEnemySize;
 		m_srcY = 0;
@@ -110,7 +112,7 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(boar))
 	{
 		m_hp = 7;
-		m_atk = 1;
+		m_atk = 1.0f;
 		m_spd = 0.4f;
 		m_scale = kEnemySize;
 		m_srcY = 1;
@@ -123,7 +125,7 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(doragon))
 	{
 		m_hp = 20;
-		m_atk = 10;
+		m_atk = 10.0f;
 		m_spd = 0.1f;
 		m_scale = kEnemySize;
 		m_srcY = 2;
@@ -136,7 +138,7 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(skeleton))
 	{
 		m_hp = 15;
-		m_atk = 3;
+		m_atk = 3.0f;
 		m_spd = 0.3f;
 		m_scale = kEnemySize;
 		m_srcY = 3;
@@ -149,7 +151,7 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(snowman))
 	{
 		m_hp = 50;
-		m_atk = 5;
+		m_atk = 5.0f;
 		m_spd = 0.1f;
 		m_scale = kEnemySize;
 		m_srcY = 4;
@@ -162,7 +164,7 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(bossGoblin))
 	{
 		m_hp = 48;
-		m_atk = 6;
+		m_atk = 6.0f;
 		m_spd = 0.2f;
 		m_scale = kBossSize;
 		m_srcY = 0;
@@ -174,7 +176,7 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(bossBoar))
 	{
 		m_hp = 21;
-		m_atk = 3;
+		m_atk = 3.0f;
 		m_spd = 0.4f;
 		m_scale = kBossSize;
 		m_srcY = 1;
@@ -187,7 +189,7 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(bossDoragon))
 	{
 		m_hp = 60;
-		m_atk = 25;
+		m_atk = 25.0f;
 		m_spd = 0.1f;
 		m_scale = kBossSize;
 		m_srcY = 2;		
@@ -200,7 +202,7 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(bossSkeleton))
 	{
 		m_hp = 50;
-		m_atk = 7;
+		m_atk = 7.0f;
 		m_spd = 0.3f;
 		m_scale = kBossSize;
 		m_srcY = 3;
@@ -213,7 +215,7 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(bossSnowman))
 	{
 		m_hp = 150;
-		m_atk = 12;
+		m_atk = 12.0f;
 		m_spd = 0.1f;
 		m_scale = kBossSize;
 		m_srcY = 4;
@@ -249,6 +251,8 @@ void Enemy::Update()
 				//ノックバックした後のほうが見栄えがいいのでここに死亡処理を入れる
 				if (m_hp < 0)
 				{
+					//状態を変化させる
+					m_nowState = Game::kDelete;
 					//血のメモリの確保
 					std::shared_ptr<Blood> pBlood
 						= std::make_shared<Blood>();
@@ -281,18 +285,27 @@ void Enemy::Update()
 					{
 						m_pMain->CountKillBoss();
 					}
-					//状態を変化させる
-					m_nowState = Game::kDelete;
 				}
 			}
 		}
+		//魔法に連続で当たらないように状態を変化させる
 		if (m_nowState == Game::kHitMagic)
 		{
-			m_hitMagicCount++;
-			if (m_hitMagicCount > kHitMagicInterval)
+			m_hitCount++;
+			if (m_hitCount > kHitMagicInterval)
 			{
 				m_nowState = Game::kNormal;
-				m_hitMagicCount = 0;
+				m_hitCount = 0;
+			}
+		}
+		//プレイヤーに連続で当たらないように状態を変化させる
+		if (m_nowState == Game::kHitPlayer)
+		{
+			m_hitCount++;
+			if (m_hitCount > kHitPlayerInterval)
+			{
+				m_nowState = Game::kNormal;
+				m_hitCount = 0;
 			}
 		}
 		//移動量の計算

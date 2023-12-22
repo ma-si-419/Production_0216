@@ -3,7 +3,7 @@
 // ゲーム全体で使用する定数を定義する
 namespace Game
 {
-	constexpr int kPlayScreenWIdth = 960;	// プレイ画面の横幅
+	constexpr int kPlayScreenWidth = 960;	// プレイ画面の横幅
 	constexpr int kScreenWidth = 1600;		// 全画面の横幅
 	constexpr int kPlayScreenHeight = 960;	// 画面の縦幅
 
@@ -36,7 +36,7 @@ namespace Game
 	enum State
 	{
 		kNormal,//基本的な状態
-		kHit,//ぶつかった状態(めり込んでぶつかり、処理が複数行われないため)
+		kHitPlayer,//ぶつかった状態(めり込んでぶつかり、処理が複数行われないため)
 		kHitMagic,//魔法にぶつかったときの状態
 		kDelete//死んでいる状態
 	};

@@ -27,9 +27,9 @@ void ItemBase::Init(Vec2 pos)
 	m_pos.x = pos.x + GetRand(50) - 25;
 	m_pos.y = pos.y + GetRand(50) - 25;
 	//‰æ–ÊŠO‚Éo‚Ä‚µ‚Ü‚í‚È‚¢‚æ‚¤‚É‚·‚é
-	if (m_pos.x > Game::kPlayScreenWIdth)
+	if (m_pos.x > Game::kPlayScreenWidth)
 	{
-		m_pos.x = Game::kPlayScreenWIdth;
+		m_pos.x = Game::kPlayScreenWidth;
 	}
 	else if (m_pos.x < 0)
 	{

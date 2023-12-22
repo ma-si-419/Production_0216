@@ -51,8 +51,8 @@ private:
 	Vec2 m_moveVec;
 	//左を向いているかフラグ
 	bool m_isLeftFlag;
-	//魔法に連続でヒットしないためにカウントを用意する
-	int m_hitMagicCount;
+	//魔法やプレイヤーに連続でヒットしないためにカウントを用意する
+	int m_hitCount;
 	//宝箱のポインタ
 	TreasureBox* m_pTreasureBox;
 	//大きいキャラかどうかを判断する

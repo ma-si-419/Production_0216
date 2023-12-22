@@ -39,9 +39,9 @@ void TreasureBox::Init(Vec2 pos)
 	m_pos.y = pos.y + GetRand(30) - 15;
 
 	//‰æ–ÊŠO‚Éo‚Ä‚µ‚Ü‚í‚È‚¢‚æ‚¤‚É‚·‚é
-	if (m_pos.x > Game::kPlayScreenWIdth)
+	if (m_pos.x > Game::kPlayScreenWidth)
 	{
-		m_pos.x = Game::kPlayScreenWIdth;
+		m_pos.x = Game::kPlayScreenWidth;
 	}
 	else if (m_pos.x < 0)
 	{

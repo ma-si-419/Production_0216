@@ -34,6 +34,8 @@ public:
 	int GetGold() { return m_gold; }
 	//持っている経験値の量を取得する
 	int GetExp() { return m_exp; }
+	//防御力を取得する
+	float GetDef() { return m_def; }
 	//アイテムを取得した時の処理
 	void PickUpItem(std::shared_ptr<ItemBase> item);
 	//持っている血を渡す関数

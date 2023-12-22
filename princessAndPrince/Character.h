@@ -21,7 +21,7 @@ public:
 	//現在位置を取得する
 	virtual Vec2 GetPos()const { return m_pos; }
 	//攻撃力を取得する
-	virtual int GetAtk() { return m_atk; }
+	virtual float GetAtk() { return m_atk; }
 	//当たり判定を取得する
 	virtual CircleCol GetColCircle() { return m_circleCol; }
 	//状態を管理する
@@ -29,13 +29,13 @@ public:
 protected:
 	/*メンバ変数*/
 	//攻撃力
-	int m_atk;
+	float m_atk;
 	//体力
 	float m_hp;
 	//速度
 	float m_spd;
 	//防御力
-	int m_def;
+	float m_def;
 	//グラフィックハンドル
 	int m_handle;
 	//当たり判定の大きさ

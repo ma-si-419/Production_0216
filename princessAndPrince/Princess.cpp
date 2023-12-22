@@ -60,7 +60,7 @@ Princess::Princess(SceneMain* sceneMain) :
 	m_isMagic(false),
 	m_pMain(sceneMain)
 {
-	m_pos.x = Game::kPlayScreenWIdth / 2;
+	m_pos.x = Game::kPlayScreenWidth / 2;
 	m_pos.y = Game::kPlayScreenHeight / 2;
 	m_dir = Game::kDirDown;
 	m_animFrame = kAnimFrameNum;
@@ -196,14 +196,6 @@ void Princess::Draw() const
 	DrawLine(m_pos.x, m_pos.y,//始点
 		m_pos.x + m_result.x, m_pos.y - m_result.y,//計算結果を始点に足して終点にする
 		GetColor(0, 0, 0));
-	if (m_isFire)
-	{
-		DrawBox(960, Game::kPlayScreenHeight - 100 , Game::kScreenWidth,Game::kPlayScreenHeight, GetColor(255, 0, 0), true);
-	}
-	else
-	{
-		DrawBox(960, Game::kPlayScreenHeight - 100, Game::kScreenWidth, Game::kPlayScreenHeight, GetColor(0, 255, 0), true);
-	}
 	//画像のどこを切り取るかを指定して、切り取った画像を表示する
 	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
 		srcX, srcY,//切り取る位置
