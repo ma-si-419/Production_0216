@@ -29,7 +29,7 @@ namespace
 	// アニメーションの１サイクルのフレーム数
 	constexpr int kAnimFrameCycle = _countof(kUseFrame) * kAnimFrameNum;
 	//ノックバックの大きさ
-	constexpr int kKnockBackScale = 4;
+	constexpr int kKnockBackScale = 6;
 	//Hpバーの横の長さ
 	constexpr float kMaxBarWidth = 60;
 	//Hpバーの縦の長さ
@@ -44,7 +44,7 @@ namespace
 	constexpr float kCharcterScale = 6.0f;
 }
 
-Player::Player() :
+Player::Player(SceneMain* pMain) :
 	m_isMove(false),
 	m_hpBarWidth(0),
 	m_bloodBarWidth(0),
@@ -54,7 +54,8 @@ Player::Player() :
 	m_nowHp(m_hp),
 	m_gold(0),
 	m_exp(0),
-	m_isDeathFlag(false)
+	m_isDeathFlag(false),
+	m_pMain(pMain)
 {
 	//初期座標を魔女の隣に設定
 	m_pos.x = Game::kPlayScreenWidth / 2 + 70;
@@ -78,7 +79,7 @@ void Player::Init()
 {
 	m_atk = 2.0f + (UserData::userAtkLevel * 0.5f);
 	m_hp = 30;
-	m_spd = 2.0f + (UserData::userSpdLevel * 0.1f);
+	m_spd = 1.5f + (UserData::userSpdLevel * 0.1f);
 	m_def = 1.0f + (UserData::userDefLevel * 0.3f);
 	m_nowHp = m_hp;
 }
@@ -222,13 +223,13 @@ void Player::Update()
 		// 縦軸の移動制限
 		if (m_pos.y < kGraphHalfHeight * kCharcterScale)
 			m_pos.y = kGraphHalfHeight * kCharcterScale;
-		else if (Game::kPlayScreenHeight - (kGraphHalfHeight*kCharcterScale) < m_pos.y)
-			m_pos.y = Game::kPlayScreenHeight - (kGraphHalfHeight*kCharcterScale);
+		else if (Game::kPlayScreenHeight - (kGraphHalfHeight * kCharcterScale) < m_pos.y)
+			m_pos.y = Game::kPlayScreenHeight - (kGraphHalfHeight * kCharcterScale);
 		// 横軸の移動制限
-		if (m_pos.x < kGraphHalfWidth*kCharcterScale)
-			m_pos.x = kGraphHalfWidth*kCharcterScale;
-		else if (Game::kPlayScreenWidth - (kGraphHalfWidth*kCharcterScale) < m_pos.x)
-			m_pos.x = Game::kPlayScreenWidth - (kGraphHalfWidth*kCharcterScale);
+		if (m_pos.x < kGraphHalfWidth * kCharcterScale)
+			m_pos.x = kGraphHalfWidth * kCharcterScale;
+		else if (Game::kPlayScreenWidth - (kGraphHalfWidth * kCharcterScale) < m_pos.x)
+			m_pos.x = Game::kPlayScreenWidth - (kGraphHalfWidth * kCharcterScale);
 
 		// 当たり判定の更新
 		m_circleCol.SetCenter(m_pos, m_radius);
@@ -260,6 +261,18 @@ void Player::Update()
 	if (m_nowBlood <= 0)
 	{
 		m_nowBlood = 0;
+	}
+	//聖剣モード状態のステータス変化
+	if (m_pMain->GetSpecialMode())
+	{
+		m_nowHp = m_hp;
+		m_atk = (2.0f + (UserData::userAtkLevel * 0.5f)) * 1.5f;
+		m_spd = 4.0f;
+	}
+	else
+	{
+		m_atk = 2.0f + (UserData::userAtkLevel * 0.5f);
+		m_spd = 1.5f + (UserData::userSpdLevel * 0.1f);
 	}
 }
 
@@ -313,20 +326,39 @@ void Player::Draw() const
 #endif
 }
 
-void Player::HitEnemy(Enemy enemy,bool weak)
+void Player::HitEnemy(Enemy enemy, bool weak)
 {
 	m_knockBack = enemy.GetPos() - m_pos;
 	m_knockBack.Normalize();
 	m_knockBack *= kKnockBackScale;
+	//聖剣モードに入っているときはダメージ処理を行わない
+	if (!m_pMain->GetSpecialMode())
+	{
 	//弱点に当たっていたら
-	if (weak)
-	{
-		//受けるダメージを半分にする
-		m_nowHp -= (enemy.GetAtk() - m_def) / 2;
-	}
-	else//弱点に当たっていなかったらそのまま
-	{
-		m_nowHp -= enemy.GetAtk() - m_def;
+		if (weak)
+		{
+			float damage = 0;
+			//受けるダメージを半分にする
+			damage = enemy.GetAtk() - m_def / 2;
+			//最低でも0.5ダメージは食らうようにする
+			if (damage < 1)
+			{
+				damage = 0.5f;
+			}
+			m_nowHp -= damage;
+
+		}
+		else//弱点に当たっていなかったらそのまま
+		{
+			float damage = 0;
+			damage = enemy.GetAtk() - m_def;
+			//最低でも0.5ダメージは食らうようにする
+			if (damage < 1)
+			{
+				damage = 0.5f;
+			}
+			m_nowHp -= damage;
+		}
 	}
 	//体力がマイナスにならないように
 	if (m_nowHp <= 0)

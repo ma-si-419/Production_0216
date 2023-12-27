@@ -14,13 +14,16 @@
 #include "TreasureBox.h"
 #include "Player.h"
 #include "Princess.h"
+#include "Particle.h"
 #include "Enemy.h"
 #include "UI.h"
 #include "UserData.h"
 namespace
 {
 	//アイテムの最大数
-	constexpr int kMaxItem = 1024;
+	constexpr int kMaxItem = 512;
+	//パーティクルの最大数
+	constexpr int kMaxParticle = 512;
 	//同時に存在する魔法の最大数
 	constexpr int kMaxMagicValue = 32;
 	//持てる血の量の最大数
@@ -39,6 +42,8 @@ namespace
 	constexpr int kBossCount = 1;
 	//聖剣モードのゲージの最大量
 	constexpr float kMaxSpecialGauge = 100.0f;
+	//パーティクルが出てくる間隔
+	constexpr int kParticleInterval = 5;
 }
 SceneMain::SceneMain(SceneManager& manager) :
 	Scene(manager),
@@ -50,12 +55,16 @@ SceneMain::SceneMain(SceneManager& manager) :
 	m_clearTime(0),
 	m_nextEnemyKind(0),
 	m_nextEnemyPopTime(0),
-	m_specialGauge(0.1f)
+	m_specialGauge(0.1f),
+	m_isSpecialMode(false),
+	m_isPause(false),
+	m_isStop(false),
+	m_particleCount(0)
 {
 	//プレイヤーのグラフィックのロード
 	m_playerHandle = LoadGraph("data/image/Monkey.png");
 	//Playerのコンストラクタ
-	m_pPlayer = new Player;
+	m_pPlayer = new Player(this);
 	//プレイヤーのメンバ変数にアクセス
 	m_pPlayer->SetHandle(m_playerHandle);
 	//プリンセスのグラフィックのロード
@@ -76,8 +85,10 @@ SceneMain::SceneMain(SceneManager& manager) :
 	m_pMagic.resize(kMaxMagicValue);
 	//宝箱の最大数を設定
 	m_pTreasure.resize(kMaxTreasureBox);
+	//パーティクルの最大数を設定
+	m_pParticleArray.resize(kMaxParticle);
 	//UIのコンストラクタ
-	m_pUi = new UI(m_pPlayer,m_pPrincess,this);
+	m_pUi = new UI(m_pPlayer, m_pPrincess, this);
 }
 
 SceneMain::~SceneMain()
@@ -120,190 +131,266 @@ void SceneMain::Init()
 
 void SceneMain::Update(Pad& pad)
 {
-
-	//シーン移動
-	if (m_pPrincess->IsDeath())
-	{
-		//音楽の再生を止める
-		StopSoundFile();
-		//タイトルシーンに移行する
-		m_manager.ChangeScene(std::make_shared<SceneTitle>(m_manager));
-
-		return;
-	}
-	//Enemyの数だけ回す後で仕様変更
-	//エネミーのスタックがなくなるまで回す
-	if (!m_popEnemyList.empty())
-	{
-		m_enemyPopTimeCount++;
-		if (m_enemyPopTimeCount > m_nextEnemyPopTime * 20)
-		{
-			//カウントを初期化
-			m_enemyPopTimeCount = 0;
-			//エネミーを出現させる
-			CreateEnemy(m_nextEnemyKind);
-			//次に出てくるエネミーの情報を入れる
-			popEnemy temp = m_popEnemyList.top();
-			m_enemyPopTimeCount = temp.popTime;
-			m_nextEnemyKind = temp.enemyKind;
-			m_popEnemyList.pop();
-		}
-	}
-	m_pPlayer->Update();
-	m_pPrincess->Update();
 	//音楽再生
 //	if (m_flag)
 //	{
 //		PlaySoundFile("data/sound/mainBgm.mp3", DX_PLAYTYPE_LOOP);
 //		m_flag = false;
 //	}
-	bool isLeaveFlag = true;
-	//エネミーのアップデート
-	for (auto& enemy : m_pEnemy)
-	{
-		if (enemy)
-		{
-			//状態がkDeleteじゃない場合のみ動く
-			if (enemy->m_nowState != Game::kDelete)
-			{
-				enemy->Update();
-				//プレイヤーとエネミーがぶつかったとき
-				if (m_pPlayer->m_nowState != Game::kDelete &&//プレイヤーが死んでいないときに
-					IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&//プレイヤーとエネミーがぶつかったら
-					enemy->m_nowState != Game::kHitPlayer)//エネミーがkDeleteじゃないときのみ
-				{
-					//エネミーのダメージ処理を行う
-					enemy->HitPlayer(*m_pPlayer,IsCollision(m_pPlayer->GetColCircle(),enemy->GetWeakCircle()));
-					//プレイヤーのダメージ処理を行う
-					m_pPlayer->HitEnemy(*enemy,IsCollision(m_pPlayer->GetColCircle(),enemy->GetWeakCircle()));
-					//敵の攻撃力に応じてゲージを上昇させる
-					AddSpecialGauge(enemy->GetAtk() - m_pPlayer->GetDef());
-				
-					//エネミーの状態を推移させる
-					enemy->m_nowState = Game::kHitPlayer;
-				}
-				//魔女とエネミーがぶつかったとき
-				if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle()))
-				{
-					//魔女のダメージ処理を行う,エネミーのノックバックを行う
-					m_pPrincess->HitEnemy(*enemy);
-					AddSpecialGauge(enemy->GetAtk());
-				}
-				for (auto& magic : m_pMagic)
-				{
+//ポーズや演出時など以外の場合動かす
 
-					if (magic &&//magicがnullじゃない場合
-						IsCollision(magic->GetCircleCol(), enemy->GetColCircle()) &&//MagicとEnemyがぶつかったら
-						enemy->m_nowState != Game::kHitMagic)//状態がkHitMagicじゃなかったら
+	XINPUT_STATE m_input;
+	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
+
+	if (!m_isPause && !m_isStop)
+	{
+		//ポーズボタンが押されたら
+		if (m_input.Buttons[XINPUT_BUTTON_START])
+		{
+			m_isPause = true;
+		}
+		//シーン移動
+		if (m_pPrincess->IsDeath())
+		{
+			//音楽の再生を止める
+			StopSoundFile();
+			//タイトルシーンに移行する
+			m_manager.ChangeScene(std::make_shared<SceneTitle>(m_manager));
+
+			return;
+		}
+		//Enemyの数だけ回す後で仕様変更
+		//エネミーのスタックがなくなるまで回す
+		if (!m_popEnemyList.empty())
+		{
+			m_enemyPopTimeCount++;
+			if (m_enemyPopTimeCount > m_nextEnemyPopTime * 20)
+			{
+				//カウントを初期化
+				m_enemyPopTimeCount = 0;
+				//エネミーを出現させる
+				CreateEnemy(m_nextEnemyKind);
+				//次に出てくるエネミーの情報を入れる
+				popEnemy temp = m_popEnemyList.top();
+				m_enemyPopTimeCount = temp.popTime;
+				m_nextEnemyKind = temp.enemyKind;
+				m_popEnemyList.pop();
+			}
+		}
+		m_pPlayer->Update();
+		m_pPrincess->Update();
+		bool isLeaveFlag = true;
+		//エネミーのアップデート
+		for (auto& enemy : m_pEnemy)
+		{
+			if (enemy)
+			{
+				//状態がkDeleteじゃない場合のみ動く
+				if (enemy->m_nowState != Game::kDelete)
+				{
+					enemy->Update();
+					//プレイヤーとエネミーがぶつかったとき
+					if (m_pPlayer->m_nowState != Game::kDelete &&//プレイヤーが死んでいないときに
+						IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&//プレイヤーとエネミーがぶつかったら
+						enemy->m_nowState != Game::kHitPlayer)//エネミーがkDeleteじゃないときのみ
 					{
-						//エネミーの状態を変化させる
-						enemy->m_nowState = Game::kHitMagic;
-						//魔法のダメージ処理を行う
-						enemy->HitMagic(magic);
+						//エネミーのダメージ処理を行う
+						enemy->HitPlayer(*m_pPlayer, IsCollision(m_pPlayer->GetColCircle(), enemy->GetWeakCircle()));
+						//プレイヤーのダメージ処理を行う
+						m_pPlayer->HitEnemy(*enemy, IsCollision(m_pPlayer->GetColCircle(), enemy->GetWeakCircle()));
+						//スペシャルゲージがマックスじゃなかったらゲージを上昇させる
+						if (!m_isSpecialMode)
+						{
+							//敵の攻撃力に応じてゲージを上昇させる
+							AddSpecialGauge(enemy->GetAtk());
+						}
+						//エネミーの状態を推移させる
+						enemy->m_nowState = Game::kHitPlayer;
+					}
+					//魔女とエネミーがぶつかったとき
+					if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle()))
+					{
+						//魔女のダメージ処理を行う,エネミーのノックバックを行う
+						m_pPrincess->HitEnemy(*enemy);
+						if (!m_isSpecialMode)
+						{
+							AddSpecialGauge(enemy->GetAtk());
+						}
+					}
+					for (auto& magic : m_pMagic)
+					{
+
+						if (magic &&//magicがnullじゃない場合
+							IsCollision(magic->GetCircleCol(), enemy->GetColCircle()) &&//MagicとEnemyがぶつかったら
+							enemy->m_nowState != Game::kHitMagic)//状態がkHitMagicじゃなかったら
+						{
+							//エネミーの状態を変化させる
+							enemy->m_nowState = Game::kHitMagic;
+							//魔法のダメージ処理を行う
+							enemy->HitMagic(magic);
+						}
 					}
 				}
 			}
 		}
-	}
 
 
-	for (auto& magic : m_pMagic)
-	{
-		//魔法がnullじゃなく
-		if (magic)
+		for (auto& magic : m_pMagic)
 		{
-			//状態がデリートになっていないとき
-			if (magic->m_nowState != Game::kDelete)
+			//魔法がnullじゃなく
+			if (magic)
 			{
-				//魔法の更新処理を行う
-				magic->Update();
-			}
-			else//状態がデリートになったとき
-			{
-				//魔法のポインタを消す
-				magic = nullptr;
-
-			}
-		}
-	}
-
-	//魔女とPlayerがぶつかった時
-	if (IsCollision(m_pPlayer->GetColCircle(), m_pPrincess->GetColCircle()) &&
-		!m_pPrincess->IsMagic())
-	{
-		m_pPlayer->GiveBlood(m_pPrincess);
-	}
-	for (auto& item : m_pItem)
-	{
-		//itemがnullじゃない場合
-		if (item)
-		{
-			//アイテムが存在している場合
-			if (item->m_nowState == Game::kNormal)
-			{
-				item->Update();
-				if (IsCollision(m_pPlayer->GetColCircle(), item->GetColCircle()))
+				//状態がデリートになっていないとき
+				if (magic->m_nowState != Game::kDelete)
 				{
-					m_pPlayer->PickUpItem(item);
-					item->m_nowState = Game::kDelete;
+					//魔法の更新処理を行う
+					magic->Update();
+				}
+				else//状態がデリートになったとき
+				{
+					//魔法のポインタを消す
+					magic = nullptr;
+
 				}
 			}
 		}
-	}
-	for (auto& treasure : m_pTreasure)
-	{
-		//itemがnullじゃない場合
-		if (treasure)
+
+		//魔女とPlayerがぶつかった時
+		if (IsCollision(m_pPlayer->GetColCircle(), m_pPrincess->GetColCircle()) &&
+			!m_pPrincess->IsMagic())
 		{
-			//アイテムが存在している場合
-			if (treasure->m_nowState != Game::kDelete)
+			m_pPlayer->GiveBlood(m_pPrincess);
+		}
+		for (auto& item : m_pItem)
+		{
+			//itemがnullじゃない場合
+			if (item)
 			{
-				treasure->Update();
-				//プレイヤーとぶつかったら
-				if (IsCollision(m_pPlayer->GetColCircle(), treasure->GetColCircle()))
+				//アイテムが存在している場合
+				if (item->m_nowState == Game::kNormal)
 				{
-					m_pPlayer->HitTreasure(treasure);
-					treasure->HitPlayer();
-				}
-				//魔法ととぶつかったら
-				for (auto& magic : m_pMagic)
-				{
-					if (magic &&//magicがnullじゃなかったら
-						IsCollision(magic->GetCircleCol(), treasure->GetColCircle()))
+					item->Update();
+					if (IsCollision(m_pPlayer->GetColCircle(), item->GetColCircle()))
 					{
-						treasure->HitMagic();
-						treasure->m_nowState = Game::kHitMagic;
+						m_pPlayer->PickUpItem(item);
+						item->m_nowState = Game::kDelete;
 					}
 				}
-
 			}
-			else//アイテムが存在しない状態になったら
+		}
+		for (auto& treasure : m_pTreasure)
+		{
+			//itemがnullじゃない場合
+			if (treasure)
 			{
-				treasure = nullptr;
+				//アイテムが存在している場合
+				if (treasure->m_nowState != Game::kDelete)
+				{
+					treasure->Update();
+					//プレイヤーとぶつかったら
+					if (IsCollision(m_pPlayer->GetColCircle(), treasure->GetColCircle()))
+					{
+						m_pPlayer->HitTreasure(treasure);
+						treasure->HitPlayer();
+					}
+					//魔法ととぶつかったら
+					for (auto& magic : m_pMagic)
+					{
+						if (magic &&//magicがnullじゃなかったら
+							IsCollision(magic->GetCircleCol(), treasure->GetColCircle()))
+						{
+							treasure->HitMagic();
+							treasure->m_nowState = Game::kHitMagic;
+						}
+					}
+
+				}
+				else//アイテムが存在しない状態になったら
+				{
+					treasure = nullptr;
+				}
+			}
+		}
+		for (auto& particle : m_pParticleArray)
+		{
+			//itemがnullじゃない場合
+			if (particle)
+			{
+				//アイテムが存在している場合
+				if (particle->GetIsExist())
+				{
+					particle->Update();
+				}
+				else//アイテムが存在しない状態になったら
+				{
+					particle = nullptr;
+				}
+			}
+		}
+		if (m_specialGauge >= kMaxSpecialGauge)
+		{
+			if (m_input.Buttons[XINPUT_BUTTON_Y])
+			{
+				m_isSpecialMode = true;
+			}
+		}
+		//聖剣モード発動中だったら
+		if (m_isSpecialMode)
+		{
+			//少しずつゲージを減らしていく
+			m_specialGauge -= 0.2f;
+			//カウントを進める
+			m_particleCount++;
+			//背景に表示するパーティクルを生成する
+			if (m_particleCount > kParticleInterval)
+			{
+				m_particleCount = 0;
+				m_pParticle = new Particle(m_pPrincess->GetPos(), 2000, 10, 2, 2);
+				AddParticle(m_pParticle);
+			}
+			//ゲージが0になったら
+			if (m_specialGauge < 0)
+			{
+				//聖剣モードを終わらせる
+				m_isSpecialMode = false;
+				m_specialGauge = 0;
+			}
+		}
+		//クリア判定
+		if (m_killBossCount >= m_bossCount)
+		{
+			m_clearTime++;
+
+			m_clearFlag = true;
+			if (m_clearTime > kClearTime)
+			{
+				UserData::userGold += m_pPlayer->GetGold();
+				UserData::userExp += m_pPlayer->GetExp();
+				m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
 			}
 		}
 	}
-	//クリア判定
-	if (m_killBossCount >= m_bossCount)
+	//ポーズ中の処理
+	else if (m_isPause)
 	{
-		m_clearTime++;
-
-		m_clearFlag = true;
-		if (m_clearTime > kClearTime)
+		if (m_input.Buttons[XINPUT_BUTTON_B])
 		{
-			UserData::userGold += m_pPlayer->GetGold();
-			UserData::userExp += m_pPlayer->GetExp();
-			m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+			m_isPause = false;
 		}
 	}
 }
 
 void SceneMain::Draw()
 {
-	
+
 	//プレイ画面の背景
 	DrawGraph(0, 0, m_bgHandle, true);
-	
+	if (m_isSpecialMode)
+	{
+		//聖剣モードに入ったら背景を暗くする
+		DrawBox(0, 0, Game::kPlayScreenWidth, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
+	}
+
 	for (auto& item : m_pItem)
 	{
 		if (item)
@@ -327,9 +414,10 @@ void SceneMain::Draw()
 			}
 		}
 	}
+
 	for (auto& treasure : m_pTreasure)
 	{
-		//itemがnullじゃない場合
+		//treasureがnullじゃない場合
 		if (treasure)
 		{
 			//アイテムが存在している場合
@@ -348,6 +436,18 @@ void SceneMain::Draw()
 
 		}
 	}
+	for (auto& particle : m_pParticleArray)
+	{
+		//particleがnullじゃない場合
+		if (particle)
+		{
+			//アイテムが存在している場合
+			if (particle->GetIsExist())
+			{
+				particle->Draw();
+			}
+		}
+	}
 	m_pPrincess->Draw();
 	m_pUi->Draw();
 	//クリアしたら
@@ -361,7 +461,6 @@ void SceneMain::Draw()
 		DrawFormatString(600, 600, GetColor(0, 0, 0), "%d", m_pPlayer->GetExp());
 
 	}
-	//UIの表示（仮）
 }
 
 bool SceneMain::AddItem(std::shared_ptr<ItemBase> pItem)
@@ -398,6 +497,24 @@ bool SceneMain::CreateEnemy(int enemyKind)
 	return false;
 }
 
+void SceneMain::AddSpecialGauge(float gauge)
+{
+	float addGauge;
+	addGauge = gauge - m_pPlayer->GetDef();
+	//最低でも１は増えるようにする
+	if (addGauge < 0)
+	{
+		addGauge = 1;
+	}
+	m_specialGauge += addGauge;
+	//限界値を超えたら
+	if (m_specialGauge > kMaxSpecialGauge)
+	{
+		//現在の値を限界値にする
+		m_specialGauge = kMaxSpecialGauge;
+	}
+}
+
 bool SceneMain::AddMagic(MagicBase* pMagic)
 {
 	//魔法の配列の長さ
@@ -416,13 +533,29 @@ bool SceneMain::AddMagic(MagicBase* pMagic)
 
 bool SceneMain::AddTreasure(TreasureBox* pTreasure)
 {
-	//魔法の配列の長さ
+	//宝箱の配列の長さ
 	for (int i = 0; i < m_pTreasure.size(); i++)
 	{
 		//使用中なら次のチェックへ
 		if (m_pTreasure[i]) continue;
 		//ここに来たということはm_pShot[i] == nullptr
 		m_pTreasure[i] = pTreasure;
+		//登録したら終了
+		return true;
+	}
+	//ここに来た、ということはm_pShotにポインタを登録できなかった
+	return false;
+}
+
+bool SceneMain::AddParticle(Particle* pParticle)
+{
+	//パーティクルの配列の長さ
+	for (int i = 0; i < m_pParticleArray.size(); i++)
+	{
+		//使用中なら次のチェックへ
+		if (m_pParticleArray[i]) continue;
+		//ここに来たということはm_pParticle[i] == nullptr
+		m_pParticleArray[i] = pParticle;
 		//登録したら終了
 		return true;
 	}

@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "Vec2.h"
 #include "CircleCol.h"
 #include "Character.h"
@@ -6,6 +7,7 @@ class SceneMain;
 class MagicBase;
 class Player;
 class TreasureBox;
+class Particle;
 class Enemy : public Character
 {
 public:
@@ -77,5 +79,7 @@ private:
 	int m_haveGold;
 	//持っている経験値の量
 	int m_haveExp;
+	//パーティクルのポインタ
+	Particle* m_pParticle;
 };
 

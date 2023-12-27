@@ -1,14 +1,10 @@
 #include "MagicBase.h"
 #include "Princess.h"
 #include "DxLib.h"
+#include "UserData.h"
 namespace
 {
-	//基本的な炎魔法の攻撃力
-	constexpr float kFireAttack = 3;
-	//基本的な風魔法の攻撃力
-	constexpr float kWindAttack = 1;
-	//基本的な魔法の大きさ
-	constexpr float kMagicScale = 20;
+
 	//基本的な炎魔法のスピード
 	constexpr float kMagicSpeed = 3;
 	//風魔法を出す時にプレイヤーから座標をずらす時に使う
@@ -20,7 +16,7 @@ namespace
 
 }
 
-MagicBase::MagicBase(Princess* pPrincess) :
+MagicBase::MagicBase(Princess* pPrincess,float scale) :
 	//コンストラクタ時に存在しているフラグを立てる
 	m_nowState(Game::kNormal),
 	//プリンセスのポインタを入れる
@@ -31,11 +27,11 @@ MagicBase::MagicBase(Princess* pPrincess) :
 	m_princessPos(0, 0),
 	m_magicPos(0,0),
 	//炎魔法の攻撃力の初期化
-	m_fireAtk(kFireAttack),
+	m_fireAtk(UserData::userFireLevel * 1.0f),
 	//風魔法の攻撃力の初期化
-	m_windAtk(kWindAttack),
+	m_windAtk(UserData::userWindLevel * 0.5f),
 	//魔法の大きさの初期化
-	m_scale(kMagicScale),
+	m_scale(scale),
 	//最初に撃っている魔法を炎にする
 	m_isFire(true),
 	//魔法の速度の初期化
@@ -112,7 +108,7 @@ void MagicBase::Update()
 		m_nowState = Game::kDelete;
 	else if (Game::kPlayScreenWidth + m_scale < m_magicPos.x)
 		m_nowState = Game::kDelete;
-	m_circleCol.SetCenter(m_magicPos, kMagicScale);
+	m_circleCol.SetCenter(m_magicPos, m_scale);
 
 }
 
@@ -130,17 +126,17 @@ void MagicBase::Draw()
 			m_magicPos.x + m_scale / 2, m_magicPos.y + m_scale / 2,
 			GetColor(0, 255, 0), true);
 	}
-	m_circleCol.Draw(kMagicScale,0,0);
+	m_circleCol.Draw(m_scale,0,0);
 }
 
 float MagicBase::GetAtk()
 {
 	if (m_isFire)
 	{
-		return m_fireAtk;
+		return m_pPrincess->GetAtk() + m_fireAtk;
 	}
 	else
 	{
-		return m_windAtk;
+		return m_pPrincess->GetAtk() + m_windAtk;
 	}
 }

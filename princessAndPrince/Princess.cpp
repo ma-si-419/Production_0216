@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "SceneMain.h"
 #include "MagicBase.h"
+#include "UserData.h"
 namespace
 {
 	// 移動速度
@@ -24,7 +25,9 @@ namespace
 	// アニメーションの１サイクルのフレーム数
 	constexpr int kAnimFrameCycle = _countof(kUseFrame) * kAnimFrameNum;
 	//ノックバックの大きさ
-	constexpr int kKnockBackScale = 4;
+	constexpr int kKnockBackScale = 6;
+	//基本的な魔法の大きさ
+	constexpr float kMagicScale = 20;
 	//Hpバーの横の長さ
 	constexpr float kMaxBarWidth = 60;
 	//Hpバーの縦の長さ
@@ -45,8 +48,10 @@ namespace
 	constexpr int kWindVol = 2;
 	//キャラの拡大率
 	constexpr float kCharcterScale = 6.0f;
+	//ベースの攻撃力
+	constexpr float kBaseAtk = 1.0f;
 }
-Princess::Princess(SceneMain* sceneMain) :
+Princess::Princess(SceneMain* pMain) :
 	m_hpBarWidth(0),
 	m_bloodBarWidth(0),
 	m_maxBlood(kMaxBlood),
@@ -58,7 +63,7 @@ Princess::Princess(SceneMain* sceneMain) :
 	m_result(0, 0),
 	m_MagicCount(0),
 	m_isMagic(false),
-	m_pMain(sceneMain)
+	m_pMain(pMain)
 {
 	m_pos.x = Game::kPlayScreenWidth / 2;
 	m_pos.y = Game::kPlayScreenHeight / 2;
@@ -75,7 +80,9 @@ void Princess::Init()
 {
 	m_hp = 50;
 	m_nowHp = m_hp;
+	m_atk = kBaseAtk;
 	m_def = 0;
+	m_scale = kMagicScale;
 }
 
 void Princess::Update()
@@ -102,19 +109,19 @@ void Princess::Update()
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
 	//魔法を打っている最中
-	if (m_isMagic)
+	if (m_isMagic || m_pMain->GetSpecialMode())
 	{
 		m_MagicCount++;
 		//ボタンの押されている状況をとる
 		//RBボタンが押されていたら
-		if (m_input.Buttons[9])
+		if (m_input.Buttons[XINPUT_BUTTON_RIGHT_SHOULDER])
 		{
 			//回転させる処理を入れる
 			m_angle -= 0.03f;
 
 		}
 		//LBボタンが押されていたら
-		if (m_input.Buttons[8])
+		if (m_input.Buttons[XINPUT_BUTTON_LEFT_SHOULDER])
 		{
 			//回転させる処理を入れる
 			m_angle += 0.03f;
@@ -128,7 +135,7 @@ void Princess::Update()
 				//カウントをゼロにして
 				m_MagicCount = 0;
 				//魔法を撃つ
-				m_pMagic = new MagicBase(this);
+				m_pMagic = new MagicBase(this,m_scale);
 				m_pMagic->Init(0);
 				m_pMain->AddMagic(m_pMagic);
 
@@ -145,7 +152,7 @@ void Princess::Update()
 				//風魔法は複数個同時に出るので
 				for (int i = 0; kWindVol > i; i++)
 				{
-					m_pMagic = new MagicBase(this);
+					m_pMagic = new MagicBase(this,m_scale);
 					m_pMagic->Init(i);
 					m_pMain->AddMagic(m_pMagic);
 				}
@@ -156,8 +163,8 @@ void Princess::Update()
 		m_nowBlood -= 0.02f;
 
 	}
-		//Aボタンが押されたら
-	if (m_input.Buttons[12] && !m_isLastKeyFlag || CheckHitKey(KEY_INPUT_Z))
+	//Aボタンが押されたら
+	if (m_input.Buttons[XINPUT_BUTTON_A] && !m_isLastKeyFlag || CheckHitKey(KEY_INPUT_Z))
 	{
 		//連続で切り替わらないように
 		m_isLastKeyFlag = true;
@@ -166,7 +173,7 @@ void Princess::Update()
 		//魔法を撃つ間隔をリセットする
 		m_MagicCount = 0;
 	}
-	else if (!m_input.Buttons[12])
+	else if (!m_input.Buttons[XINPUT_BUTTON_A])
 	{
 		//連続で切り替わらないように
 		m_isLastKeyFlag = false;
@@ -183,6 +190,17 @@ void Princess::Update()
 	m_result *= kBarLen;
 	m_magicVec.x = m_pos.x + m_result.x;
 	m_magicVec.y = m_pos.y - m_result.y;
+	//聖剣モードの処理
+	if (m_pMain->GetSpecialMode())
+	{
+		m_atk = kBaseAtk * 1.5f;
+		m_scale = kMagicScale * 2.0f;
+	}
+	else
+	{
+		m_atk = kBaseAtk;
+		m_scale = kMagicScale;
+	}
 }
 
 void Princess::Draw() const
@@ -193,9 +211,12 @@ void Princess::Draw() const
 	int srcY = kGraphHeight * m_dir;
 
 	//魔法を打つ方向に線を表示する
-	DrawLine(m_pos.x, m_pos.y,//始点
-		m_pos.x + m_result.x, m_pos.y - m_result.y,//計算結果を始点に足して終点にする
-		GetColor(0, 0, 0));
+	if (m_isMagic)
+	{
+		DrawLine(m_pos.x, m_pos.y,//始点
+			m_pos.x + m_result.x, m_pos.y - m_result.y,//計算結果を始点に足して終点にする
+			GetColor(0, 0, 0));
+	}
 	//画像のどこを切り取るかを指定して、切り取った画像を表示する
 	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
 		srcX, srcY,//切り取る位置

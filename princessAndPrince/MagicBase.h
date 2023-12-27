@@ -7,7 +7,7 @@ class MagicBase
 {
 public:
 	//コンストラクタ
-	MagicBase(Princess* pPrincess);
+	MagicBase(Princess* pPrincess,float scale);
 	//デストラクタ
 	virtual ~MagicBase();
 	//初期化処理

@@ -9,7 +9,7 @@ class MagicBase;
 class Princess : public Character
 {
 public:
-	Princess(SceneMain* sceneMain);
+	Princess(SceneMain* pMain);
 	virtual ~Princess();
 
 	void Init();
@@ -33,6 +33,8 @@ public:
 	Vec2 GetMagicDir() { return m_magicVec; }
 	//魔法の種類を取得する
 	bool GetMagicKind() { return m_isFire; }
+	//攻撃力を取得する
+	float GetAtk() { return m_atk; }
 private:
 	//メインシーンのポインタを保存する変数
 	SceneMain* m_pMain;
@@ -66,5 +68,7 @@ private:
 	int m_MagicCount;
 	//魔法を撃つ線の終点を保存する変数
 	Vec2 m_magicVec;
+	//魔法の大きさ
+	float m_scale;
 };
 

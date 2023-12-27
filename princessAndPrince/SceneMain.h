@@ -14,6 +14,7 @@ class UI;
 class MagicBase;
 class TreasureBox;
 class CircleCol;
+class Particle;
 struct popEnemy
 {
 	int enemyKind;
@@ -40,6 +41,8 @@ public:
 	bool AddMagic(MagicBase* pMagic);
 	//SceneMainに宝箱を出す関数
 	bool AddTreasure(TreasureBox* pTreasure);
+	//SceneMainにパーティクルを出す関数
+	bool AddParticle(Particle* pParticle);
 	//当たり判定を判定する関数
 	bool IsCollision(CircleCol col1, CircleCol col2);
 	//敵を生成する関数
@@ -47,9 +50,11 @@ public:
 	//倒したボスの数を数える
 	void CountKillBoss() { m_killBossCount++; };
 	//聖剣モードのゲージをためる
-	void AddSpecialGauge(float gauge) { m_specialGauge += gauge; }
+	void AddSpecialGauge(float gauge);
 	//聖剣モードのゲージのたまっている割合を返す
 	float GetSpecialGaugeRate() { return 100 / m_specialGauge; }
+	//聖剣モードを発動しているかどうかを返す
+	bool GetSpecialMode() { return m_isSpecialMode; }
 private:
 	// グラフィックのハンドル
 	int m_playerHandle;
@@ -62,7 +67,8 @@ private:
 	Princess* m_pPrincess;
 	//UI
 	UI* m_pUi;
-	// 背景
+	//パーティクル
+	Particle* m_pParticle;
 
 	// 敵
 	vector<shared_ptr<Enemy>> m_pEnemy;
@@ -72,6 +78,8 @@ private:
 	vector<MagicBase*> m_pMagic;
 	//宝箱
 	vector<TreasureBox*> m_pTreasure;
+	//パーティクル
+	vector<Particle*> m_pParticleArray;
 	//音楽が複数個流れないように
 	bool m_isMusicFlag;
 	//敵の出現間隔
@@ -84,6 +92,8 @@ private:
 	int m_killBossCount;
 	//ボスを倒した後の時間をカウントする変数
 	int m_clearTime;
+	//次にパーティクルが出てくるまでカウントする変数
+	int m_particleCount;
 	//クリアしたかどうか判断する変数
 	bool m_clearFlag;
 	//次にモンスターが出てくるまでの時間
@@ -92,4 +102,10 @@ private:
 	int m_nextEnemyKind;
 	//聖剣モードのゲージ
 	float m_specialGauge;
+	//聖剣モードを発動しているかどうか
+	bool m_isSpecialMode;
+	//ポーズに入っているかどうか
+	bool m_isPause;
+	//演出時に画面を止める
+	bool m_isStop;
 };

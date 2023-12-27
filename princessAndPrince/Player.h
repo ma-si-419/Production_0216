@@ -6,12 +6,13 @@
 class Princess;
 class Enemy;
 class TreasureBox;
+class SceneMain;
 class ItemBase;
 class Player : public Character
 {
 
 public:
-	Player();
+	Player(SceneMain* pMain);
 	~Player();
 
 	void Init();
@@ -40,7 +41,10 @@ public:
 	void PickUpItem(std::shared_ptr<ItemBase> item);
 	//持っている血を渡す関数
 	void GiveBlood(Princess* princess);
+
 private:
+	//シーンメインのポインタを入れる
+	SceneMain* m_pMain;
 	//歩いているかどうか
 	bool m_isMove;
 	//Hpバーの位置

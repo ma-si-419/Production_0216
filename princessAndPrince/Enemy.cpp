@@ -8,6 +8,7 @@
 #include "Gold.h"
 #include "TreasureBox.h"
 #include "SceneMain.h"
+#include "Particle.h"
 #include<memory>
 namespace
 {
@@ -41,6 +42,9 @@ namespace
 	constexpr int kEffectTime = 10;
 	//エフェクトの大きさ(仮実装)
 	constexpr int kEffectSize = 60;
+	//パーティクルの数
+	constexpr int kParticleVol = 30;
+
 }
 Enemy::Enemy(SceneMain* pMain) :
 	m_targetPos(Game::kPlayScreenWidth / 2, Game::kPlayScreenHeight / 2),
@@ -60,6 +64,7 @@ Enemy::Enemy(SceneMain* pMain) :
 {
 	m_animFrame = 0;
 	m_nowState = Game::kNormal;
+
 }
 Enemy::~Enemy()
 {
@@ -155,7 +160,7 @@ void Enemy::Init(int kinds)
 		m_spd = 0.1f;
 		m_scale = kEnemySize;
 		m_srcY = 4;
-		m_kind = snowman;		
+		m_kind = snowman;
 		m_haveGold = 50;
 		m_haveExp = 2;
 		m_isBoss = false;
@@ -192,7 +197,7 @@ void Enemy::Init(int kinds)
 		m_atk = 25.0f;
 		m_spd = 0.1f;
 		m_scale = kBossSize;
-		m_srcY = 2;		
+		m_srcY = 2;
 		m_kind = bossDoragon;
 		m_haveGold = 500;
 		m_haveExp = 2;
@@ -206,7 +211,7 @@ void Enemy::Init(int kinds)
 		m_spd = 0.3f;
 		m_scale = kBossSize;
 		m_srcY = 3;
-		m_kind = bossSkeleton;		
+		m_kind = bossSkeleton;
 		m_haveGold = 300;
 		m_haveExp = 2;
 		m_isBoss = true;
@@ -219,7 +224,7 @@ void Enemy::Init(int kinds)
 		m_spd = 0.1f;
 		m_scale = kBossSize;
 		m_srcY = 4;
-		m_kind = bossSnowman;		
+		m_kind = bossSnowman;
 		m_haveGold = 1000;
 		m_haveExp = 2;
 		m_isBoss = true;
@@ -353,27 +358,6 @@ void Enemy::Draw()
 			4.0 * m_scale,
 			0.0,
 			m_handle, true, m_isLeftFlag);
-		if (m_isHitFlag)
-		{
-			m_effectCount++;
-			if (m_isHitWeakFlag && m_effectCount < kEffectTime)
-			{
-				DrawBox(m_hitPos.x - kEffectSize / 2, m_hitPos.y - kEffectSize / 2,//始点座標
-					m_hitPos.x + kEffectSize / 2, m_hitPos.y + kEffectSize / 2,//終点座標
-					GetColor(255, 0, 0), true);
-			}
-			else if(!m_isHitWeakFlag && m_effectCount < kEffectTime)
-			{
-				DrawBox(m_hitPos.x - kEffectSize / 2, m_hitPos.y - kEffectSize / 2,//始点座標
-					m_hitPos.x + kEffectSize / 2, m_hitPos.y + kEffectSize / 2,//終点座標
-					GetColor(255, 255, 255), true);
-			}
-			if(m_effectCount > kEffectTime)
-			{
-				m_isHitFlag = false;
-				m_effectCount = 0;
-			}
-		}
 #ifdef _DEBUG
 		m_circleCol.Draw(m_radius * m_scale, 0x0000ff, false);
 		m_weakCircle.Draw(m_radius * m_scale, 0xff0000, false);
@@ -389,15 +373,27 @@ void Enemy::HitPlayer(Player& player, bool weak)
 	m_isHitFlag = true;
 	//中点を出す(衝突点の座標)
 	m_hitPos = (player.GetPos() + m_pos) / 2;
+	//弱点に当たっていたら
 	if (weak)
 	{
 		m_hp -= (player.GetAtk() - m_def) * 2;
-		m_isHitWeakFlag = true;
+		//赤いエフェクトを出す
+		for (int i = 0; i < kParticleVol; i++)
+		{
+			m_pParticle = new Particle(m_hitPos, 40.0f,4.0f,5,1);
+			m_pMain->AddParticle(m_pParticle);
+		}
 	}
+	//当たっていなかったら
 	else
 	{
 		m_hp -= player.GetAtk() - m_def;
-		m_isHitWeakFlag = false;
+		//白いエフェクトを出す
+		for (int i = 0; i < kParticleVol; i++)
+		{
+			m_pParticle = new Particle(m_hitPos, 40.0f, 4.0f,5,0);
+			m_pMain->AddParticle(m_pParticle);
+		}
 	}
 }
 
