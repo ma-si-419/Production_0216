@@ -70,5 +70,13 @@ private:
 	Vec2 m_magicVec;
 	//魔法の大きさ
 	float m_scale;
+	//敵にぶつかって揺れる時間をカウントする
+	int m_shakeTimeCount;
+	//ぶつかった時に立つフラグ
+	bool m_hitFlag;
+	//基本的な魔女の位置
+	Vec2 m_basePos;
+	//揺れるスピード
+	float m_shakeSpeed;
 };
 

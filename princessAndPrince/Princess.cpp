@@ -50,6 +50,12 @@ namespace
 	constexpr float kCharcterScale = 6.0f;
 	//ベースの攻撃力
 	constexpr float kBaseAtk = 1.0f;
+	//揺れる大きさ
+	constexpr int kShakeWidth = 3;
+	//揺れる時間
+	constexpr int kShakeTime = 15;
+	//揺れるスピード
+	constexpr float kshakeSpeed = 2.0f;
 }
 Princess::Princess(SceneMain* pMain) :
 	m_hpBarWidth(0),
@@ -63,10 +69,13 @@ Princess::Princess(SceneMain* pMain) :
 	m_result(0, 0),
 	m_MagicCount(0),
 	m_isMagic(false),
-	m_pMain(pMain)
+	m_pMain(pMain),
+	m_shakeTimeCount(kShakeTime),
+	m_shakeSpeed(kshakeSpeed)
 {
 	m_pos.x = Game::kPlayScreenWidth / 2;
 	m_pos.y = Game::kPlayScreenHeight / 2;
+	m_basePos = m_pos;
 	m_dir = Game::kDirDown;
 	m_animFrame = kAnimFrameNum;
 	m_radius = Game::kRadius;
@@ -135,7 +144,7 @@ void Princess::Update()
 				//カウントをゼロにして
 				m_MagicCount = 0;
 				//魔法を撃つ
-				m_pMagic = new MagicBase(this,m_scale);
+				m_pMagic = new MagicBase(this, m_scale);
 				m_pMagic->Init(0);
 				m_pMain->AddMagic(m_pMagic);
 
@@ -152,7 +161,7 @@ void Princess::Update()
 				//風魔法は複数個同時に出るので
 				for (int i = 0; kWindVol > i; i++)
 				{
-					m_pMagic = new MagicBase(this,m_scale);
+					m_pMagic = new MagicBase(this, m_scale);
 					m_pMagic->Init(i);
 					m_pMain->AddMagic(m_pMagic);
 				}
@@ -200,6 +209,24 @@ void Princess::Update()
 	{
 		m_atk = kBaseAtk;
 		m_scale = kMagicScale;
+	}
+	//足し続ける
+	m_shakeTimeCount++;
+	if (m_pos.x < m_basePos.x - kShakeWidth)
+	{
+		m_shakeSpeed *= -1;
+	}
+	else if (m_pos.x > m_basePos.x + kShakeWidth)
+	{
+		m_shakeSpeed *= -1;
+	}
+	if (m_shakeTimeCount < kShakeTime)
+	{
+		m_pos.x += m_shakeSpeed;
+	}
+	else
+	{
+		m_pos = m_basePos;
 	}
 }
 
@@ -258,6 +285,7 @@ void Princess::Draw() const
 
 void Princess::HitEnemy(Enemy& enemy)
 {
+	m_shakeTimeCount = 0;
 	Vec2 knockBack;
 	knockBack = m_pos - enemy.GetPos();
 	knockBack.Normalize();

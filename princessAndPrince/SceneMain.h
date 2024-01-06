@@ -55,6 +55,8 @@ public:
 	float GetSpecialGaugeRate() { return 100 / m_specialGauge; }
 	//聖剣モードを発動しているかどうかを返す
 	bool GetSpecialMode() { return m_isSpecialMode; }
+	//シーンが終わったタイミング
+	void SetEnd() { m_isEnd = true; }
 private:
 	// グラフィックのハンドル
 	int m_playerHandle;
@@ -95,7 +97,7 @@ private:
 	//次にパーティクルが出てくるまでカウントする変数
 	int m_particleCount;
 	//クリアしたかどうか判断する変数
-	bool m_clearFlag;
+	bool m_isClearFlag;
 	//次にモンスターが出てくるまでの時間
 	int m_nextEnemyPopTime;
 	//次に出てくるモンスターの種類
@@ -108,4 +110,6 @@ private:
 	bool m_isPause;
 	//演出時に画面を止める
 	bool m_isStop;
+	//画面移動のタイミング
+	bool m_isEnd;
 };

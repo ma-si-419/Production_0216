@@ -36,6 +36,8 @@ namespace
 	constexpr float kBarHeight = 5;
 	//Hpバーのポジション
 	constexpr int kHpBarPosY = 40;
+	//復活した後の硬直時間
+	constexpr int kRevivalTime = 30;
 	//持てる血の量の最大値
 	constexpr float kMaxBlood = 10;
 	//バーの後ろに表示するBoxの余白の大きさ
@@ -54,6 +56,7 @@ Player::Player(SceneMain* pMain) :
 	m_nowHp(m_hp),
 	m_gold(0),
 	m_exp(0),
+	m_moveVec(),
 	m_isDeathFlag(false),
 	m_pMain(pMain)
 {
@@ -95,86 +98,115 @@ void Player::Update()
 		m_nowHp += GetHealRate();
 		//レバガチャすると早く回復するようにする
 		//おしっぱではだめなので、if文を追加する
-		if (pad & PAD_INPUT_UP)
+		//倒れている状態でないとレバガチャできないようにする(死亡演出を入れるために)
+		if (m_isDeathFlag)
 		{
-			if (m_lastPad != 0)
+
+			if (pad & PAD_INPUT_UP)
 			{
-				//今入力したkeyを保存する
-				m_lastPad = 0;
-				//回復する
-				m_nowHp += GetHealRate() * 3;
-				//ランダムにプレイヤーを動かす
-				m_pos.x = m_deathPos.x + GetRand(2) - 1;
-				m_pos.y = m_deathPos.y + GetRand(2) - 1;
+				if (m_lastPad != 0)
+				{
+					//今入力したkeyを保存する
+					m_lastPad = 0;
+					//回復する
+					m_nowHp += GetHealRate() * 3;
+					//ランダムにプレイヤーを動かす
+					m_pos.x = m_deathPos.x + GetRand(2) - 1;
+					m_pos.y = m_deathPos.y + GetRand(2) - 1;
+				}
+
+			}
+			else if (pad & PAD_INPUT_DOWN)
+			{
+				if (m_lastPad != 1)
+				{
+					//今入力したkeyを保存する
+					m_lastPad = 1;
+					//回復する
+					m_nowHp += GetHealRate() * 3;
+					//ランダムにプレイヤーを動かす
+					m_pos.x = GetRand(10) + m_deathPos.x;
+					m_pos.y = GetRand(10) + m_deathPos.y;
+				}
+			}
+			else if (pad & PAD_INPUT_LEFT)
+			{
+				if (m_lastPad != 2)
+				{
+					//今入力したkeyを保存する
+					m_lastPad = 2;
+					//回復する
+					m_nowHp += GetHealRate() * 3;
+					//ランダムにプレイヤーを動かす
+					m_pos.x = GetRand(10) + m_deathPos.x;
+					m_pos.y = GetRand(10) + m_deathPos.y;
+				}
+			}
+			else if (pad & PAD_INPUT_RIGHT)
+			{
+				if (m_lastPad != 3)
+				{
+					//今入力したkeyを保存する
+					m_lastPad = 3;
+					//回復する
+					m_nowHp += GetHealRate() * 3;
+					//ランダムにプレイヤーを動かす
+					m_pos.x = GetRand(10) + m_deathPos.x;
+					m_pos.y = GetRand(10) + m_deathPos.y;
+				}
+			}
+		}
+		if (m_nowHp >= m_hp)
+		{
+			/////////////////////////////////////////////////////////////////////////
+		    //現在の体力が最大値よりも大きくならないように
+			m_nowHp = m_hp;
+			//アニメーションを動かすかどうか
+			bool isAnimEnd = false;
+			if (m_animFrame / kAnimFrameNum == 2)
+			{
+				m_revivalCount++;
+				isAnimEnd = true;
+			}
+			// 復活アニメーションを動かす
+			if (!isAnimEnd)
+			{
+				m_animFrame++;
+				if (kAnimFrameCycle <= m_animFrame)	m_animFrame = 1;
 			}
 
-		}
-		else if (pad & PAD_INPUT_DOWN)
-		{
-			if (m_lastPad != 1)
+			//復活の硬直時間を超えたら
+			if (m_revivalCount > kRevivalTime)
 			{
-				//今入力したkeyを保存する
-				m_lastPad = 1;
-				//回復する
-				m_nowHp += GetHealRate() * 3;
-				//ランダムにプレイヤーを動かす
-				m_pos.x = GetRand(10) + m_deathPos.x;
-				m_pos.y = GetRand(10) + m_deathPos.y;
+				//状態をkNormalに変化させる
+				m_nowState = Game::kNormal;
+				//死んだフラッグをfalseにする
+				m_isDeathFlag = false;
+				m_revivalCount = 0;
 			}
-		}
-		else if (pad & PAD_INPUT_LEFT)
-		{
-			if (m_lastPad != 2)
-			{
-				//今入力したkeyを保存する
-				m_lastPad = 2;
-				//回復する
-				m_nowHp += GetHealRate() * 3;
-				//ランダムにプレイヤーを動かす
-				m_pos.x = GetRand(10) + m_deathPos.x;
-				m_pos.y = GetRand(10) + m_deathPos.y;
-			}
-		}
-		else if (pad & PAD_INPUT_RIGHT)
-		{
-			if (m_lastPad != 3)
-			{
-				//今入力したkeyを保存する
-				m_lastPad = 3;
-				//回復する
-				m_nowHp += GetHealRate() * 3;
-				//ランダムにプレイヤーを動かす
-				m_pos.x = GetRand(10) + m_deathPos.x;
-				m_pos.y = GetRand(10) + m_deathPos.y;
-			}
-		}
-		if (m_nowHp > m_hp)
-		{
-			//現在の体力が最大値よりも大きくならないように
-			m_nowHp = m_hp;
-			//状態をkNormalに変化させる
-			m_nowState = Game::kNormal;
+			/////////////////////////////////////////////////////////////////////////
 		}
 	}
-	//体力が0の時は動けないようにする
+	//体力が0の時以外動くようにする
 	if (m_nowHp > 0 && m_nowState != Game::kDelete)
 	{
 
 
 		m_isMove = false;
-		// 移動量を持つようにする
-		Vec2 move{ 0.0f, 0.0f };	// 引数ありコンストラクタは{}　()でもできるが{}のほうが良い
+
+		m_moveVec.x = 0.0f;
+		m_moveVec.y = 0.0f;
 
 		//ユーザのKey入力を取得
 		if (pad & PAD_INPUT_UP)
 		{
-			move.y--;
+			m_moveVec.y--;
 			m_dirY = -1;
 			m_isMove = true;
 		}
 		else if (pad & PAD_INPUT_DOWN)
 		{
-			move.y++;
+			m_moveVec.y++;
 			m_dirY = 1;
 			m_isMove = true;
 		}
@@ -184,13 +216,13 @@ void Player::Update()
 		}
 		if (pad & PAD_INPUT_LEFT)
 		{
-			move.x--;
+			m_moveVec.x--;
 			m_dirX = -1;
 			m_isMove = true;
 		}
 		else if (pad & PAD_INPUT_RIGHT)
 		{
-			move.x++;
+			m_moveVec.x++;
 			m_dirX = 1;
 			m_isMove = true;
 		}
@@ -203,15 +235,16 @@ void Player::Update()
 		GetDir(m_dirX, m_dirY);
 
 		// 正規化
-		move.Normalize();
+		m_moveVec.Normalize();
 		// 長さの変更
-		move *= m_spd;
+		m_moveVec *= m_spd;
 		// 座標にベクトルを足す
-		m_pos += move;
+		m_pos += m_moveVec;
 		//ノックバック処理
 		if (m_knockBack.x != 0 || m_knockBack.y != 0)
 		{
 			m_knockBackTime++;
+			//一定時間ノックバックしたら
 			if (m_knockBackTime > 5)
 			{
 				m_knockBack *= 0;
@@ -245,6 +278,10 @@ void Player::Update()
 		{
 			m_animFrame = kAnimFrameNum;
 		}
+	}
+	else
+	{
+		DeathMove();
 	}
 	//HPバーの処理//
 	//座標を参考にHpバーの位置を設定
@@ -334,7 +371,7 @@ void Player::HitEnemy(Enemy enemy, bool weak)
 	//聖剣モードに入っているときはダメージ処理を行わない
 	if (!m_pMain->GetSpecialMode())
 	{
-	//弱点に当たっていたら
+		//弱点に当たっていたら
 		if (weak)
 		{
 			float damage = 0;
@@ -366,8 +403,6 @@ void Player::HitEnemy(Enemy enemy, bool weak)
 		m_nowHp = 0;
 		//状態をkDeleteに変化させる
 		m_nowState = Game::kDelete;
-		//倒れた座標を保存する
-		m_deathPos = m_pos;
 	}
 }
 void Player::HitTreasure(TreasureBox* treasureBox)
@@ -414,6 +449,53 @@ void Player::GiveBlood(Princess* princess)
 	if (m_nowBlood < 0)
 	{
 		m_nowBlood = 0;
+	}
+
+}
+
+void Player::DeathMove()
+{
+	//倒れた時に動くベクトル
+	Vec2 deathMoveVec;
+	//ノックバックの移動をゆっくり行う
+	deathMoveVec = m_knockBack * 0.15f;
+	// 座標にベクトルを足す
+	m_pos -= deathMoveVec;
+	//ノックバック処理
+	if (m_knockBack.x != 0 || m_knockBack.y != 0)
+	{
+		m_knockBackTime++;
+		//死亡演出
+		if (m_knockBackTime < 20)
+		{
+			m_dir = Game::kDirDown;
+		}
+		else if (m_knockBackTime < 40)
+		{
+			m_dir = Game::kDirLeft;
+		}
+		else if (m_knockBackTime < 60)
+		{
+			m_dir = Game::kDirUp;
+		}
+		else if (m_knockBackTime < 80)
+		{
+			m_dir = Game::kDirRight;
+		}
+		else
+		{
+			m_dir = Game::kDirUp;
+		}
+		//一定時間ノックバックしたら
+		if (m_knockBackTime > 100)
+		{
+			m_knockBack *= 0;
+			m_knockBackTime = 0;
+			//倒れたフラッグを立てる
+			m_isDeathFlag = true;
+			//倒れた座標を保存する
+			m_deathPos = m_pos;
+		}
 	}
 
 }

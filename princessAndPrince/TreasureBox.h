@@ -3,6 +3,7 @@
 #include"Game.h"
 #include"Vec2.h"
 class SceneMain;
+class Player;
 class TreasureBox
 {
 public:
@@ -21,7 +22,7 @@ public:
 	//宝箱の体力を減らす
 	int GetHp() { return m_hp; }
 	//Playerとぶつかったとき
-	void HitPlayer();
+	void HitPlayer(Player* player);
 	//魔法とぶつかったとき
 	void HitMagic();
 	//自分の場所を返す
@@ -48,5 +49,9 @@ private:
 	int m_colScale;
 	//魔法に当たったときにカウントする変数
 	int m_magicCount;
+	//ノックバックのベクトル
+	Vec2 m_knockBackVec;
+	//ノックバックする時間をカウントする変数
+	int m_knockBackTime;
 };
 

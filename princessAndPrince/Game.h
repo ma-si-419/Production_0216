@@ -21,7 +21,8 @@ namespace Game
 		kDirUp,		 // 上
 		kDirRightUp, // 右上
 		kDirRight,	 // 右
-		kDirRightDown// 右下
+		kDirRightDown,// 右下
+		kDirDeath//死んでいる状態
 	};
 	/*アイテムの種類を保持するenum*/
 	enum ItemKinds

@@ -49,7 +49,7 @@ SceneMain::SceneMain(SceneManager& manager) :
 	Scene(manager),
 	m_isMusicFlag(true),
 	m_enemyPopTimeCount(0),
-	m_clearFlag(false),
+	m_isClearFlag(false),
 	m_bossCount(kBossCount),
 	m_killBossCount(0),
 	m_clearTime(0),
@@ -59,7 +59,8 @@ SceneMain::SceneMain(SceneManager& manager) :
 	m_isSpecialMode(false),
 	m_isPause(false),
 	m_isStop(false),
-	m_particleCount(0)
+	m_particleCount(0),
+	m_isEnd(false)
 {
 	//プレイヤーのグラフィックのロード
 	m_playerHandle = LoadGraph("data/image/Monkey.png");
@@ -291,7 +292,7 @@ void SceneMain::Update(Pad& pad)
 					if (IsCollision(m_pPlayer->GetColCircle(), treasure->GetColCircle()))
 					{
 						m_pPlayer->HitTreasure(treasure);
-						treasure->HitPlayer();
+						treasure->HitPlayer(m_pPlayer);
 					}
 					//魔法ととぶつかったら
 					for (auto& magic : m_pMagic)
@@ -356,19 +357,6 @@ void SceneMain::Update(Pad& pad)
 				m_specialGauge = 0;
 			}
 		}
-		//クリア判定
-		if (m_killBossCount >= m_bossCount)
-		{
-			m_clearTime++;
-
-			m_clearFlag = true;
-			if (m_clearTime > kClearTime)
-			{
-				UserData::userGold += m_pPlayer->GetGold();
-				UserData::userExp += m_pPlayer->GetExp();
-				m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
-			}
-		}
 	}
 	//ポーズ中の処理
 	else if (m_isPause)
@@ -378,6 +366,34 @@ void SceneMain::Update(Pad& pad)
 			m_isPause = false;
 		}
 	}
+	///////////////////////////////////////////////////////////////////////////////
+	//クリア判定
+	if (m_killBossCount >= m_bossCount)
+	{
+		m_clearTime++;
+
+		if (m_clearTime > kClearTime)
+		{
+			m_isClearFlag = true;
+			m_isStop = true;
+			m_clearTime = 0;
+			if (m_isEnd)
+			{
+				for (int i = 0; m_pPlayer->GetExp() != 0; i++)
+				{
+					m_pPlayer->SubExp();
+					UserData::userExp++;
+				}
+				for (int i = 0; m_pPlayer->GetGold() != 0; i++)
+				{
+					m_pPlayer->SubGold();
+					UserData::userGold++;
+				}
+				m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+			}
+		}
+	}
+	///////////////////////////////////////////////////////////////////////////////
 }
 
 void SceneMain::Draw()
@@ -451,15 +467,9 @@ void SceneMain::Draw()
 	m_pPrincess->Draw();
 	m_pUi->Draw();
 	//クリアしたら
-	if (m_clearFlag)
+	if (m_isClearFlag)
 	{
-		int stringWidth = GetDrawStringWidth("ゲームクリア", -1);
-		DrawString((Game::kPlayScreenWidth - stringWidth) / 2, 200, "ゲームクリア", GetColor(0, 0, 0));
-		DrawString(300, 500, "獲得経験値", GetColor(0, 0, 0));
-		DrawString(300, 600, "獲得ゴールド", GetColor(0, 0, 0));
-		DrawFormatString(600, 500, GetColor(0, 0, 0), "%d", m_pPlayer->GetGold());
-		DrawFormatString(600, 600, GetColor(0, 0, 0), "%d", m_pPlayer->GetExp());
-
+		m_pUi->SceneClearUI();
 	}
 }
 

@@ -5,6 +5,7 @@
 #include "Gold.h"
 #include "Portion.h"
 #include "SceneMain.h"
+#include "Player.h"
 namespace
 {
 	//落とす血の量
@@ -17,13 +18,16 @@ namespace
 	constexpr int kHalfGraphSize = 20;
 	//魔法にヒットするインターバル
 	constexpr int kHitMagicInterval = 30;
+	//ノックバックの大きさ
+	constexpr int kKnockBackScale = 4;
 }
 TreasureBox::TreasureBox(SceneMain* sceneMain) :
 	m_pMain(sceneMain),
 	m_hp(GetRand(2) + 3),
 	m_colScale(25),
 	m_handle(-1),
-	m_isExist(true)
+	m_isExist(true),
+	m_knockBackVec()
 {
 }
 
@@ -62,8 +66,21 @@ void TreasureBox::Update()
 {
 	if (m_nowState != Game::kDelete)
 	{
-
-
+		m_pos -= m_knockBackVec;
+		//ノックバック処理
+		if (m_knockBackVec.x != 0 || m_knockBackVec.y != 0)
+		{
+			//ノックバックする時間カウント
+			m_knockBackTime++;
+			//規定の時間を過ぎたら
+			if (m_knockBackTime > 5)
+			{
+				//ノックバックの大きさを0にする
+				m_knockBackVec *= 0;
+				//時間カウントを0にする
+				m_knockBackTime = 0;
+			}
+		}
 		m_circleCol.SetCenter(m_pos, m_colScale);
 		if (m_hp < 0)
 		{
@@ -149,10 +166,13 @@ void TreasureBox::Draw()
 #endif
 }
 
-void TreasureBox::HitPlayer()
+void TreasureBox::HitPlayer(Player* player)
 {
 	m_hp--;
 	//ノックバック処理を入れる
+	m_knockBackVec = player->GetPos() - m_pos;
+	m_knockBackVec.Normalize();
+	m_knockBackVec *= kKnockBackScale;
 }
 
 void TreasureBox::HitMagic()

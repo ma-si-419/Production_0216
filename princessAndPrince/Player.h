@@ -33,14 +33,20 @@ public:
 	bool GetDeathFlag() { return m_isDeathFlag; }
 	//持っているゴールドの量を取得する
 	int GetGold() { return m_gold; }
+	//持っているゴールドを減らす
+	void SubGold() { m_gold--; }
 	//持っている経験値の量を取得する
 	int GetExp() { return m_exp; }
+	//持っている経験値を減らす
+	void SubExp() { m_exp--; }
 	//防御力を取得する
 	float GetDef() { return m_def; }
 	//アイテムを取得した時の処理
 	void PickUpItem(std::shared_ptr<ItemBase> item);
 	//持っている血を渡す関数
 	void GiveBlood(Princess* princess);
+	//死んだときの処理を作成する
+	void DeathMove();
 
 private:
 	//シーンメインのポインタを入れる
@@ -51,6 +57,8 @@ private:
 	Vec2 m_hpBarPos;
 	//血の量を表すバーの位置
 	Vec2 m_bloodBarPos;
+	//移動ベクトル
+	Vec2 m_moveVec;
 	//Hpバーの長さ
 	float m_hpBarWidth;
 	//現在のHPの量
@@ -71,4 +79,6 @@ private:
 	int m_gold;
 	//入手した経験値を保存する
 	int m_exp;
+	//復活する時間をカウントする変数
+	int m_revivalCount;
 };

@@ -16,6 +16,9 @@ public:
 	void Update();
 	//描画処理
 	void Draw();
+	//シーンクリア時に行うUI表示
+	void SceneClearUI();
+	bool IsEnd() { return m_isClearUIEnd; };
 private:
 	//プレイヤーのポインタを保存する
 	Player* m_pPlayer;
@@ -23,5 +26,7 @@ private:
 	Princess* m_pPrincess;
 	//シーンメインのポインタを保存する
 	SceneMain* m_pMain;
+	//クリアのUIを表示したかどうかを表す
+	bool m_isClearUIEnd;
 };
 
