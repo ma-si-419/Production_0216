@@ -44,8 +44,10 @@ namespace
 	constexpr float kMaxSpecialGauge = 100.0f;
 	//パーティクルが出てくる間隔
 	constexpr int kParticleInterval = 5;
+	//ポーズ画面の項目数
+	constexpr int kMaxPauseNum = 1;
 }
-SceneMain::SceneMain(SceneManager& manager) :
+SceneMain::SceneMain(SceneManager& manager, int stageNum) :
 	Scene(manager),
 	m_isMusicFlag(true),
 	m_enemyPopTimeCount(0),
@@ -60,7 +62,8 @@ SceneMain::SceneMain(SceneManager& manager) :
 	m_isPause(false),
 	m_isStop(false),
 	m_particleCount(0),
-	m_isEnd(false)
+	m_isEnd(false),
+	m_pauseSelectNum(0)
 {
 	//プレイヤーのグラフィックのロード
 	m_playerHandle = LoadGraph("data/image/Monkey.png");
@@ -361,10 +364,51 @@ void SceneMain::Update(Pad& pad)
 	//ポーズ中の処理
 	else if (m_isPause)
 	{
+		//Bボタンを押したらメインシーンに戻る
 		if (m_input.Buttons[XINPUT_BUTTON_B])
 		{
 			m_isPause = false;
 		}
+		//Aボタンを押したら選択している項目に応じて処理を行う
+		if (m_input.Buttons[XINPUT_BUTTON_A])
+		{
+			switch (m_pauseSelectNum)
+			{
+			case 0:
+				m_isPause = false;
+				break;
+			case 1:
+				m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+				break;
+
+			}
+		}
+		//上キーが押されたら
+		if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] && !m_isSelectKeyDown)
+		{
+			m_pauseSelectNum--;
+			if (m_pauseSelectNum < 0)
+			{
+				m_pauseSelectNum = kMaxPauseNum;
+			}
+			m_isSelectKeyDown = true;
+		}
+		//下キーが入力されたら
+		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] && !m_isSelectKeyDown)
+		{
+			m_pauseSelectNum++;
+			if (m_pauseSelectNum > kMaxPauseNum)
+			{
+				m_pauseSelectNum = 0;
+			}
+			m_isSelectKeyDown = true;
+		}
+		//上キーと下キーが離されたら
+		else if (!m_input.Buttons[XINPUT_BUTTON_DPAD_UP] && !m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN])
+		{
+			m_isSelectKeyDown = false;
+		}
+
 	}
 	///////////////////////////////////////////////////////////////////////////////
 	//クリア判定
@@ -470,6 +514,30 @@ void SceneMain::Draw()
 	if (m_isClearFlag)
 	{
 		m_pUi->SceneClearUI();
+	}
+	//ポーズ画面を開いていたら
+	if (m_isPause)
+	{
+		int stringWidth = GetDrawStringWidth("つづける", 0);
+		DrawString(Game::kPlayScreenWidth / 2 - stringWidth, 700,
+			"つづける", GetColor(0, 0, 0));
+		stringWidth = GetDrawStringWidth("やめる", 0);
+		DrawString(Game::kPlayScreenWidth / 2 - stringWidth, 800,
+			"やめる", GetColor(0, 0, 0));
+		switch (m_pauseSelectNum)
+		{
+		case 0:
+			stringWidth = GetDrawStringWidth("つづける", 0);
+			DrawString(Game::kPlayScreenWidth / 2 - stringWidth, 700,
+				"つづける", GetColor(255, 0, 0));
+			break;
+		case 1:
+			stringWidth = GetDrawStringWidth("やめる", 0);
+			DrawString(Game::kPlayScreenWidth / 2 - stringWidth, 800,
+				"やめる", GetColor(255, 0, 0));
+			break;
+
+		}
 	}
 }
 

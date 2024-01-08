@@ -18,7 +18,7 @@ namespace
 SceneShop::SceneShop(SceneManager& manager) :
 	Scene(manager),
 	m_isKeyDown(false),
-	m_selectNum(0),
+	m_stageSelectNum(0),
 	m_isSelectKeyDown(false),
 	m_loopCount(0),
 	m_isAKeyDown(false)
@@ -60,20 +60,20 @@ void SceneShop::Update(Pad& pad)
 	//上キーが押されたら
 	if (m_input.Buttons[0] && !m_isSelectKeyDown)
 	{
-		m_selectNum--;
-		if (m_selectNum < 0)
+		m_stageSelectNum--;
+		if (m_stageSelectNum < 0)
 		{
-			m_selectNum = kMaxItemNum;
+			m_stageSelectNum = kMaxItemNum;
 		}
 		m_isSelectKeyDown = true;
 	}
 	//下キーが入力されたら
 	else if (m_input.Buttons[1] && !m_isSelectKeyDown)
 	{
-		m_selectNum++;
-		if (m_selectNum > kMaxItemNum)
+		m_stageSelectNum++;
+		if (m_stageSelectNum > kMaxItemNum)
 		{
-			m_selectNum = 0;
+			m_stageSelectNum = 0;
 		}
 		m_isSelectKeyDown = true;
 	}
@@ -90,7 +90,7 @@ void SceneShop::Update(Pad& pad)
 	//Aボタンが押されたら
 	if (m_input.Buttons[12] && m_isAKeyDown)
 	{
-		switch (m_selectNum)
+		switch (m_stageSelectNum)
 		{
 		case 0:
 			if (UserData::userAtkLevel < kMaxLevel)
@@ -221,7 +221,7 @@ void SceneShop::Draw()
 	{
 		DrawFormatString(500, 500, GetColor(255, 255, 255), "%d", m_princessItemPriceList[UserData::userWindLevel]);
 	}
-	switch (m_selectNum)
+	switch (m_stageSelectNum)
 	{
 	case 0:
 		DrawString(200, 100, "攻撃力", GetColor(255, 0, 0), true);

@@ -17,7 +17,7 @@ public:
 	void Update(Pad& pad);
 	void Draw();
 	//今選択している項目を保存する
-	int m_selectNum;
+	int m_stageSelectNum;
 	//連続でキーが押されてないように
 	bool m_isKeyDown;
 	//カーソルが連続で移動しないように

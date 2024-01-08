@@ -23,7 +23,7 @@ struct popEnemy
 class SceneMain : public Scene
 {
 public:
-	SceneMain(SceneManager& manager);
+	SceneMain(SceneManager& manager,int stageNum);
 	virtual ~SceneMain();
 
 	void Init();
@@ -55,6 +55,8 @@ public:
 	float GetSpecialGaugeRate() { return 100 / m_specialGauge; }
 	//聖剣モードを発動しているかどうかを返す
 	bool GetSpecialMode() { return m_isSpecialMode; }
+	//ポーズ画面かどうかを取得する
+	bool GetPause() { return m_isPause; }
 	//シーンが終わったタイミング
 	void SetEnd() { m_isEnd = true; }
 private:
@@ -112,4 +114,8 @@ private:
 	bool m_isStop;
 	//画面移動のタイミング
 	bool m_isEnd;
+	//ポーズ画面で選択している項目を保存する
+	int m_pauseSelectNum;
+	//連続で上下入力がされないように
+	bool m_isSelectKeyDown;
 };

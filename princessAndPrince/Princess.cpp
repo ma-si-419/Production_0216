@@ -51,7 +51,7 @@ namespace
 	//ベースの攻撃力
 	constexpr float kBaseAtk = 1.0f;
 	//揺れる大きさ
-	constexpr int kShakeWidth = 3;
+	constexpr int kShakeWidth = 2;
 	//揺れる時間
 	constexpr int kShakeTime = 15;
 	//揺れるスピード
@@ -227,6 +227,11 @@ void Princess::Update()
 	else
 	{
 		m_pos = m_basePos;
+	}
+	//ポーズから戻ったときに魔法が切り替わらないように
+	if (m_pMain->GetPause())
+	{
+		m_isLastKeyFlag = true;
 	}
 }
 
