@@ -194,6 +194,12 @@ void TreasureBox::HitPlayer(Player* player)
 void TreasureBox::HitMagic()
 {
 	m_nowState = Game::kHitMagic;
+	//白いエフェクトを出す
+	for (int i = 0; i < kParticleVol; i++)
+	{
+		m_pParticle = new Particle(m_pos, 40.0f, 4.0f, 5, 0);
+		m_pMain->AddParticle(m_pParticle);
+	}
 	m_hp--;
 	if (m_hp < 0)
 	{
@@ -222,6 +228,7 @@ void TreasureBox::HitMagic()
 					= std::make_shared<Exp>();
 				//経験値の初期化処理
 				pExp->Init(m_pos);
+				pExp->SetExp(5);
 				//経験値を落とす処理
 				m_pMain->AddItem(pExp);
 			}
@@ -235,6 +242,8 @@ void TreasureBox::HitMagic()
 					= std::make_shared<Gold>();
 				//お金の初期化処理
 				pGold->Init(m_pos);
+				pGold->SetPrice(5);
+
 				//お金を落とす処理
 				m_pMain->AddItem(pGold);
 			}

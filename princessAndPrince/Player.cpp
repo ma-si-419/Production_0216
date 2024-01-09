@@ -159,7 +159,7 @@ void Player::Update()
 		if (m_nowHp >= m_hp)
 		{
 			/////////////////////////////////////////////////////////////////////////
-		    //現在の体力が最大値よりも大きくならないように
+			//現在の体力が最大値よりも大きくならないように
 			m_nowHp = m_hp;
 			//アニメーションを動かすかどうか
 			bool isAnimEnd = false;
@@ -180,6 +180,8 @@ void Player::Update()
 			{
 				//状態をkNormalに変化させる
 				m_nowState = Game::kNormal;
+				//向いている向きを下向きにする
+				m_dir = Game::kDirDown;
 				//死んだフラッグをfalseにする
 				m_isDeathFlag = false;
 				m_revivalCount = 0;
@@ -253,16 +255,6 @@ void Player::Update()
 		}
 		//現在のポジションにノックバックの力を加える
 		m_pos -= m_knockBack;
-		// 縦軸の移動制限
-		if (m_pos.y < kGraphHalfHeight * kCharcterScale)
-			m_pos.y = kGraphHalfHeight * kCharcterScale;
-		else if (Game::kPlayScreenHeight - (kGraphHalfHeight * kCharcterScale) < m_pos.y)
-			m_pos.y = Game::kPlayScreenHeight - (kGraphHalfHeight * kCharcterScale);
-		// 横軸の移動制限
-		if (m_pos.x < kGraphHalfWidth * kCharcterScale)
-			m_pos.x = kGraphHalfWidth * kCharcterScale;
-		else if (Game::kPlayScreenWidth - (kGraphHalfWidth * kCharcterScale) < m_pos.x)
-			m_pos.x = Game::kPlayScreenWidth - (kGraphHalfWidth * kCharcterScale);
 
 		// 当たり判定の更新
 		m_circleCol.SetCenter(m_pos, m_radius);
@@ -283,6 +275,16 @@ void Player::Update()
 	{
 		DeathMove();
 	}
+	// 縦軸の移動制限
+	if (m_pos.y < kGraphHalfHeight * kCharcterScale)
+		m_pos.y = kGraphHalfHeight * kCharcterScale;
+	else if (Game::kPlayScreenHeight - (kGraphHalfHeight * kCharcterScale) < m_pos.y)
+		m_pos.y = Game::kPlayScreenHeight - (kGraphHalfHeight * kCharcterScale);
+	// 横軸の移動制限
+	if (m_pos.x < kGraphHalfWidth * kCharcterScale)
+		m_pos.x = kGraphHalfWidth * kCharcterScale;
+	else if (Game::kPlayScreenWidth - (kGraphHalfWidth * kCharcterScale) < m_pos.x)
+		m_pos.x = Game::kPlayScreenWidth - (kGraphHalfWidth * kCharcterScale);
 	//HPバーの処理//
 	//座標を参考にHpバーの位置を設定
 	m_hpBarPos.x = m_pos.x - kMaxBarWidth / 2;
@@ -420,11 +422,13 @@ void Player::PickUpItem(std::shared_ptr<ItemBase> item)
 		break;
 	case Game::kExp:
 		//持っている経験値量を増やす
-		m_exp += item->GetExp();
+		item->m_nowState = Game::kNone;
+		item->MoveItem(this);
 		break;
 	case Game::kGold:
 		//持っているお金を増やす
-		m_gold += item->GetPrice();
+		item->m_nowState = Game::kNone;
+		item->MoveItem(this);
 		break;
 	case Game::kBlood:
 		//プレイヤーの持つ血の量を増やす
@@ -433,10 +437,12 @@ void Player::PickUpItem(std::shared_ptr<ItemBase> item)
 		{
 			m_nowBlood++;
 		}
+		item->m_nowState = Game::kDelete;
 		break;
 	case Game::kPortion:
 		//プレイヤーの体力を全回復させる
 		m_nowHp = m_hp;
+		item->m_nowState = Game::kDelete;
 	}
 }
 
@@ -469,6 +475,7 @@ void Player::DeathMove()
 		if (m_knockBackTime < 20)
 		{
 			m_dir = Game::kDirDown;
+			m_animFrame = 0;
 		}
 		else if (m_knockBackTime < 40)
 		{
@@ -484,7 +491,7 @@ void Player::DeathMove()
 		}
 		else
 		{
-			m_dir = Game::kDirUp;
+			m_dir = Game::kDirDeath;
 		}
 		//一定時間ノックバックしたら
 		if (m_knockBackTime > 100)

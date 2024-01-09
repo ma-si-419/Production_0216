@@ -31,15 +31,15 @@ void UI::Update()
 
 void UI::Draw()
 {
-	//背景表示
+	//UIの背景(右側)表示
 	DrawBox(960, 0, Game::kScreenWidth, Game::kPlayScreenHeight, GetColor(100, 100, 100), true);
-	//入手したゴールドの量をプレイヤーから取得して表示する
-	DrawFormatString(Game::kScreenWidth - 300, 0,//座標
-		GetColor(0, 0, 0), "取得ゴールド%d", m_pPlayer->GetGold());
-
 	//入手した経験値の量をプレイヤーから取得して表示する	
 	DrawFormatString(Game::kScreenWidth - 300, 100,//座標
 		GetColor(0, 0, 0), "取得経験値%d", m_pPlayer->GetExp());
+
+	//入手したゴールドの量をプレイヤーから取得して表示する
+	DrawFormatString(Game::kScreenWidth - 300, 200,//座標
+		GetColor(0, 0, 0), "取得ゴールド%d", m_pPlayer->GetGold());
 
 	//攻撃力のレベルを表示する
 	DrawFormatString(Game::kScreenWidth - 200, 300,//座標

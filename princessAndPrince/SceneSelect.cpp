@@ -188,13 +188,13 @@ void SceneSelect::Draw()
 	if (m_isStatus)
 	{
 		DrawBox(400, 400, 800, 800, GetColor(255, 255, 255), true);
-		DrawFormatString(500, 450, GetColor(0, 0, 0), "ゴールド %d", UserData::userGold);
-		DrawFormatString(500, 500, GetColor(0, 0, 0), "けいけん %d", UserData::userExp);
-		DrawFormatString(500, 550, GetColor(0, 0, 0), "こうげき %dLv", UserData::userAtkLevel + 1);
-		DrawFormatString(500, 600, GetColor(0, 0, 0), "ぼうぎょ %dLv", UserData::userDefLevel + 1);
-		DrawFormatString(500, 650, GetColor(0, 0, 0), "い ど う %dLv", UserData::userSpdLevel + 1);
-		DrawFormatString(500, 700, GetColor(0, 0, 0), "ファイア %dLv", UserData::userFireLevel + 1);
-		DrawFormatString(500, 750, GetColor(0, 0, 0), "ウィンド %dLv", UserData::userWindLevel + 1);
+		DrawFormatString(500, 450, GetColor(0, 0, 0), "ゴールド   %d", UserData::userGold);
+		DrawFormatString(500, 500, GetColor(0, 0, 0), "けいけん   %d", UserData::userExp);
+		DrawFormatString(500, 550, GetColor(0, 0, 0), "こうげきLv %d", UserData::userAtkLevel + 1);
+		DrawFormatString(500, 600, GetColor(0, 0, 0), "ぼうぎょLv %d", UserData::userDefLevel + 1);
+		DrawFormatString(500, 650, GetColor(0, 0, 0), "い ど うLv %d", UserData::userSpdLevel + 1);
+		DrawFormatString(500, 700, GetColor(0, 0, 0), "ファイアLv %d", UserData::userFireLevel + 1);
+		DrawFormatString(500, 750, GetColor(0, 0, 0), "ウィンドLv %d", UserData::userWindLevel + 1);
 
 	}
 

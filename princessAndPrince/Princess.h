@@ -6,6 +6,7 @@
 class Enemy;
 class SceneMain;
 class MagicBase;
+class Particle;
 class Princess : public Character
 {
 public:
@@ -38,6 +39,8 @@ public:
 private:
 	//メインシーンのポインタを保存する変数
 	SceneMain* m_pMain;
+	//パーティクルのポインタ
+	Particle* m_pParticle;
 	//Hpバーの位置
 	Vec2 m_hpBarPos;
 	//血の量バーのいち
@@ -78,5 +81,7 @@ private:
 	Vec2 m_basePos;
 	//揺れるスピード
 	float m_shakeSpeed;
+	//エネミーとの衝突点
+	Vec2 m_hitPos;
 };
 

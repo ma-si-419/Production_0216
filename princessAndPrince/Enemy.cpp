@@ -109,8 +109,8 @@ void Enemy::Init(int kinds)
 		m_spd = 0.2f;
 		m_scale = kEnemySize;
 		m_srcY = 0;
-		m_haveGold = 5;
-		m_haveExp = 2;
+		m_haveGold = GetRand(5) + 3;
+		m_haveExp = GetRand(3) + 1;
 		m_kind = goblin;
 		m_isBoss = false;
 	}
@@ -121,8 +121,8 @@ void Enemy::Init(int kinds)
 		m_spd = 0.4f;
 		m_scale = kEnemySize;
 		m_srcY = 1;
-		m_haveGold = 10;
-		m_haveExp = 2;
+		m_haveGold = GetRand(10) + 8;
+		m_haveExp = GetRand(5) + 2;
 		m_kind = boar;
 		m_isBoss = false;
 
@@ -134,9 +134,9 @@ void Enemy::Init(int kinds)
 		m_spd = 0.1f;
 		m_scale = kEnemySize;
 		m_srcY = 2;
+		m_haveGold = GetRand(100) + 50;
+		m_haveExp = GetRand(10) + 5;
 		m_kind = doragon;
-		m_haveGold = 50;
-		m_haveExp = 2;
 		m_isBoss = false;
 
 	}
@@ -148,8 +148,8 @@ void Enemy::Init(int kinds)
 		m_scale = kEnemySize;
 		m_srcY = 3;
 		m_kind = skeleton;
-		m_haveGold = 20;
-		m_haveExp = 2;
+		m_haveGold = GetRand(20) + 20;
+		m_haveExp = GetRand(10) + 3;
 		m_isBoss = false;
 
 	}
@@ -161,8 +161,8 @@ void Enemy::Init(int kinds)
 		m_scale = kEnemySize;
 		m_srcY = 4;
 		m_kind = snowman;
-		m_haveGold = 50;
-		m_haveExp = 2;
+		m_haveGold = GetRand(150) + 50;
+		m_haveExp = GetRand(20) + 10;
 		m_isBoss = false;
 
 	}
@@ -174,8 +174,8 @@ void Enemy::Init(int kinds)
 		m_scale = kBossSize;
 		m_srcY = 0;
 		m_kind = bossGoblin;
-		m_haveGold = 100;
-		m_haveExp = 2;
+		m_haveGold = GetRand(150) + 100;
+		m_haveExp = GetRand(20) + 10;
 		m_isBoss = true;
 	}
 	else if (kinds == static_cast<int>(bossBoar))
@@ -186,8 +186,8 @@ void Enemy::Init(int kinds)
 		m_scale = kBossSize;
 		m_srcY = 1;
 		m_kind = bossBoar;
-		m_haveGold = 150;
-		m_haveExp = 2;
+		m_haveGold = GetRand(150) + 150;
+		m_haveExp = GetRand(30) + 15;
 		m_isBoss = true;
 
 	}
@@ -199,8 +199,8 @@ void Enemy::Init(int kinds)
 		m_scale = kBossSize;
 		m_srcY = 2;
 		m_kind = bossDoragon;
-		m_haveGold = 500;
-		m_haveExp = 2;
+		m_haveGold = GetRand(300) + 500;
+		m_haveExp = GetRand(50) + 50;
 		m_isBoss = true;
 
 	}
@@ -212,8 +212,8 @@ void Enemy::Init(int kinds)
 		m_scale = kBossSize;
 		m_srcY = 3;
 		m_kind = bossSkeleton;
-		m_haveGold = 300;
-		m_haveExp = 2;
+		m_haveGold = GetRand(300) + 300;
+		m_haveExp = GetRand(40) + 40;
 		m_isBoss = true;
 
 	}
@@ -225,8 +225,8 @@ void Enemy::Init(int kinds)
 		m_scale = kBossSize;
 		m_srcY = 4;
 		m_kind = bossSnowman;
-		m_haveGold = 1000;
-		m_haveExp = 2;
+		m_haveGold = GetRand(1000) + 1000;
+		m_haveExp = GetRand(100) + 100;
 		m_isBoss = true;
 
 	}

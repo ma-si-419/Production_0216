@@ -59,6 +59,8 @@ public:
 	bool GetPause() { return m_isPause; }
 	//シーンが終わったタイミング
 	void SetEnd() { m_isResult = true; }
+	//桁数を取得する
+	int GetDigits(int num);
 private:
 	// グラフィックのハンドル
 	int m_playerHandle;

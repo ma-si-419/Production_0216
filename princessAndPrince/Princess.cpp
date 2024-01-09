@@ -6,6 +6,7 @@
 #include "SceneMain.h"
 #include "MagicBase.h"
 #include "UserData.h"
+#include "Particle.h"
 namespace
 {
 	// 移動速度
@@ -56,6 +57,8 @@ namespace
 	constexpr int kShakeTime = 15;
 	//揺れるスピード
 	constexpr float kshakeSpeed = 2.0f;
+	//パーティクルの数
+	constexpr int kParticleVol = 30;
 }
 Princess::Princess(SceneMain* pMain) :
 	m_hpBarWidth(0),
@@ -295,6 +298,14 @@ void Princess::HitEnemy(Enemy& enemy)
 	knockBack = m_pos - enemy.GetPos();
 	knockBack.Normalize();
 	knockBack *= kKnockBackScale;
+	//衝突点の座標
+	m_hitPos = (enemy.GetPos() + m_pos) / 2;
+	//白いエフェクトを出す
+	for (int i = 0; i < kParticleVol; i++)
+	{
+		m_pParticle = new Particle(m_hitPos, 40.0f, 4.0f, 5, 0);
+		m_pMain->AddParticle(m_pParticle);
+	}
 	m_nowHp -= enemy.GetAtk() - m_def;
 	if (m_nowHp <= 0)
 	{

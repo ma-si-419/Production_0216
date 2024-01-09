@@ -39,6 +39,7 @@ namespace Game
 		kNormal,//基本的な状態
 		kHitPlayer,//ぶつかった状態(めり込んでぶつかり、処理が複数行われないため)
 		kHitMagic,//魔法にぶつかったときの状態
-		kDelete//死んでいる状態
+		kDelete,//死んでいる状態
+		kNone,//何もない状態
 	};
 }

@@ -2,6 +2,7 @@
 #include"CircleCol.h"
 #include"Game.h"
 #include"Vec2.h"
+class Player;
 class ItemBase
 {
 public:
@@ -32,10 +33,16 @@ public:
 	void SetPrice(int gold) { m_haveGold = gold; }
 	//経験値の量を設定する
 	void SetExp(int exp) { m_haveExp = exp; }
+	//お金と経験値を取得した時は画面右上まで移動させる
+	void MoveItem(Player* player);
 
 protected:
 	//表示位置
 	Vec2 m_pos;
+	//動くベクトル
+	Vec2 m_moveVec;
+	//プレイヤーのポインタ
+	Player* m_pPlayer;
 	//グラフィックハンドル
 	int m_handle;
 	//当たり判定

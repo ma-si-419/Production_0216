@@ -59,7 +59,7 @@ SceneMain::SceneMain(SceneManager& manager, int stageNum) :
 	m_clearTime(0),
 	m_nextEnemyKind(0),
 	m_nextEnemyPopTime(0),
-	m_specialGauge(0.1f),
+	m_specialGauge(99.1f),
 	m_isSpecialMode(false),
 	m_isPause(false),
 	m_isStop(false),
@@ -277,13 +277,14 @@ void SceneMain::Update(Pad& pad)
 			if (item)
 			{
 				//アイテムが存在している場合
-				if (item->m_nowState == Game::kNormal)
+				if (item->m_nowState != Game::kDelete)
 				{
 					item->Update();
-					if (IsCollision(m_pPlayer->GetColCircle(), item->GetColCircle()))
+					//アイテムとプレイヤーが接触し、アイテムの状態がkNoneじゃなかったら
+					if (IsCollision(m_pPlayer->GetColCircle(), item->GetColCircle()) &&
+						item->m_nowState != Game::kNone)
 					{
 						m_pPlayer->PickUpItem(item);
-						item->m_nowState = Game::kDelete;
 					}
 				}
 			}
@@ -309,7 +310,6 @@ void SceneMain::Update(Pad& pad)
 					{
 						if (magic &&//magicがnullじゃなかったら
 							IsCollision(magic->GetCircleCol(), treasure->GetColCircle()) &&
-							treasure->m_nowState != Game::kDelete &&
 							treasure->m_nowState != Game::kHitMagic)
 						{
 							treasure->HitMagic();
@@ -432,14 +432,16 @@ void SceneMain::Update(Pad& pad)
 			m_isStop = true;
 			if (m_isResult)
 			{
+				int temp;
 				m_startLoopTimeCount++;
 				//経験値が0になるまでまわす
 				if (m_pPlayer->GetExp() != 0 && m_isExpLoop &&
 					m_startLoopTimeCount > kStartLoopTime)//ループが始まるまで少し時間をとる
 				{
-					m_pPlayer->SubExp();
-					UserData::userExp++;
-
+					//減らす量を決める
+					temp = GetDigits(m_pPlayer->GetExp());
+					m_pPlayer->SubExp(temp);
+					UserData::userExp += temp;
 				}
 				else if (m_pPlayer->GetExp() == 0 && m_isExpLoop)
 				{
@@ -452,8 +454,10 @@ void SceneMain::Update(Pad& pad)
 				if (m_pPlayer->GetGold() != 0 && m_isGoldLoop &&
 					m_startLoopTimeCount > kStartLoopTime)
 				{
-					m_pPlayer->SubGold();
-					UserData::userGold++;
+					//減らす量を決める
+					temp = GetDigits(m_pPlayer->GetGold());
+					m_pPlayer->SubGold(temp);
+					UserData::userGold += temp;
 				}
 				else if (m_pPlayer->GetGold() == 0 && m_isGoldLoop)
 				{
@@ -480,16 +484,6 @@ void SceneMain::Draw()
 		DrawBox(0, 0, Game::kPlayScreenWidth, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
 	}
 
-	for (auto& item : m_pItem)
-	{
-		if (item)
-		{
-			if (item->m_nowState == Game::kNormal)
-			{
-				item->Draw();
-			}
-		}
-	}
 	for (auto& magic : m_pMagic)
 	{
 		//magicがnullじゃない場合
@@ -503,20 +497,29 @@ void SceneMain::Draw()
 			}
 		}
 	}
-
+	for (auto& item : m_pItem)
+	{
+		if (item)
+		{
+			if (item->m_nowState != Game::kDelete && 
+				item->m_nowState != Game::kNone)
+			{
+				item->Draw();
+			}
+		}
+	}
 	for (auto& treasure : m_pTreasure)
 	{
 		//treasureがnullじゃない場合
 		if (treasure)
 		{
 			//アイテムが存在している場合
-			if (treasure->m_nowState == Game::kNormal)
+			if (treasure->m_nowState != Game::kDelete)
 			{
 				treasure->Draw();
 			}
 		}
 	}
-	m_pPlayer->Draw();
 	for (const auto& enemy : m_pEnemy)
 	{
 		if (enemy)
@@ -525,6 +528,7 @@ void SceneMain::Draw()
 
 		}
 	}
+	m_pPlayer->Draw();
 	for (auto& particle : m_pParticleArray)
 	{
 		//particleがnullじゃない場合
@@ -539,6 +543,16 @@ void SceneMain::Draw()
 	}
 	m_pPrincess->Draw();
 	m_pUi->Draw();
+	for (auto& item : m_pItem)
+	{
+		if (item)
+		{
+			if (item->m_nowState == Game::kNone)
+			{
+				item->Draw();
+			}
+		}
+	}
 	//クリアしたら
 	if (m_isClearFlag)
 	{
@@ -619,6 +633,34 @@ void SceneMain::AddSpecialGauge(float gauge)
 	{
 		//現在の値を限界値にする
 		m_specialGauge = kMaxSpecialGauge;
+	}
+}
+
+int SceneMain::GetDigits(int num)
+{
+	if (num >= 10000)
+	{
+		return 10000;
+	}
+	else if (num >= 1000)
+	{
+		return 1000;
+	}
+	else if (num >= 100)
+	{
+		return 100;
+	}
+	else if (num >= 10)
+	{
+		return 10;
+	}
+	else if (num >= 1)
+	{
+		return 1;
+	}
+	else if (num <= 0)
+	{
+		return 0;
 	}
 }
 

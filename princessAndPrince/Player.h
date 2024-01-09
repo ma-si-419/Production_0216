@@ -34,15 +34,19 @@ public:
 	//持っているゴールドの量を取得する
 	int GetGold() { return m_gold; }
 	//持っているゴールドを減らす
-	void SubGold() { m_gold--; }
+	void SubGold(int subNum) { m_gold -= subNum; }
 	//持っている経験値の量を取得する
 	int GetExp() { return m_exp; }
 	//持っている経験値を減らす
-	void SubExp() { m_exp--; }
+	void SubExp(int subNum) { m_exp-= subNum; }
 	//防御力を取得する
 	float GetDef() { return m_def; }
 	//アイテムを取得した時の処理
 	void PickUpItem(std::shared_ptr<ItemBase> item);
+	//経験値を増やす関数
+	void PickUpExp(int exp) { m_exp += exp; }
+	//ゴールドを増やす関数
+	void PickUpGold(int gold) { m_gold += gold; }
 	//持っている血を渡す関数
 	void GiveBlood(Princess* princess);
 	//死んだときの処理を作成する
