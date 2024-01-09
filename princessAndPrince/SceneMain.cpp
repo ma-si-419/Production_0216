@@ -46,6 +46,8 @@ namespace
 	constexpr int kParticleInterval = 5;
 	//ポーズ画面の項目数
 	constexpr int kMaxPauseNum = 1;
+	//クリア時のループが始まるまでの時間
+	constexpr int kStartLoopTime = 30;
 }
 SceneMain::SceneMain(SceneManager& manager, int stageNum) :
 	Scene(manager),
@@ -62,8 +64,12 @@ SceneMain::SceneMain(SceneManager& manager, int stageNum) :
 	m_isPause(false),
 	m_isStop(false),
 	m_particleCount(0),
+	m_isResult(false),
+	m_pauseSelectNum(0),
+	m_isExpLoop(true),
+	m_isGoldLoop(false),
 	m_isEnd(false),
-	m_pauseSelectNum(0)
+	m_startLoopTimeCount(0)
 {
 	//プレイヤーのグラフィックのロード
 	m_playerHandle = LoadGraph("data/image/Monkey.png");
@@ -282,9 +288,10 @@ void SceneMain::Update(Pad& pad)
 				}
 			}
 		}
+		//宝箱
 		for (auto& treasure : m_pTreasure)
 		{
-			//itemがnullじゃない場合
+			//treasureがnullじゃない場合
 			if (treasure)
 			{
 				//アイテムが存在している場合
@@ -301,10 +308,11 @@ void SceneMain::Update(Pad& pad)
 					for (auto& magic : m_pMagic)
 					{
 						if (magic &&//magicがnullじゃなかったら
-							IsCollision(magic->GetCircleCol(), treasure->GetColCircle()))
+							IsCollision(magic->GetCircleCol(), treasure->GetColCircle()) &&
+							treasure->m_nowState != Game::kDelete &&
+							treasure->m_nowState != Game::kHitMagic)
 						{
 							treasure->HitMagic();
-							treasure->m_nowState = Game::kHitMagic;
 						}
 					}
 
@@ -315,6 +323,7 @@ void SceneMain::Update(Pad& pad)
 				}
 			}
 		}
+		//パーティクル
 		for (auto& particle : m_pParticleArray)
 		{
 			//itemがnullじゃない場合
@@ -418,22 +427,42 @@ void SceneMain::Update(Pad& pad)
 
 		if (m_clearTime > kClearTime)
 		{
+			m_isSpecialMode = false;
 			m_isClearFlag = true;
 			m_isStop = true;
-			m_clearTime = 0;
-			if (m_isEnd)
+			if (m_isResult)
 			{
-				for (int i = 0; m_pPlayer->GetExp() != 0; i++)
+				m_startLoopTimeCount++;
+				//経験値が0になるまでまわす
+				if (m_pPlayer->GetExp() != 0 && m_isExpLoop &&
+					m_startLoopTimeCount > kStartLoopTime)//ループが始まるまで少し時間をとる
 				{
 					m_pPlayer->SubExp();
 					UserData::userExp++;
+
 				}
-				for (int i = 0; m_pPlayer->GetGold() != 0; i++)
+				else if (m_pPlayer->GetExp() == 0 && m_isExpLoop)
+				{
+					//経験値のループが終わったらゴールドのループに行く
+					m_isExpLoop = false;
+					m_isGoldLoop = true;
+					m_startLoopTimeCount = 0;
+				}
+
+				if (m_pPlayer->GetGold() != 0 && m_isGoldLoop &&
+					m_startLoopTimeCount > kStartLoopTime)
 				{
 					m_pPlayer->SubGold();
 					UserData::userGold++;
 				}
-				m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+				else if (m_pPlayer->GetGold() == 0 && m_isGoldLoop)
+				{
+					m_isEnd = true;
+				}
+				if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A])
+				{
+					m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+				}
 			}
 		}
 	}

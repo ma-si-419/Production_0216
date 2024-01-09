@@ -3,7 +3,7 @@
 #include"Player.h"
 namespace
 {
-	constexpr float kColScale = 10.0f;
+	constexpr float kColScale = 40.0f;
 }
 ItemBase::ItemBase() :
 	m_handle(0),

@@ -24,7 +24,7 @@ namespace
 	//ノックバックの大きさ
 	constexpr int kKnockBackScale = 4;
 	//エネミーが宝箱を落とす確率(Max100)
-	constexpr int kDropProb = 30;
+	constexpr int kDropProb = 100;
 	//マジックにヒットするインターバル
 	constexpr int kHitMagicInterval = 30;
 	//プレイヤーにヒットするインターバル

@@ -4,6 +4,7 @@
 #include"Vec2.h"
 class SceneMain;
 class Player;
+class Particle;
 class TreasureBox
 {
 public:
@@ -37,6 +38,10 @@ private:
 	SceneMain* m_pMain;
 	//表示位置
 	Vec2 m_pos;
+	//プレイヤーと衝突した点の座標
+	Vec2 m_hitPos;
+	//パーティクルのポインタ
+	Particle* m_pParticle;
 	//グラフィックハンドル
 	int m_handle;
 	//当たり判定

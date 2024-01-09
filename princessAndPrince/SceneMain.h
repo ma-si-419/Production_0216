@@ -58,7 +58,7 @@ public:
 	//ポーズ画面かどうかを取得する
 	bool GetPause() { return m_isPause; }
 	//シーンが終わったタイミング
-	void SetEnd() { m_isEnd = true; }
+	void SetEnd() { m_isResult = true; }
 private:
 	// グラフィックのハンドル
 	int m_playerHandle;
@@ -112,10 +112,17 @@ private:
 	bool m_isPause;
 	//演出時に画面を止める
 	bool m_isStop;
-	//画面移動のタイミング
+	//リザルトを流すタイミング
+	bool m_isResult;
+	//すべてが終了したフラッグ
 	bool m_isEnd;
 	//ポーズ画面で選択している項目を保存する
 	int m_pauseSelectNum;
 	//連続で上下入力がされないように
 	bool m_isSelectKeyDown;
+	//クリア時の演出に使う変数
+	bool m_isGoldLoop;
+	bool m_isExpLoop;
+	//ループが始まるまでの時間を測る
+	int m_startLoopTimeCount;
 };
