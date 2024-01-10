@@ -47,7 +47,11 @@ namespace
 	//ポーズ画面の項目数
 	constexpr int kMaxPauseNum = 1;
 	//クリア時のループが始まるまでの時間
-	constexpr int kStartLoopTime = 30;
+	constexpr int kStartLoopTime = 60;
+	//出すパーティクルの数
+	constexpr int kParticleVol = 30;
+	//クリア時に止める時間
+	constexpr int kResultTime = 60 + kClearTime;
 }
 SceneMain::SceneMain(SceneManager& manager, int stageNum) :
 	Scene(manager),
@@ -78,7 +82,7 @@ SceneMain::SceneMain(SceneManager& manager, int stageNum) :
 	//プレイヤーのメンバ変数にアクセス
 	m_pPlayer->SetHandle(m_playerHandle);
 	//プリンセスのグラフィックのロード
-	m_princessHandle = LoadGraph("data/image/Monkey.png");
+	m_princessHandle = LoadGraph("data/image/Princess.png");
 	//Princessのコンストラクタ
 	m_pPrincess = new Princess(this);
 	//プリンセスのメンバ変数にアクセス
@@ -187,57 +191,60 @@ void SceneMain::Update(Pad& pad)
 				m_popEnemyList.pop();
 			}
 		}
-		m_pPlayer->Update();
-		m_pPrincess->Update();
-		bool isLeaveFlag = true;
-		//エネミーのアップデート
-		for (auto& enemy : m_pEnemy)
+		//リザルト状態のときは止まるようにする
+		if (!m_isResult)
 		{
-			if (enemy)
+			m_pPlayer->Update();
+			m_pPrincess->Update();
+			//エネミーのアップデート
+			for (auto& enemy : m_pEnemy)
 			{
-				//状態がkDeleteじゃない場合のみ動く
-				if (enemy->m_nowState != Game::kDelete)
+				if (enemy)
 				{
-					enemy->Update();
-					//プレイヤーとエネミーがぶつかったとき
-					if (m_pPlayer->m_nowState != Game::kDelete &&//プレイヤーが死んでいないときに
-						IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&//プレイヤーとエネミーがぶつかったら
-						enemy->m_nowState != Game::kHitPlayer)//エネミーがkDeleteじゃないときのみ
+					//状態がkDeleteじゃない場合のみ動く
+					if (enemy->m_nowState != Game::kDelete)
 					{
-						//エネミーのダメージ処理を行う
-						enemy->HitPlayer(*m_pPlayer, IsCollision(m_pPlayer->GetColCircle(), enemy->GetWeakCircle()));
-						//プレイヤーのダメージ処理を行う
-						m_pPlayer->HitEnemy(*enemy, IsCollision(m_pPlayer->GetColCircle(), enemy->GetWeakCircle()));
-						//スペシャルゲージがマックスじゃなかったらゲージを上昇させる
-						if (!m_isSpecialMode)
+						enemy->Update();
+						//プレイヤーとエネミーがぶつかったとき
+						if (m_pPlayer->m_nowState != Game::kDelete &&//プレイヤーが死んでいないときに
+							IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&//プレイヤーとエネミーがぶつかったら
+							enemy->m_nowState != Game::kHitPlayer)//エネミーがkDeleteじゃないときのみ
 						{
-							//敵の攻撃力に応じてゲージを上昇させる
-							AddSpecialGauge(enemy->GetAtk());
+							//エネミーのダメージ処理を行う
+							enemy->HitPlayer(*m_pPlayer, IsCollision(m_pPlayer->GetColCircle(), enemy->GetWeakCircle()));
+							//プレイヤーのダメージ処理を行う
+							m_pPlayer->HitEnemy(*enemy, IsCollision(m_pPlayer->GetColCircle(), enemy->GetWeakCircle()));
+							//スペシャルゲージがマックスじゃなかったらゲージを上昇させる
+							if (!m_isSpecialMode)
+							{
+								//敵の攻撃力に応じてゲージを上昇させる
+								AddSpecialGauge(enemy->GetAtk());
+							}
+							//エネミーの状態を推移させる
+							enemy->m_nowState = Game::kHitPlayer;
 						}
-						//エネミーの状態を推移させる
-						enemy->m_nowState = Game::kHitPlayer;
-					}
-					//魔女とエネミーがぶつかったとき
-					if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle()))
-					{
-						//魔女のダメージ処理を行う,エネミーのノックバックを行う
-						m_pPrincess->HitEnemy(*enemy);
-						if (!m_isSpecialMode)
+						//魔女とエネミーがぶつかったとき
+						if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle()))
 						{
-							AddSpecialGauge(enemy->GetAtk());
+							//魔女のダメージ処理を行う,エネミーのノックバックを行う
+							m_pPrincess->HitEnemy(*enemy);
+							if (!m_isSpecialMode)
+							{
+								AddSpecialGauge(enemy->GetAtk());
+							}
 						}
-					}
-					for (auto& magic : m_pMagic)
-					{
+						for (auto& magic : m_pMagic)
+						{
 
-						if (magic &&//magicがnullじゃない場合
-							IsCollision(magic->GetCircleCol(), enemy->GetColCircle()) &&//MagicとEnemyがぶつかったら
-							enemy->m_nowState != Game::kHitMagic)//状態がkHitMagicじゃなかったら
-						{
-							//エネミーの状態を変化させる
-							enemy->m_nowState = Game::kHitMagic;
-							//魔法のダメージ処理を行う
-							enemy->HitMagic(magic);
+							if (magic &&//magicがnullじゃない場合
+								IsCollision(magic->GetCircleCol(), enemy->GetColCircle()) &&//MagicとEnemyがぶつかったら
+								enemy->m_nowState != Game::kHitMagic)//状態がkHitMagicじゃなかったら
+							{
+								//エネミーの状態を変化させる
+								enemy->m_nowState = Game::kHitMagic;
+								//魔法のダメージ処理を行う
+								enemy->HitMagic(magic);
+							}
 						}
 					}
 				}
@@ -428,44 +435,72 @@ void SceneMain::Update(Pad& pad)
 		if (m_clearTime > kClearTime)
 		{
 			m_isSpecialMode = false;
-			m_isClearFlag = true;
-			m_isStop = true;
-			if (m_isResult)
+			//プレイヤーのアニメーションを行う
+			if (m_clearTime > kResultTime)
 			{
-				int temp;
-				m_startLoopTimeCount++;
-				//経験値が0になるまでまわす
-				if (m_pPlayer->GetExp() != 0 && m_isExpLoop &&
-					m_startLoopTimeCount > kStartLoopTime)//ループが始まるまで少し時間をとる
-				{
-					//減らす量を決める
-					temp = GetDigits(m_pPlayer->GetExp());
-					m_pPlayer->SubExp(temp);
-					UserData::userExp += temp;
-				}
-				else if (m_pPlayer->GetExp() == 0 && m_isExpLoop)
-				{
-					//経験値のループが終わったらゴールドのループに行く
-					m_isExpLoop = false;
-					m_isGoldLoop = true;
-					m_startLoopTimeCount = 0;
-				}
 
-				if (m_pPlayer->GetGold() != 0 && m_isGoldLoop &&
-					m_startLoopTimeCount > kStartLoopTime)
+				if (!m_isResult)
 				{
-					//減らす量を決める
-					temp = GetDigits(m_pPlayer->GetGold());
-					m_pPlayer->SubGold(temp);
-					UserData::userGold += temp;
+
+					//マップ上にいる敵を消す
+					for (const auto& enemy : m_pEnemy)
+					{
+						if (enemy && enemy->m_nowState != Game::kDelete)
+						{
+							enemy->m_nowState = Game::kDelete;
+							Vec2 temp;
+							//消えるときにエフェクトを出す
+							temp = enemy->GetPos();
+							//白いエフェクトを出す
+							for (int i = 0; i < kParticleVol; i++)
+							{
+								m_pParticle = new Particle(temp, 40.0f, 4.0f, 5, 0);
+								AddParticle(m_pParticle);
+							}
+
+						}
+					}
 				}
-				else if (m_pPlayer->GetGold() == 0 && m_isGoldLoop)
+				//////////////////////
+				m_isClearFlag = true;
+				//////////////////////
+				if (m_isResult)
 				{
-					m_isEnd = true;
-				}
-				if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A])
-				{
-					m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+					int temp;
+					m_startLoopTimeCount++;
+					//経験値が0になるまでまわす
+					if (m_pPlayer->GetExp() != 0 && m_isExpLoop &&
+						m_startLoopTimeCount > kStartLoopTime)//ループが始まるまで少し時間をとる
+					{
+						//減らす量を決める
+						temp = GetDigits(m_pPlayer->GetExp());
+						m_pPlayer->SubExp(temp);
+						UserData::userExp += temp;
+					}
+					else if (m_pPlayer->GetExp() == 0 && m_isExpLoop)
+					{
+						//経験値のループが終わったらゴールドのループに行く
+						m_isExpLoop = false;
+						m_isGoldLoop = true;
+						m_startLoopTimeCount = 0;
+					}
+
+					if (m_pPlayer->GetGold() != 0 && m_isGoldLoop &&
+						m_startLoopTimeCount > kStartLoopTime)
+					{
+						//減らす量を決める
+						temp = GetDigits(m_pPlayer->GetGold());
+						m_pPlayer->SubGold(temp);
+						UserData::userGold += temp;
+					}
+					else if (m_pPlayer->GetGold() == 0 && m_isGoldLoop)
+					{
+						m_isEnd = true;
+					}
+					if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A])
+					{
+						m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+					}
 				}
 			}
 		}
@@ -501,7 +536,7 @@ void SceneMain::Draw()
 	{
 		if (item)
 		{
-			if (item->m_nowState != Game::kDelete && 
+			if (item->m_nowState != Game::kDelete &&
 				item->m_nowState != Game::kNone)
 			{
 				item->Draw();

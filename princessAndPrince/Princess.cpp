@@ -13,8 +13,8 @@ namespace
 	constexpr float kSpeed = 3.0f;
 
 	// キャラクターのサイズ
-	constexpr int kGraphWidth = 16;
-	constexpr int kGraphHeight = 16;
+	constexpr int kGraphWidth = 14;
+	constexpr int kGraphHeight = 20;
 	// 半分のサイズ
 	constexpr float kGraphHalfWidth = kGraphWidth / 2.0f;
 	constexpr float kGraphHalfHeight = kGraphHeight / 2.0f;
