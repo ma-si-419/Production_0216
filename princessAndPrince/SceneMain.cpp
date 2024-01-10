@@ -48,10 +48,14 @@ namespace
 	constexpr int kMaxPauseNum = 1;
 	//クリア時のループが始まるまでの時間
 	constexpr int kStartLoopTime = 60;
+	//クリア時のゴールドのループが始まるまでの時間
+	constexpr int kStartGoldLoopTime = 60 + kStartLoopTime;
 	//出すパーティクルの数
 	constexpr int kParticleVol = 30;
 	//クリア時に止める時間
 	constexpr int kResultTime = 60 + kClearTime;
+	//クリア時の演出の時間
+	constexpr int kDanceTime = 60 + kResultTime;
 }
 SceneMain::SceneMain(SceneManager& manager, int stageNum) :
 	Scene(manager),
@@ -70,9 +74,10 @@ SceneMain::SceneMain(SceneManager& manager, int stageNum) :
 	m_particleCount(0),
 	m_isResult(false),
 	m_pauseSelectNum(0),
-	m_isExpLoop(true),
+	m_isExpLoop(false),
 	m_isGoldLoop(false),
 	m_isEnd(false),
+	m_isClearString(false),
 	m_startLoopTimeCount(0)
 {
 	//プレイヤーのグラフィックのロード
@@ -155,8 +160,12 @@ void SceneMain::Update(Pad& pad)
 
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
-
-	if (!m_isPause && !m_isStop)
+	//デバッグ用
+	if (m_input.Buttons[XINPUT_BUTTON_LEFT_THUMB])
+	{
+		CountKillBoss();
+	}
+	if (!m_isPause)
 	{
 		//ポーズボタンが押されたら
 		if (m_input.Buttons[XINPUT_BUTTON_START])
@@ -177,7 +186,12 @@ void SceneMain::Update(Pad& pad)
 		//エネミーのスタックがなくなるまで回す
 		if (!m_popEnemyList.empty())
 		{
-			m_enemyPopTimeCount++;
+			//ボスを倒したら敵を出てこないようにする
+			if (m_killBossCount < m_bossCount)
+			{
+				m_enemyPopTimeCount++;
+			}
+			//設定した時間になったら
 			if (m_enemyPopTimeCount > m_nextEnemyPopTime * 20)
 			{
 				//カウントを初期化
@@ -192,7 +206,7 @@ void SceneMain::Update(Pad& pad)
 			}
 		}
 		//リザルト状態のときは止まるようにする
-		if (!m_isResult)
+		if (!m_isStop)
 		{
 			m_pPlayer->Update();
 			m_pPrincess->Update();
@@ -430,79 +444,84 @@ void SceneMain::Update(Pad& pad)
 	//クリア判定
 	if (m_killBossCount >= m_bossCount)
 	{
+		//時間をカウントし続ける
 		m_clearTime++;
-
-		if (m_clearTime > kClearTime)
+	}
+	//アイテムをとる時間をとる
+	if (m_clearTime > kClearTime)
+	{
+		//聖剣モードを止める
+		m_isSpecialMode = false;
+		//プレイヤーとエネミーの動きを止める
+		m_isStop = true;
+	}
+	//動きが止まって少ししたら
+	if (m_clearTime > kResultTime && m_clearTime < kDanceTime)
+	{
+		//マップ上にいる敵を消す
+		for (const auto& enemy : m_pEnemy)
 		{
-			m_isSpecialMode = false;
-			//プレイヤーのアニメーションを行う
-			if (m_clearTime > kResultTime)
+			if (enemy && enemy->m_nowState != Game::kDelete)
 			{
-
-				if (!m_isResult)
+				enemy->m_nowState = Game::kDelete;
+				Vec2 temp;
+				//消えるときにエフェクトを出す
+				temp = enemy->GetPos();
+				//白いエフェクトを出す
+				for (int i = 0; i < kParticleVol; i++)
 				{
-
-					//マップ上にいる敵を消す
-					for (const auto& enemy : m_pEnemy)
-					{
-						if (enemy && enemy->m_nowState != Game::kDelete)
-						{
-							enemy->m_nowState = Game::kDelete;
-							Vec2 temp;
-							//消えるときにエフェクトを出す
-							temp = enemy->GetPos();
-							//白いエフェクトを出す
-							for (int i = 0; i < kParticleVol; i++)
-							{
-								m_pParticle = new Particle(temp, 40.0f, 4.0f, 5, 0);
-								AddParticle(m_pParticle);
-							}
-
-						}
-					}
+					m_pParticle = new Particle(temp, 40.0f, 4.0f, 5, 0);
+					AddParticle(m_pParticle);
 				}
-				//////////////////////
-				m_isClearFlag = true;
-				//////////////////////
-				if (m_isResult)
-				{
-					int temp;
-					m_startLoopTimeCount++;
-					//経験値が0になるまでまわす
-					if (m_pPlayer->GetExp() != 0 && m_isExpLoop &&
-						m_startLoopTimeCount > kStartLoopTime)//ループが始まるまで少し時間をとる
-					{
-						//減らす量を決める
-						temp = GetDigits(m_pPlayer->GetExp());
-						m_pPlayer->SubExp(temp);
-						UserData::userExp += temp;
-					}
-					else if (m_pPlayer->GetExp() == 0 && m_isExpLoop)
-					{
-						//経験値のループが終わったらゴールドのループに行く
-						m_isExpLoop = false;
-						m_isGoldLoop = true;
-						m_startLoopTimeCount = 0;
-					}
 
-					if (m_pPlayer->GetGold() != 0 && m_isGoldLoop &&
-						m_startLoopTimeCount > kStartLoopTime)
-					{
-						//減らす量を決める
-						temp = GetDigits(m_pPlayer->GetGold());
-						m_pPlayer->SubGold(temp);
-						UserData::userGold += temp;
-					}
-					else if (m_pPlayer->GetGold() == 0 && m_isGoldLoop)
-					{
-						m_isEnd = true;
-					}
-					if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A])
-					{
-						m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
-					}
-				}
 			}
+		}
+		//プレイヤーを前に向ける
+		m_pPlayer->TurnFront();
+	}
+	//敵が消えた後に少しだけ間を開けて
+	if (m_clearTime > kDanceTime && !m_isResult)
+	{
+		//プレイヤーのクリア時の行動を入れる
+		m_pPlayer->ClearDance();
+	}
+	if (m_isResult)
+	{
+		m_isClearFlag = true;
+		int temp;
+		m_startLoopTimeCount++;
+		//経験値が0になるまでまわす
+		if (m_pPlayer->GetExp() != 0 && m_isExpLoop &&
+			m_startLoopTimeCount > kStartLoopTime)//ループが始まるまで少し時間をとる
+		{
+			//減らす量を決める
+			temp = GetDigits(m_pPlayer->GetExp());
+			m_pPlayer->SubExp(temp);
+			UserData::userExp += temp;
+		}
+		else if (m_pPlayer->GetExp() == 0 && m_isExpLoop)
+		{
+			//経験値のループが終わったらゴールドのループに行く
+			m_isExpLoop = false;
+			m_isGoldLoop = true;
+			m_pUi->ShowGold();
+		}
+
+		if (m_pPlayer->GetGold() != 0 && m_isGoldLoop &&
+			m_startLoopTimeCount > kStartGoldLoopTime)
+		{
+			//減らす量を決める
+			temp = GetDigits(m_pPlayer->GetGold());
+			m_pPlayer->SubGold(temp);
+			UserData::userGold += temp;
+		}
+		else if (m_pPlayer->GetGold() == 0 && m_isGoldLoop)
+		{
+			m_isEnd = true;
+		}
+		if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A])
+		{
+			m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////////
@@ -588,8 +607,8 @@ void SceneMain::Draw()
 			}
 		}
 	}
-	//クリアしたら
-	if (m_isClearFlag)
+	//ClearDanceが終わったら
+	if (m_isClearString)
 	{
 		m_pUi->SceneClearUI();
 	}

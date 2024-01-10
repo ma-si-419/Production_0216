@@ -19,6 +19,8 @@ public:
 	//シーンクリア時に行うUI表示
 	void SceneClearUI();
 	bool IsEnd() { return m_isClearUIEnd; };
+	//ゴールドを表示する
+	void ShowGold() { m_isShowGold = true; }
 private:
 	//プレイヤーのポインタを保存する
 	Player* m_pPlayer;
@@ -28,5 +30,9 @@ private:
 	SceneMain* m_pMain;
 	//クリアのUIを表示したかどうかを表す
 	bool m_isClearUIEnd;
+	//表示する間の時間をカウントする
+	int m_timeCount;
+	//ゴールドを表示するタイミング
+	bool m_isShowGold;
 };
 

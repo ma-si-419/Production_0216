@@ -34,7 +34,7 @@ namespace
 	//Hpバーの縦の長さ
 	constexpr float kBarHeight = 5;
 	//Hpバーのポジション
-	constexpr int kHpBarPosY = 40;
+	constexpr int kHpBarPosY = 60;
 	//持てる血の量の上限
 	constexpr float kMaxBlood = 10;
 	//バーの後ろに表示するBoxの余白の大きさ

@@ -9,11 +9,17 @@ namespace
 {
 	constexpr float kMaxBarWidth = 200.0f;
 	constexpr float kBarHeight = 50.0f;
+	//表示する間隔
+	constexpr int kShowTime = 60;
+	//Exp表示するタイミング
+	constexpr int kExpShowTime = 120;
 }
-UI::UI(Player* pPlayer,Princess* pPrincess,SceneMain* pMain) :
+UI::UI(Player* pPlayer, Princess* pPrincess, SceneMain* pMain) :
 	m_pPlayer(pPlayer),
 	m_pPrincess(pPrincess),
-	m_pMain(pMain)
+	m_pMain(pMain),
+	m_timeCount(0),
+	m_isShowGold(false)
 {
 }
 
@@ -80,21 +86,32 @@ void UI::Draw()
 
 void UI::SceneClearUI()
 {
+	m_timeCount++;
 	//黒い少し透明なボックスを表示する
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 155);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
 	DrawBox(0, 0, Game::kPlayScreenWidth, Game::kPlayScreenHeight,
 		GetColor(0, 0, 0), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-	int stringWidth = GetDrawStringWidth("ゲームクリア", -1);
-	DrawString((Game::kPlayScreenWidth - stringWidth) / 2, 200, "ゲームクリア", GetColor(0, 0, 0));
-	//獲得したゴールドと経験値を表示する
-	DrawString(300, 500, "獲得経験値", GetColor(0, 0, 0));
-	DrawString(300, 600, "所持経験値", GetColor(0, 0, 0));
-	DrawString(300, 700, "獲得ゴールド", GetColor(0, 0, 0));
-	DrawString(300, 800, "所持ゴールド", GetColor(0, 0, 0));
-	DrawFormatString(600, 500, GetColor(0, 0, 0), "%d", m_pPlayer->GetExp());
-	DrawFormatString(600, 600, GetColor(0, 0, 0), "%d", UserData::userExp);
-	DrawFormatString(600, 700, GetColor(0, 0, 0), "%d", m_pPlayer->GetGold());
-	DrawFormatString(600, 800, GetColor(0, 0, 0), "%d", UserData::userGold);
-	m_pMain->SetEnd();
+	if (m_timeCount > kShowTime)
+	{
+		int stringWidth = GetDrawStringWidth("ゲームクリア", -1);
+		DrawString((Game::kPlayScreenWidth - stringWidth) / 2, 200, "ゲームクリア", GetColor(0, 0, 0));
+		//獲得したゴールドと経験値を表示する
+		DrawString(300, 500, "獲得経験値", GetColor(0, 0, 0));
+		DrawString(300, 600, "所持経験値", GetColor(0, 0, 0));
+		DrawString(300, 700, "獲得ゴールド", GetColor(0, 0, 0));
+		DrawString(300, 800, "所持ゴールド", GetColor(0, 0, 0));
+		m_pMain->SetEnd();
+	}
+	if (m_timeCount > kExpShowTime)
+	{
+		DrawFormatString(600, 500, GetColor(0, 0, 0), "%d", m_pPlayer->GetExp());
+		DrawFormatString(600, 600, GetColor(0, 0, 0), "%d", UserData::userExp);
+		m_pMain->StartExpLoop();
+	}
+	if (m_isShowGold)
+	{
+		DrawFormatString(600, 700, GetColor(0, 0, 0), "%d", m_pPlayer->GetGold());
+		DrawFormatString(600, 800, GetColor(0, 0, 0), "%d", UserData::userGold);
+	}
 }

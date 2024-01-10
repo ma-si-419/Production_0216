@@ -35,7 +35,7 @@ namespace
 	//Hpバーの縦の長さ
 	constexpr float kBarHeight = 5;
 	//Hpバーのポジション
-	constexpr int kHpBarPosY = 40;
+	constexpr int kHpBarPosY = 50;
 	//復活した後の硬直時間
 	constexpr int kRevivalTime = 30;
 	//持てる血の量の最大値
@@ -44,6 +44,10 @@ namespace
 	constexpr int kBoxSpace = 3;
 	//キャラの拡大率
 	constexpr float kCharcterScale = 6.0f;
+	//クリア時のダンスの時間の長さ
+	constexpr int kDanceTIme = 5;
+	//クリア時の回る回数
+	constexpr int kTurnCount = 20;
 }
 
 Player::Player(SceneMain* pMain) :
@@ -58,7 +62,9 @@ Player::Player(SceneMain* pMain) :
 	m_exp(0),
 	m_moveVec(),
 	m_isDeathFlag(false),
-	m_pMain(pMain)
+	m_pMain(pMain),
+	m_turnCount(0),
+	m_danceCount(0)
 {
 	//初期座標を魔女の隣に設定
 	m_pos.x = Game::kPlayScreenWidth / 2 + 70;
@@ -367,7 +373,11 @@ void Player::Draw() const
 
 void Player::HitEnemy(Enemy enemy, bool weak)
 {
-	m_knockBack = enemy.GetPos() - m_pos;
+	m_knockBack = m_moveVec;
+	if (m_knockBack.x == 0 && m_knockBack.y == 0)
+	{
+		m_knockBack = enemy.GetMoveVec() * -1;
+	}
 	m_knockBack.Normalize();
 	m_knockBack *= kKnockBackScale;
 	//聖剣モードに入っているときはダメージ処理を行わない
@@ -409,9 +419,9 @@ void Player::HitEnemy(Enemy enemy, bool weak)
 }
 void Player::HitTreasure(TreasureBox* treasureBox)
 {
-	m_knockBack = treasureBox->GetPos() - m_pos;
+	m_knockBack = m_moveVec;
 	m_knockBack.Normalize();
-	m_knockBack *= kKnockBackScale * (GetRand(3) + 3);
+	m_knockBack *= kKnockBackScale * (GetRand(3) + 1);
 }
 void Player::PickUpItem(std::shared_ptr<ItemBase> item)
 {
@@ -505,6 +515,54 @@ void Player::DeathMove()
 		}
 	}
 
+}
+
+void Player::ClearDance()
+{
+	m_animFrame = kAnimFrameNum;
+	m_danceCount++;
+	if (m_danceCount > kDanceTIme)
+	{
+		m_danceCount = 0;
+		switch (m_dir)
+		{
+		case Game::kDirDown:
+			m_dir = Game::kDirLeft;
+			break;
+		case Game::kDirLeftDown:
+			m_dir = Game::kDirLeft;
+			break;
+		case Game::kDirLeft:
+			m_dir = Game::kDirUp;
+			break;
+		case Game::kDirLeftUp:
+			m_dir = Game::kDirUp;
+			break;
+		case Game::kDirUp:
+			m_dir = Game::kDirRight;
+			break;
+		case Game::kDirRightUp:
+			m_dir = Game::kDirRight;
+			break;
+		case Game::kDirRight:
+			m_dir = Game::kDirDown;
+			break;
+		case Game::kDirRightDown:
+			m_dir = Game::kDirDown;
+			break;
+		case Game::kDirDeath:
+			break;
+		default:
+			break;
+		}
+		m_turnCount++;
+	}
+	if (m_turnCount > kTurnCount)
+	{
+		m_dir = Game::kDirDeath;
+		m_animFrame = kAnimFrameNum * 2;
+		m_pMain->ShowResult();
+	}
 }
 
 

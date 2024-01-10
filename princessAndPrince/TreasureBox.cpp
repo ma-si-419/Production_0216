@@ -178,7 +178,7 @@ void TreasureBox::HitPlayer(Player* player)
 {
 	m_hp--;
 	//ノックバック処理を入れる
-	m_knockBackVec = player->GetPos() - m_pos;
+	m_knockBackVec = player->GetMoveVec() * -1;
 	m_knockBackVec.Normalize();
 	m_knockBackVec *= kKnockBackScale;
 	//衝突点の座標

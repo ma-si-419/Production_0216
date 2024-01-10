@@ -367,7 +367,11 @@ void Enemy::Draw()
 
 void Enemy::HitPlayer(Player& player, bool weak)
 {
-	m_knockBack = player.GetPos() - m_pos;
+	m_knockBack = player.GetMoveVec() * -1;
+	if (m_knockBack.x == 0 && m_knockBack.y == 0)
+	{
+		m_knockBack = m_moveVec;
+	}
 	m_knockBack.Normalize();
 	m_knockBack *= kKnockBackScale;
 	m_isHitFlag = true;

@@ -57,10 +57,15 @@ public:
 	bool GetSpecialMode() { return m_isSpecialMode; }
 	//ポーズ画面かどうかを取得する
 	bool GetPause() { return m_isPause; }
-	//シーンが終わったタイミング
+	//演出が終わったタイミング
 	void SetEnd() { m_isResult = true; }
+	//リザルトの文字を表示するタイミング
+	void ShowResult() { m_isClearString = true; }
 	//桁数を取得する
 	int GetDigits(int num);
+	//リザルトのGOLDのループを開始する
+	void StartExpLoop() { m_isExpLoop = true; }
+
 private:
 	// グラフィックのハンドル
 	int m_playerHandle;
@@ -127,4 +132,6 @@ private:
 	bool m_isExpLoop;
 	//ループが始まるまでの時間を測る
 	int m_startLoopTimeCount;
+	//ゲームクリアした時に文字を出すタイミング
+	bool m_isClearString;
 };

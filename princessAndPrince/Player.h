@@ -51,6 +51,12 @@ public:
 	void GiveBlood(Princess* princess);
 	//死んだときの処理を作成する
 	void DeathMove();
+	//クリアした時の演出
+	void ClearDance();
+	//向いている方向を前方にする
+	void TurnFront() { m_dir = Game::kDirDown; }
+	//今動いているベクトルを取得する
+	Vec2 GetMoveVec() { return m_moveVec; }
 
 private:
 	//シーンメインのポインタを入れる
@@ -85,4 +91,8 @@ private:
 	int m_exp;
 	//復活する時間をカウントする変数
 	int m_revivalCount;
+	//クリア時の演出の時にカウントする変数
+	int m_danceCount;
+	//クリア時の演出で回った数をカウントする
+	int m_turnCount;
 };

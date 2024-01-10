@@ -42,6 +42,8 @@ public:
 	void HitPrincess(Vec2 knockBack) { m_knockBack = knockBack; }
 	//弱点の当たり判定を返す
 	CircleCol GetWeakCircle() { return m_weakCircle; }
+	//動いているベクトルを返す
+	Vec2 GetMoveVec() { return m_moveVec; }
 private:
 	//SceneMainのポインタをもつ
 	SceneMain* m_pMain;
