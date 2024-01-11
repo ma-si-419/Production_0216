@@ -145,6 +145,7 @@
     <ClCompile Include="CircleCol.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Exp.cpp" />
+    <ClCompile Include="Fade.cpp" />
     <ClCompile Include="Gold.cpp" />
     <ClCompile Include="ItemBase.cpp" />
     <ClCompile Include="MagicBase.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="CircleCol.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Exp.h" />
+    <ClInclude Include="Fade.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Gold.h" />
     <ClInclude Include="ItemBase.h" />

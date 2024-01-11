@@ -37,7 +37,7 @@ namespace
 	//配列のサイズ
 	constexpr int kArraySize = 81;
 	//クリアした後の時間
-	constexpr int kClearTime = 360;
+	constexpr int kClearTime = 240;
 	//倒すボスの数(仮実装)
 	constexpr int kBossCount = 1;
 	//聖剣モードのゲージの最大量
@@ -78,7 +78,14 @@ SceneMain::SceneMain(SceneManager& manager, int stageNum) :
 	m_isGoldLoop(false),
 	m_isEnd(false),
 	m_isClearString(false),
-	m_startLoopTimeCount(0)
+	m_startLoopTimeCount(0),
+	m_attackSe(-1),
+	m_weakAttackSe(-1),
+	m_isBossFlag(false),
+	m_danceMusic(-1),
+	m_resultGold(-1),
+	m_resultExp(-1),
+	m_isWitchParticle(false)
 
 {
 	//プレイヤーのグラフィックのロード
@@ -97,6 +104,19 @@ SceneMain::SceneMain(SceneManager& manager, int stageNum) :
 	m_enemyHandle = LoadGraph("data/image/Enemy.png");
 	//背景のグラフィックのロード
 	m_bgHandle = LoadGraph("data/image/_bg.png");
+	//ぶつかったときの音のロード
+	m_attackSe = LoadSoundMem("data/sound/attack3.mp3");
+	//ダンスの音のロード
+	m_danceMusic = LoadSoundMem("data/sound/clearSe.mp3");
+	//リザルトの効果音のロード
+	m_resultGold = LoadSoundMem("data/sound/gold1.mp3");
+	m_resultExp = LoadSoundMem("data/sound/exp1.mp3");
+	//マップの音楽のロード
+	m_fieldBgm = LoadSoundMem("data/sound/mainBgm2.mp3");
+	//ボスが出てきた時の音楽のロード
+	m_bossBgm = LoadSoundMem("data/sound/mainBgm1.mp3");
+	//ダンスの前のSeのロード
+	m_beforeDanceSe = LoadSoundMem("data/sound/enemyDelete.mp3");
 	//敵の最大数を設定
 	m_pEnemy.resize(kMaxEnemy);
 	//アイテムの最大数を設定
@@ -146,18 +166,25 @@ void SceneMain::Init()
 	}
 	m_pPlayer->Init();
 	m_pPrincess->Init();
+	ChangeSoundVol(50);
 }
 
 
 void SceneMain::Update(Pad& pad)
 {
 	//音楽再生
-//	if (m_flag)
-//	{
-//		PlaySoundFile("data/sound/mainBgm.mp3", DX_PLAYTYPE_LOOP);
-//		m_flag = false;
-//	}
-//ポーズや演出時など以外の場合動かす
+	if (m_isMusicFlag && !m_isBossFlag)
+	{
+		PlaySoundMem(m_fieldBgm, DX_PLAYTYPE_LOOP);
+		m_isMusicFlag = false;
+	}
+	else if (m_isMusicFlag && m_isBossFlag)
+	{
+		StopSoundMem(m_fieldBgm);
+		PlaySoundMem(m_bossBgm, DX_PLAYTYPE_LOOP);
+		m_isMusicFlag = false;
+	}
+	//ポーズや演出時など以外の場合動かす
 
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
@@ -204,6 +231,11 @@ void SceneMain::Update(Pad& pad)
 				m_enemyPopTimeCount = temp.popTime;
 				m_nextEnemyKind = temp.enemyKind;
 				m_popEnemyList.pop();
+				if (m_nextEnemyKind > 4 && !m_isBossFlag)
+				{
+					m_isBossFlag = true;
+					m_isMusicFlag = true;
+				}
 			}
 		}
 		//リザルト状態のときは止まるようにする
@@ -237,6 +269,7 @@ void SceneMain::Update(Pad& pad)
 							}
 							//エネミーの状態を推移させる
 							enemy->m_nowState = Game::kHitPlayer;
+							PlaySoundMem(m_attackSe, DX_PLAYTYPE_BACK);
 						}
 						//魔女とエネミーがぶつかったとき
 						if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle()))
@@ -324,6 +357,7 @@ void SceneMain::Update(Pad& pad)
 					//プレイヤーとぶつかったら
 					if (IsCollision(m_pPlayer->GetColCircle(), treasure->GetColCircle()))
 					{
+						PlaySoundMem(m_attackSe, DX_PLAYTYPE_BACK);
 						m_pPlayer->HitTreasure(treasure);
 						treasure->HitPlayer(m_pPlayer);
 					}
@@ -409,6 +443,8 @@ void SceneMain::Update(Pad& pad)
 				m_isPause = false;
 				break;
 			case 1:
+				StopSoundMem(m_fieldBgm);
+				StopSoundMem(m_bossBgm);
 				m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
 				return;
 				break;
@@ -448,6 +484,8 @@ void SceneMain::Update(Pad& pad)
 	{
 		//時間をカウントし続ける
 		m_clearTime++;
+		StopSoundMem(m_fieldBgm);
+		StopSoundMem(m_bossBgm);
 		//アイテムをとる時間をとる
 		if (m_clearTime > kClearTime)
 		{
@@ -459,6 +497,23 @@ void SceneMain::Update(Pad& pad)
 		//動きが止まって少ししたら
 		if (m_clearTime > kResultTime && m_clearTime < kDanceTime)
 		{
+			if (!CheckSoundMem(m_beforeDanceSe))
+			{
+				PlaySoundMem(m_beforeDanceSe, DX_PLAYTYPE_BACK);
+			}
+
+			//プリンセスの位置に白いエフェクトを出す
+			if (!m_isWitchParticle)
+			{
+				for (int i = 0; i < kParticleVol; i++)
+				{
+					m_pParticle = new Particle(m_pPrincess->GetPos(), 40.0f, 4.0f, 5, 0);
+					AddParticle(m_pParticle);
+				}
+				m_isWitchParticle = true;
+			}
+
+
 			//マップ上にいる敵を消す
 			for (const auto& enemy : m_pEnemy)
 			{
@@ -480,6 +535,8 @@ void SceneMain::Update(Pad& pad)
 			//プレイヤーを前に向ける
 			m_pPlayer->TurnFront();
 			m_pPrincess->TransStone();
+			PlaySoundMem(m_danceMusic, DX_PLAYTYPE_BACK);
+
 		}
 		//敵が消えた後に少しだけ間を開けて
 		if (m_clearTime > kDanceTime && !m_isResult)
@@ -498,7 +555,6 @@ void SceneMain::Update(Pad& pad)
 				if (m_pPlayer->GetExp() != 0 &&
 					m_startLoopTimeCount > kStartLoopTime)//ループが始まるまで少し時間をとる
 				{
-					PlaySoundFile("data/sound/exp1.mp3", DX_PLAYTYPE_BACK);
 					//減らす量を決める
 					temp = GetDigits(m_pPlayer->GetExp());
 					m_pPlayer->SubExp(temp);
@@ -506,6 +562,10 @@ void SceneMain::Update(Pad& pad)
 				}
 				else if (m_pPlayer->GetExp() == 0)
 				{
+					if (!CheckSoundMem(m_resultExp) && !m_isGoldLoop)
+					{
+						PlaySoundMem(m_resultExp, DX_PLAYTYPE_BACK);
+					}
 					//経験値のループが終わったらゴールドのループに行く
 					m_isExpLoop = false;
 					m_isGoldLoop = true;
@@ -518,7 +578,6 @@ void SceneMain::Update(Pad& pad)
 				if (m_pPlayer->GetGold() != 0 &&
 					m_startLoopTimeCount > kStartGoldLoopTime)
 				{
-					PlaySoundFile("data/sound/gold1.mp3", DX_PLAYTYPE_BACK);
 					//減らす量を決める
 					temp = GetDigits(m_pPlayer->GetGold());
 					m_pPlayer->SubGold(temp);
@@ -526,6 +585,8 @@ void SceneMain::Update(Pad& pad)
 				}
 				else if (m_pPlayer->GetGold() == 0)
 				{
+					if (!CheckSoundMem(m_resultGold) && !m_isEnd)
+						PlaySoundMem(m_resultGold, DX_PLAYTYPE_BACK);
 					m_isEnd = true;
 					m_pUi->ShowLeaveButton();
 				}
@@ -538,6 +599,7 @@ void SceneMain::Update(Pad& pad)
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////////
+
 }
 
 void SceneMain::Draw()
@@ -729,6 +791,19 @@ int SceneMain::GetDigits(int num)
 	{
 		return 0;
 	}
+}
+
+void SceneMain::ChangeSoundVol(int volume)
+{
+	ChangeVolumeSoundMem(volume, m_attackSe);
+	ChangeVolumeSoundMem(volume, m_danceMusic);
+	ChangeVolumeSoundMem(volume, m_resultGold);
+	ChangeVolumeSoundMem(volume, m_resultExp);
+	ChangeVolumeSoundMem(volume, m_fieldBgm);
+	ChangeVolumeSoundMem(volume, m_bossBgm);
+	ChangeVolumeSoundMem(volume, m_beforeDanceSe);
+
+
 }
 
 bool SceneMain::AddMagic(MagicBase* pMagic)

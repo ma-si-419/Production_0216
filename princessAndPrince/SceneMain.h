@@ -3,6 +3,7 @@
 #include <vector>
 #include<memory>
 #include<stack>
+#include"Fade.h"
 using namespace std;
 
 class Player;
@@ -65,6 +66,8 @@ public:
 	int GetDigits(int num);
 	//リザルトのGOLDのループを開始する
 	void StartExpLoop() { m_isExpLoop = true; }
+	//音量を設定する
+	void ChangeSoundVol(int volume);
 
 private:
 	// グラフィックのハンドル
@@ -134,4 +137,24 @@ private:
 	int m_startLoopTimeCount;
 	//ゲームクリアした時に文字を出すタイミング
 	bool m_isClearString;
+	//敵とぶつかったときの音
+	int m_attackSe;
+	//弱点にぶつかったときの音
+	int m_weakAttackSe;
+	//ボスが出てきた時に立てるフラグ
+	bool m_isBossFlag;
+	//クリア時のダンスの音楽
+	int m_danceMusic;
+	//クリア時の獲得ゴールドを数える音
+	int m_resultGold;
+	//クリア時の経験値
+	int m_resultExp;
+	//マップのBGM
+	int m_fieldBgm;
+	//ボスが出てきた時のBGM
+	int m_bossBgm;
+	//最後のダンス前の音
+	int m_beforeDanceSe;
+	//魔女の場所にパーティクルを出したか判断する
+	bool m_isWitchParticle;
 };

@@ -47,7 +47,7 @@ namespace
 	//クリア時のダンスの時間の長さ
 	constexpr int kDanceTIme = 5;
 	//クリア時の回る回数
-	constexpr int kTurnCount = 20;
+	constexpr int kTurnCount = 16;
 }
 
 Player::Player(SceneMain* pMain) :
