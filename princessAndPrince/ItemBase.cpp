@@ -11,7 +11,7 @@ namespace
 	constexpr int kUiPosY = 150;
 
 	//アイテムが動くスピード
-	constexpr int kSpeed = 20;
+	constexpr int kSpeed = 35;
 }
 ItemBase::ItemBase() :
 	m_handle(0),

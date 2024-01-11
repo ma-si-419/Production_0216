@@ -79,6 +79,7 @@ SceneMain::SceneMain(SceneManager& manager, int stageNum) :
 	m_isEnd(false),
 	m_isClearString(false),
 	m_startLoopTimeCount(0)
+
 {
 	//プレイヤーのグラフィックのロード
 	m_playerHandle = LoadGraph("data/image/Monkey.png");
@@ -409,6 +410,7 @@ void SceneMain::Update(Pad& pad)
 				break;
 			case 1:
 				m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+				return;
 				break;
 
 			}
@@ -446,82 +448,91 @@ void SceneMain::Update(Pad& pad)
 	{
 		//時間をカウントし続ける
 		m_clearTime++;
-	}
-	//アイテムをとる時間をとる
-	if (m_clearTime > kClearTime)
-	{
-		//聖剣モードを止める
-		m_isSpecialMode = false;
-		//プレイヤーとエネミーの動きを止める
-		m_isStop = true;
-	}
-	//動きが止まって少ししたら
-	if (m_clearTime > kResultTime && m_clearTime < kDanceTime)
-	{
-		//マップ上にいる敵を消す
-		for (const auto& enemy : m_pEnemy)
+		//アイテムをとる時間をとる
+		if (m_clearTime > kClearTime)
 		{
-			if (enemy && enemy->m_nowState != Game::kDelete)
+			//聖剣モードを止める
+			m_isSpecialMode = false;
+			//プレイヤーとエネミーの動きを止める
+			m_isStop = true;
+		}
+		//動きが止まって少ししたら
+		if (m_clearTime > kResultTime && m_clearTime < kDanceTime)
+		{
+			//マップ上にいる敵を消す
+			for (const auto& enemy : m_pEnemy)
 			{
-				enemy->m_nowState = Game::kDelete;
-				Vec2 temp;
-				//消えるときにエフェクトを出す
-				temp = enemy->GetPos();
-				//白いエフェクトを出す
-				for (int i = 0; i < kParticleVol; i++)
+				if (enemy && enemy->m_nowState != Game::kDelete)
 				{
-					m_pParticle = new Particle(temp, 40.0f, 4.0f, 5, 0);
-					AddParticle(m_pParticle);
+					enemy->m_nowState = Game::kDelete;
+					Vec2 temp;
+					//消えるときにエフェクトを出す
+					temp = enemy->GetPos();
+					//白いエフェクトを出す
+					for (int i = 0; i < kParticleVol; i++)
+					{
+						m_pParticle = new Particle(temp, 40.0f, 4.0f, 5, 0);
+						AddParticle(m_pParticle);
+					}
+
 				}
-
 			}
+			//プレイヤーを前に向ける
+			m_pPlayer->TurnFront();
+			m_pPrincess->TransStone();
 		}
-		//プレイヤーを前に向ける
-		m_pPlayer->TurnFront();
-	}
-	//敵が消えた後に少しだけ間を開けて
-	if (m_clearTime > kDanceTime && !m_isResult)
-	{
-		//プレイヤーのクリア時の行動を入れる
-		m_pPlayer->ClearDance();
-	}
-	if (m_isResult)
-	{
-		m_isClearFlag = true;
-		int temp;
-		m_startLoopTimeCount++;
-		//経験値が0になるまでまわす
-		if (m_pPlayer->GetExp() != 0 && m_isExpLoop &&
-			m_startLoopTimeCount > kStartLoopTime)//ループが始まるまで少し時間をとる
+		//敵が消えた後に少しだけ間を開けて
+		if (m_clearTime > kDanceTime && !m_isResult)
 		{
-			//減らす量を決める
-			temp = GetDigits(m_pPlayer->GetExp());
-			m_pPlayer->SubExp(temp);
-			UserData::userExp += temp;
+			//プレイヤーのクリア時の行動を入れる
+			m_pPlayer->ClearDance();
 		}
-		else if (m_pPlayer->GetExp() == 0 && m_isExpLoop)
+		if (m_isResult)
 		{
-			//経験値のループが終わったらゴールドのループに行く
-			m_isExpLoop = false;
-			m_isGoldLoop = true;
-			m_pUi->ShowGold();
-		}
+			m_isClearFlag = true;
+			int temp;
+			if (m_isExpLoop)
+			{
+				m_startLoopTimeCount++;
+				//経験値が0になるまでまわす
+				if (m_pPlayer->GetExp() != 0 &&
+					m_startLoopTimeCount > kStartLoopTime)//ループが始まるまで少し時間をとる
+				{
+					//減らす量を決める
+					temp = GetDigits(m_pPlayer->GetExp());
+					m_pPlayer->SubExp(temp);
+					UserData::userExp += temp;
+				}
+				else if (m_pPlayer->GetExp() == 0)
+				{
+					//経験値のループが終わったらゴールドのループに行く
+					m_isExpLoop = false;
+					m_isGoldLoop = true;
+					m_pUi->ShowGold();
+				}
+			}
+			if (m_isGoldLoop)
+			{
 
-		if (m_pPlayer->GetGold() != 0 && m_isGoldLoop &&
-			m_startLoopTimeCount > kStartGoldLoopTime)
-		{
-			//減らす量を決める
-			temp = GetDigits(m_pPlayer->GetGold());
-			m_pPlayer->SubGold(temp);
-			UserData::userGold += temp;
-		}
-		else if (m_pPlayer->GetGold() == 0 && m_isGoldLoop)
-		{
-			m_isEnd = true;
-		}
-		if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A])
-		{
-			m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+				if (m_pPlayer->GetGold() != 0 &&
+					m_startLoopTimeCount > kStartGoldLoopTime)
+				{
+					//減らす量を決める
+					temp = GetDigits(m_pPlayer->GetGold());
+					m_pPlayer->SubGold(temp);
+					UserData::userGold += temp;
+				}
+				else if (m_pPlayer->GetGold() == 0)
+				{
+					m_isEnd = true;
+					m_pUi->ShowLeaveButton();
+				}
+			}
+			if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A])
+			{
+				m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+				return;
+			}
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////////
@@ -582,6 +593,7 @@ void SceneMain::Draw()
 
 		}
 	}
+	m_pPrincess->Draw();
 	m_pPlayer->Draw();
 	for (auto& particle : m_pParticleArray)
 	{
@@ -595,7 +607,6 @@ void SceneMain::Draw()
 			}
 		}
 	}
-	m_pPrincess->Draw();
 	m_pUi->Draw();
 	for (auto& item : m_pItem)
 	{

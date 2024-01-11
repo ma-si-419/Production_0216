@@ -22,7 +22,7 @@ namespace
 	// キャラクターのアニメーション
 	constexpr int kUseFrame[] = { 1,0 };
 	// アニメーション1コマのフレーム数
-	constexpr int kAnimFrameNum = 60;
+	constexpr int kAnimFrameNum = 30;
 	// アニメーションの１サイクルのフレーム数
 	constexpr int kAnimFrameCycle = _countof(kUseFrame) * kAnimFrameNum;
 	//ノックバックの大きさ
@@ -56,7 +56,7 @@ namespace
 	//揺れる時間
 	constexpr int kShakeTime = 15;
 	//揺れるスピード
-	constexpr float kshakeSpeed = 2.0f;
+	constexpr float kShakeSpeed = 2.0f;
 	//パーティクルの数
 	constexpr int kParticleVol = 30;
 }
@@ -74,12 +74,12 @@ Princess::Princess(SceneMain* pMain) :
 	m_isMagic(false),
 	m_pMain(pMain),
 	m_shakeTimeCount(kShakeTime),
-	m_shakeSpeed(kshakeSpeed)
+	m_shakeSpeed(kShakeSpeed),
+	m_drawState(Game::kStone)
 {
 	m_pos.x = Game::kPlayScreenWidth / 2;
 	m_pos.y = Game::kPlayScreenHeight / 2;
 	m_basePos = m_pos;
-	m_dir = Game::kDirDown;
 	m_animFrame = kAnimFrameNum;
 	m_radius = Game::kRadius;
 }
@@ -123,6 +123,14 @@ void Princess::Update()
 	//魔法を打っている最中
 	if (m_isMagic || m_pMain->GetSpecialMode())
 	{
+		//石の状態から直す
+		m_drawState = Game::kMagic;
+		//アニメーションを動かす
+		m_animFrame++;
+		//スペシャルモード中だったら動きを早くする
+		if (m_pMain->GetSpecialMode())m_animFrame++;
+		if (kAnimFrameCycle <= m_animFrame)	m_animFrame = 1;
+		//魔法を撃つ間隔を計る
 		m_MagicCount++;
 		//ボタンの押されている状況をとる
 		//RBボタンが押されていたら
@@ -174,6 +182,10 @@ void Princess::Update()
 		//持っている血の量を減らしていく
 		m_nowBlood -= 0.02f;
 
+	}
+	else
+	{
+		m_drawState = Game::kStone;
 	}
 	//Aボタンが押されたら
 	if (m_input.Buttons[XINPUT_BUTTON_A] && !m_isLastKeyFlag || CheckHitKey(KEY_INPUT_Z))
@@ -243,7 +255,7 @@ void Princess::Draw() const
 	int animEle = m_animFrame / kAnimFrameNum;
 
 	int srcX = kGraphWidth * kUseFrame[animEle];
-	int srcY = kGraphHeight * m_dir;
+	int srcY = kGraphHeight * m_drawState;
 
 	//魔法を打つ方向に線を表示する
 	if (m_isMagic)

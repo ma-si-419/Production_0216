@@ -29,7 +29,7 @@ namespace
 	// アニメーションの１サイクルのフレーム数
 	constexpr int kAnimFrameCycle = _countof(kUseFrame) * kAnimFrameNum;
 	//ノックバックの大きさ
-	constexpr int kKnockBackScale = 6;
+	constexpr int kKnockBackScale = 20;
 	//Hpバーの横の長さ
 	constexpr float kMaxBarWidth = 60;
 	//Hpバーの縦の長さ
@@ -204,7 +204,6 @@ void Player::Update()
 
 		m_moveVec.x = 0.0f;
 		m_moveVec.y = 0.0f;
-
 		//ユーザのKey入力を取得
 		if (pad & PAD_INPUT_UP)
 		{
@@ -246,6 +245,8 @@ void Player::Update()
 		m_moveVec.Normalize();
 		// 長さの変更
 		m_moveVec *= m_spd;
+		//移動量にノックバックを足す
+		m_moveVec -= m_knockBack;
 		// 座標にベクトルを足す
 		m_pos += m_moveVec;
 		//ノックバック処理
@@ -255,13 +256,11 @@ void Player::Update()
 			//一定時間ノックバックしたら
 			if (m_knockBackTime > 5)
 			{
+				m_nowState = Game::kNormal;
 				m_knockBack *= 0;
 				m_knockBackTime = 0;
 			}
 		}
-		//現在のポジションにノックバックの力を加える
-		m_pos -= m_knockBack;
-
 		// 当たり判定の更新
 		m_circleCol.SetCenter(m_pos, m_radius);
 
@@ -373,13 +372,9 @@ void Player::Draw() const
 
 void Player::HitEnemy(Enemy enemy, bool weak)
 {
-	m_knockBack = m_moveVec;
-	if (m_knockBack.x == 0 && m_knockBack.y == 0)
-	{
-		m_knockBack = enemy.GetMoveVec() * -1;
-	}
+	m_knockBack = enemy.GetPos() - m_pos;
 	m_knockBack.Normalize();
-	m_knockBack *= kKnockBackScale;
+	//エネミーの移動速度に応じてノックバックする
 	//聖剣モードに入っているときはダメージ処理を行わない
 	if (!m_pMain->GetSpecialMode())
 	{
@@ -394,6 +389,10 @@ void Player::HitEnemy(Enemy enemy, bool weak)
 			{
 				damage = 0.5f;
 			}
+			//エネミーの移動速度に応じてノックバックする
+			m_knockBack *= enemy.GetSpd() * kKnockBackScale;
+			//弱点に当たっていたらノックバックの大きさを減らす
+			m_knockBack *= 0.4f;
 			m_nowHp -= damage;
 
 		}
@@ -406,6 +405,8 @@ void Player::HitEnemy(Enemy enemy, bool weak)
 			{
 				damage = 0.5f;
 			}
+			//エネミーの移動速度に応じてノックバックする
+			m_knockBack *= enemy.GetSpd() * kKnockBackScale;
 			m_nowHp -= damage;
 		}
 	}

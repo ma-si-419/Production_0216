@@ -44,6 +44,8 @@ public:
 	CircleCol GetWeakCircle() { return m_weakCircle; }
 	//動いているベクトルを返す
 	Vec2 GetMoveVec() { return m_moveVec; }
+	//移動速度を返す
+	float GetSpd() { return m_spd; }
 private:
 	//SceneMainのポインタをもつ
 	SceneMain* m_pMain;

@@ -36,6 +36,8 @@ public:
 	bool GetMagicKind() { return m_isFire; }
 	//攻撃力を取得する
 	float GetAtk() { return m_atk; }
+	//石の状態にする
+	void TransStone() {m_drawState = Game::kStone; }
 private:
 	//メインシーンのポインタを保存する変数
 	SceneMain* m_pMain;
@@ -83,5 +85,7 @@ private:
 	float m_shakeSpeed;
 	//エネミーとの衝突点
 	Vec2 m_hitPos;
+	//魔女の描画する状態を表す
+	Game::WitchState m_drawState;
 };
 

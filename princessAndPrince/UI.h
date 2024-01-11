@@ -21,6 +21,8 @@ public:
 	bool IsEnd() { return m_isClearUIEnd; };
 	//ゴールドを表示する
 	void ShowGold() { m_isShowGold = true; }
+	//ボタンを押したらクリアを表示する
+	void ShowLeaveButton() { m_isLeaveButton = true; }
 private:
 	//プレイヤーのポインタを保存する
 	Player* m_pPlayer;
@@ -34,5 +36,7 @@ private:
 	int m_timeCount;
 	//ゴールドを表示するタイミング
 	bool m_isShowGold;
+	//ボタンを押したらクリアを出すタイミング
+	bool m_isLeaveButton;
 };
 

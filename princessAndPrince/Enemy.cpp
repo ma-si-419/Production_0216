@@ -367,13 +367,11 @@ void Enemy::Draw()
 
 void Enemy::HitPlayer(Player& player, bool weak)
 {
-	m_knockBack = player.GetMoveVec() * -1;
-	if (m_knockBack.x == 0 && m_knockBack.y == 0)
-	{
-		m_knockBack = m_moveVec;
-	}
+	//プレイヤーの座標を参考にして、ノックバックの方向を決める
+	m_knockBack = player.GetPos() - m_pos;
 	m_knockBack.Normalize();
-	m_knockBack *= kKnockBackScale;
+	Vec2 temp = player.GetMoveVec() * kKnockBackScale;
+	m_knockBack *= temp.Length();
 	m_isHitFlag = true;
 	//中点を出す(衝突点の座標)
 	m_hitPos = (player.GetPos() + m_pos) / 2;

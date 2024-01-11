@@ -19,7 +19,8 @@ UI::UI(Player* pPlayer, Princess* pPrincess, SceneMain* pMain) :
 	m_pPrincess(pPrincess),
 	m_pMain(pMain),
 	m_timeCount(0),
-	m_isShowGold(false)
+	m_isShowGold(false),
+	m_isLeaveButton(false)
 {
 }
 
@@ -95,23 +96,28 @@ void UI::SceneClearUI()
 	if (m_timeCount > kShowTime)
 	{
 		int stringWidth = GetDrawStringWidth("ゲームクリア", -1);
-		DrawString((Game::kPlayScreenWidth - stringWidth) / 2, 200, "ゲームクリア", GetColor(0, 0, 0));
+		DrawString((Game::kPlayScreenWidth - stringWidth) / 2, 200, "ゲームクリア", GetColor(255, 255, 255));
 		//獲得したゴールドと経験値を表示する
-		DrawString(300, 500, "獲得経験値", GetColor(0, 0, 0));
-		DrawString(300, 600, "所持経験値", GetColor(0, 0, 0));
-		DrawString(300, 700, "獲得ゴールド", GetColor(0, 0, 0));
-		DrawString(300, 800, "所持ゴールド", GetColor(0, 0, 0));
+		DrawString(300, 500, "獲得経験値", GetColor(255, 255, 255));
+		DrawString(300, 600, "所持経験値", GetColor(255, 255, 255));
+		DrawString(300, 700, "獲得ゴールド", GetColor(255, 255, 255));
+		DrawString(300, 800, "所持ゴールド", GetColor(255, 255, 255));
 		m_pMain->SetEnd();
 	}
 	if (m_timeCount > kExpShowTime)
 	{
-		DrawFormatString(600, 500, GetColor(0, 0, 0), "%d", m_pPlayer->GetExp());
-		DrawFormatString(600, 600, GetColor(0, 0, 0), "%d", UserData::userExp);
+		DrawFormatString(600, 500, GetColor(255, 255, 255), "%d", m_pPlayer->GetExp());
+		DrawFormatString(600, 600, GetColor(255, 255, 255), "%d", UserData::userExp);
 		m_pMain->StartExpLoop();
 	}
 	if (m_isShowGold)
 	{
-		DrawFormatString(600, 700, GetColor(0, 0, 0), "%d", m_pPlayer->GetGold());
-		DrawFormatString(600, 800, GetColor(0, 0, 0), "%d", UserData::userGold);
+		DrawFormatString(600, 700, GetColor(255, 255, 255), "%d", m_pPlayer->GetGold());
+		DrawFormatString(600, 800, GetColor(255, 255, 255), "%d", UserData::userGold);
+	}
+	if (m_isLeaveButton)
+	{
+		DrawCircle(400, 900, 20, GetColor(255, 255, 255), true);
+		DrawString(500, 900, "で戻る", GetColor(255, 255, 255));
 	}
 }
