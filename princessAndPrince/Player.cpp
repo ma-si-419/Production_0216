@@ -29,7 +29,7 @@ namespace
 	// アニメーションの１サイクルのフレーム数
 	constexpr int kAnimFrameCycle = _countof(kUseFrame) * kAnimFrameNum;
 	//ノックバックの大きさ
-	constexpr int kKnockBackScale = 20;
+	constexpr int kKnockBackScale = 3;
 	//Hpバーの横の長さ
 	constexpr float kMaxBarWidth = 60;
 	//Hpバーの縦の長さ
@@ -248,7 +248,14 @@ void Player::Update()
 		//移動量にノックバックを足す
 		m_moveVec -= m_knockBack;
 		// 座標にベクトルを足す
-		m_pos += m_moveVec;
+		if (m_nowState != Game::kHitEnemy)
+		{
+			m_pos += m_moveVec;
+		}
+		else if (m_nowState == Game::kHitEnemy)
+		{
+			m_pos -= m_knockBack;
+		}
 		//ノックバック処理
 		if (m_knockBack.x != 0 || m_knockBack.y != 0)
 		{
@@ -372,44 +379,44 @@ void Player::Draw() const
 
 void Player::HitEnemy(Enemy enemy, bool weak)
 {
+	m_nowState = Game::kHitEnemy;
 	m_knockBack = enemy.GetPos() - m_pos;
 	m_knockBack.Normalize();
 	//エネミーの移動速度に応じてノックバックする
 	//聖剣モードに入っているときはダメージ処理を行わない
+		//弱点に当たっていたら
+	float damage = 0;
+	if (weak)
+	{
+		//受けるダメージを半分にする
+		damage = enemy.GetAtk() - m_def / 2;
+		//最低でも0.5ダメージは食らうようにする
+		if (damage < 1)
+		{
+			damage = 0.5f;
+		}
+		//エネミーの移動速度に応じてノックバックする
+		m_knockBack *= enemy.GetKnockBackPow() * kKnockBackScale;
+		//弱点に当たっていたらノックバックの大きさを減らす
+		m_knockBack *= 0.6f;
+
+	}
+	else//弱点に当たっていなかったらそのまま
+	{
+		damage = enemy.GetAtk() - m_def;
+		//最低でも0.5ダメージは食らうようにする
+		if (damage < 1)
+		{
+			damage = 0.5f;
+		}
+		//エネミーの移動速度に応じてノックバックする
+		m_knockBack *= enemy.GetKnockBackPow() * kKnockBackScale;
+	}
 	if (!m_pMain->GetSpecialMode())
 	{
-		//弱点に当たっていたら
-		if (weak)
-		{
-			float damage = 0;
-			//受けるダメージを半分にする
-			damage = enemy.GetAtk() - m_def / 2;
-			//最低でも0.5ダメージは食らうようにする
-			if (damage < 1)
-			{
-				damage = 0.5f;
-			}
-			//エネミーの移動速度に応じてノックバックする
-			m_knockBack *= enemy.GetSpd() * kKnockBackScale;
-			//弱点に当たっていたらノックバックの大きさを減らす
-			m_knockBack *= 0.4f;
-			m_nowHp -= damage;
-
-		}
-		else//弱点に当たっていなかったらそのまま
-		{
-			float damage = 0;
-			damage = enemy.GetAtk() - m_def;
-			//最低でも0.5ダメージは食らうようにする
-			if (damage < 1)
-			{
-				damage = 0.5f;
-			}
-			//エネミーの移動速度に応じてノックバックする
-			m_knockBack *= enemy.GetSpd() * kKnockBackScale;
-			m_nowHp -= damage;
-		}
+		m_nowHp -= damage;
 	}
+
 	//体力がマイナスにならないように
 	if (m_nowHp <= 0)
 	{
@@ -422,7 +429,8 @@ void Player::HitTreasure(TreasureBox* treasureBox)
 {
 	m_knockBack = m_moveVec;
 	m_knockBack.Normalize();
-	m_knockBack *= kKnockBackScale * (GetRand(3) + 1);
+	m_knockBack *= kKnockBackScale * treasureBox->GetKnockBackPow()*(GetRand(2) + 1);
+	m_nowState = Game::kHitEnemy;
 }
 void Player::PickUpItem(std::shared_ptr<ItemBase> item)
 {
@@ -475,7 +483,7 @@ void Player::DeathMove()
 	//倒れた時に動くベクトル
 	Vec2 deathMoveVec;
 	//ノックバックの移動をゆっくり行う
-	deathMoveVec = m_knockBack * 0.15f;
+	deathMoveVec = m_knockBack * 0.1f;
 	// 座標にベクトルを足す
 	m_pos -= deathMoveVec;
 	//ノックバック処理

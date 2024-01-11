@@ -498,6 +498,7 @@ void SceneMain::Update(Pad& pad)
 				if (m_pPlayer->GetExp() != 0 &&
 					m_startLoopTimeCount > kStartLoopTime)//ƒ‹[ƒv‚ªŽn‚Ü‚é‚Ü‚Å­‚µŽžŠÔ‚ð‚Æ‚é
 				{
+					PlaySoundFile("data/sound/exp1.mp3", DX_PLAYTYPE_BACK);
 					//Œ¸‚ç‚·—Ê‚ðŒˆ‚ß‚é
 					temp = GetDigits(m_pPlayer->GetExp());
 					m_pPlayer->SubExp(temp);
@@ -517,6 +518,7 @@ void SceneMain::Update(Pad& pad)
 				if (m_pPlayer->GetGold() != 0 &&
 					m_startLoopTimeCount > kStartGoldLoopTime)
 				{
+					PlaySoundFile("data/sound/gold1.mp3", DX_PLAYTYPE_BACK);
 					//Œ¸‚ç‚·—Ê‚ðŒˆ‚ß‚é
 					temp = GetDigits(m_pPlayer->GetGold());
 					m_pPlayer->SubGold(temp);

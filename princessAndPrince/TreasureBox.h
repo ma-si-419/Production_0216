@@ -30,8 +30,12 @@ public:
 	Vec2 GetPos() { return m_pos; }
 	//当たり判定を返す
 	CircleCol GetColCircle() { return m_circleCol; }
+	//ノックバックの大きさを返す
+	float GetKnockBackPow() { return m_knockBackPow; }
+	
 	//状態を管理する
 	Game::State m_nowState;
+
 
 private:
 	//SceneMainのポインタ
@@ -58,5 +62,7 @@ private:
 	Vec2 m_knockBackVec;
 	//ノックバックする時間をカウントする変数
 	int m_knockBackTime;
+	//ノックバックの大きさを決める変数
+	float m_knockBackPow;
 };
 

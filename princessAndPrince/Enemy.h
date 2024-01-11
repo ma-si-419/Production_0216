@@ -45,7 +45,7 @@ public:
 	//動いているベクトルを返す
 	Vec2 GetMoveVec() { return m_moveVec; }
 	//移動速度を返す
-	float GetSpd() { return m_spd; }
+	float GetKnockBackPow() { return m_knockBackPow; }
 private:
 	//SceneMainのポインタをもつ
 	SceneMain* m_pMain;
@@ -83,6 +83,8 @@ private:
 	int m_haveGold;
 	//持っている経験値の量
 	int m_haveExp;
+	//ぶつかった時のノックバックの大きさ
+	float m_knockBackPow;
 	//パーティクルのポインタ
 	Particle* m_pParticle;
 };

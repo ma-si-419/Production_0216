@@ -25,14 +25,17 @@ namespace
 	constexpr int kKnockBackScale = 3;
 	//パーティクルの数
 	constexpr int kParticleVol = 30;
+	//ノックバックの大きさ
+	constexpr float kKnockBackPow = 3;
 }
 TreasureBox::TreasureBox(SceneMain* sceneMain) :
 	m_pMain(sceneMain),
-	m_hp(GetRand(2) + 3),
+	m_hp(GetRand(3) + 5),
 	m_colScale(kColScale),
 	m_handle(-1),
 	m_isExist(true),
-	m_knockBackVec()
+	m_knockBackVec(),
+	m_knockBackPow(kKnockBackPow)
 {
 }
 
@@ -176,7 +179,7 @@ void TreasureBox::Draw()
 
 void TreasureBox::HitPlayer(Player* player)
 {
-	m_hp--;
+	m_hp -= GetRand(5) + 1;
 	//ノックバック処理を入れる
 	m_knockBackVec = player->GetMoveVec() * -1;
 	m_knockBackVec.Normalize();

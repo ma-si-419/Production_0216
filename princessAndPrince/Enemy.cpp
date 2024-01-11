@@ -22,7 +22,7 @@ namespace
 	// アニメーションの１サイクルのフレーム数
 	constexpr int kAnimFrameCycle = _countof(kUseFrame) * kAnimFrameNum;
 	//ノックバックの大きさ
-	constexpr int kKnockBackScale = 4;
+	constexpr int kKnockBackScale = 3;
 	//エネミーが宝箱を落とす確率(Max100)
 	constexpr int kDropProb = 100;
 	//マジックにヒットするインターバル
@@ -60,7 +60,8 @@ Enemy::Enemy(SceneMain* pMain) :
 	m_kind(goblin),
 	m_pTreasureBox(nullptr),
 	m_scale(0.0f),
-	m_srcY(0)
+	m_srcY(0),
+	m_knockBackPow(0)
 {
 	m_animFrame = 0;
 	m_nowState = Game::kNormal;
@@ -113,24 +114,26 @@ void Enemy::Init(int kinds)
 		m_haveExp = GetRand(3) + 1;
 		m_kind = goblin;
 		m_isBoss = false;
+		m_knockBackPow = 2;
 	}
 	else if (kinds == static_cast<int>(boar))
 	{
 		m_hp = 7;
 		m_atk = 1.0f;
-		m_spd = 0.4f;
+		m_spd = 0.5f;
 		m_scale = kEnemySize;
 		m_srcY = 1;
 		m_haveGold = GetRand(10) + 8;
 		m_haveExp = GetRand(5) + 2;
 		m_kind = boar;
 		m_isBoss = false;
+		m_knockBackPow = 4;
 
 	}
 	else if (kinds == static_cast<int>(doragon))
 	{
 		m_hp = 20;
-		m_atk = 10.0f;
+		m_atk = 20.0f;
 		m_spd = 0.1f;
 		m_scale = kEnemySize;
 		m_srcY = 2;
@@ -138,6 +141,7 @@ void Enemy::Init(int kinds)
 		m_haveExp = GetRand(10) + 5;
 		m_kind = doragon;
 		m_isBoss = false;
+		m_knockBackPow = 4;
 
 	}
 	else if (kinds == static_cast<int>(skeleton))
@@ -151,7 +155,7 @@ void Enemy::Init(int kinds)
 		m_haveGold = GetRand(20) + 20;
 		m_haveExp = GetRand(10) + 3;
 		m_isBoss = false;
-
+		m_knockBackPow = 2;
 	}
 	else if (kinds == static_cast<int>(snowman))
 	{
@@ -164,7 +168,7 @@ void Enemy::Init(int kinds)
 		m_haveGold = GetRand(150) + 50;
 		m_haveExp = GetRand(20) + 10;
 		m_isBoss = false;
-
+		m_knockBackPow = 1;
 	}
 	else if (kinds == static_cast<int>(bossGoblin))
 	{
@@ -177,6 +181,7 @@ void Enemy::Init(int kinds)
 		m_haveGold = GetRand(150) + 100;
 		m_haveExp = GetRand(20) + 10;
 		m_isBoss = true;
+		m_knockBackPow = 2;
 	}
 	else if (kinds == static_cast<int>(bossBoar))
 	{
@@ -189,6 +194,7 @@ void Enemy::Init(int kinds)
 		m_haveGold = GetRand(150) + 150;
 		m_haveExp = GetRand(30) + 15;
 		m_isBoss = true;
+		m_knockBackPow = 3;
 
 	}
 	else if (kinds == static_cast<int>(bossDoragon))
@@ -202,7 +208,7 @@ void Enemy::Init(int kinds)
 		m_haveGold = GetRand(300) + 500;
 		m_haveExp = GetRand(50) + 50;
 		m_isBoss = true;
-
+		m_knockBackPow = 3;
 	}
 	else if (kinds == static_cast<int>(bossSkeleton))
 	{
@@ -215,7 +221,7 @@ void Enemy::Init(int kinds)
 		m_haveGold = GetRand(300) + 300;
 		m_haveExp = GetRand(40) + 40;
 		m_isBoss = true;
-
+		m_knockBackPow = 2;
 	}
 	else if (kinds == static_cast<int>(bossSnowman))
 	{
@@ -228,7 +234,7 @@ void Enemy::Init(int kinds)
 		m_haveGold = GetRand(1000) + 1000;
 		m_haveExp = GetRand(100) + 100;
 		m_isBoss = true;
-
+		m_knockBackPow = 1;
 	}
 }
 
@@ -370,8 +376,7 @@ void Enemy::HitPlayer(Player& player, bool weak)
 	//プレイヤーの座標を参考にして、ノックバックの方向を決める
 	m_knockBack = player.GetPos() - m_pos;
 	m_knockBack.Normalize();
-	Vec2 temp = player.GetMoveVec() * kKnockBackScale;
-	m_knockBack *= temp.Length();
+	m_knockBack *= m_knockBackPow * kKnockBackScale;
 	m_isHitFlag = true;
 	//中点を出す(衝突点の座標)
 	m_hitPos = (player.GetPos() + m_pos) / 2;
@@ -385,6 +390,7 @@ void Enemy::HitPlayer(Player& player, bool weak)
 			m_pParticle = new Particle(m_hitPos, 40.0f,4.0f,5,1);
 			m_pMain->AddParticle(m_pParticle);
 		}
+		m_knockBack *= 0.6f;
 	}
 	//当たっていなかったら
 	else
@@ -406,6 +412,12 @@ void Enemy::HitMagic(MagicBase* magic)
 	//ぶつかったときのエフェクトを出す
 	m_isHitFlag = true;
 	m_isHitWeakFlag = false;
+	//白いエフェクトを出す
+	for (int i = 0; i < kParticleVol; i++)
+	{
+		m_pParticle = new Particle(m_pos, 40.0f, 4.0f, 5, 0);
+		m_pMain->AddParticle(m_pParticle);
+	}
 	//もし魔法が炎魔法だったら
 	if (magic->GetMagicKind())
 	{
