@@ -162,6 +162,7 @@
     <ClCompile Include="SceneSelect.cpp" />
     <ClCompile Include="SceneShop.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
+    <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="TreasureBox.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="UserData.cpp" />
@@ -185,16 +186,21 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Portion.h" />
     <ClInclude Include="Princess.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneMain.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneSelect.h" />
     <ClInclude Include="SceneShop.h" />
     <ClInclude Include="SceneTitle.h" />
+    <ClInclude Include="DataManager.h" />
     <ClInclude Include="TreasureBox.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="UserData.h" />
     <ClInclude Include="Vec2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="princessAndPrince.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

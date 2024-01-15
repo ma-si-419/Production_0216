@@ -2,6 +2,7 @@
 #include <memory>
 class Pad;
 class SceneManager;
+class DataManager;
 /// <summary>
 /// シーン基底クラス
 /// いろんなシーンの基になるクラス
@@ -9,14 +10,15 @@ class SceneManager;
 class Scene
 {
 protected:
-	SceneManager& m_manager;	//シーン管理クラスの参照
+	SceneManager& m_sceneManager;	//シーン管理クラスの参照
+	DataManager& m_dataManager;
 
 public:
 	/// <summary>
 	/// 生成時にSceneManagerの参照を受け取っておく
 	/// </summary>
 	/// <param name="manager">SceneManagerの参照</param>
-	Scene(SceneManager& manager);
+	Scene(SceneManager& sceneManager,DataManager& DataManager);
 	virtual void Init() = 0;
 	/// <summary>
 	/// シーンの更新

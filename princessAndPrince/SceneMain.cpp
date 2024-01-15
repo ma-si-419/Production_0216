@@ -6,6 +6,7 @@
 #include "SceneMain.h"
 #include "SceneTitle.h"
 #include "SceneManager.h"
+#include "DataManager.h"
 #include "SceneSelect.h"
 #include "MyString.h"
 
@@ -57,8 +58,8 @@ namespace
 	//クリア時の演出の時間
 	constexpr int kDanceTime = 60 + kResultTime;
 }
-SceneMain::SceneMain(SceneManager& manager, int stageNum) :
-	Scene(manager),
+SceneMain::SceneMain(SceneManager& sceneManager,DataManager& DataManager, int stageNum) :
+	Scene(sceneManager,DataManager),
 	m_isMusicFlag(true),
 	m_enemyPopTimeCount(0),
 	m_isClearFlag(false),
@@ -89,34 +90,34 @@ SceneMain::SceneMain(SceneManager& manager, int stageNum) :
 
 {
 	//プレイヤーのグラフィックのロード
-	m_playerHandle = LoadGraph("data/image/Monkey.png");
+	m_playerHandle = m_dataManager.SearchGraph("playerGraph");
 	//Playerのコンストラクタ
 	m_pPlayer = new Player(this);
 	//プレイヤーのメンバ変数にアクセス
 	m_pPlayer->SetHandle(m_playerHandle);
 	//プリンセスのグラフィックのロード
-	m_princessHandle = LoadGraph("data/image/Princess.png");
+	m_princessHandle = m_dataManager.SearchGraph("princessGraph");
 	//Princessのコンストラクタ
 	m_pPrincess = new Princess(this);
 	//プリンセスのメンバ変数にアクセス
 	m_pPrincess->SetHandle(m_princessHandle);
 	//敵のグラフィックのロード
-	m_enemyHandle = LoadGraph("data/image/Enemy.png");
+	m_enemyHandle = m_dataManager.SearchGraph("enemyGraph");
 	//背景のグラフィックのロード
-	m_bgHandle = LoadGraph("data/image/_bg.png");
+	m_bgHandle = m_dataManager.SearchGraph("bgGraph");
 	//ぶつかったときの音のロード
-	m_attackSe = LoadSoundMem("data/sound/attack3.mp3");
+	m_attackSe = m_dataManager.SearchSound("attackSe");
 	//ダンスの音のロード
-	m_danceMusic = LoadSoundMem("data/sound/clearSe.mp3");
+	m_danceMusic = m_dataManager.SearchSound("danceSe");
 	//リザルトの効果音のロード
-	m_resultGold = LoadSoundMem("data/sound/gold1.mp3");
-	m_resultExp = LoadSoundMem("data/sound/exp1.mp3");
+	m_resultGold = m_dataManager.SearchSound("resultGoldSe");
+	m_resultExp = m_dataManager.SearchSound("resultExpSe");
 	//マップの音楽のロード
-	m_fieldBgm = LoadSoundMem("data/sound/mainBgm2.mp3");
+	m_fieldBgm = m_dataManager.SearchSound("fieldBgm");
 	//ボスが出てきた時の音楽のロード
-	m_bossBgm = LoadSoundMem("data/sound/mainBgm1.mp3");
+	m_bossBgm = m_dataManager.SearchSound("bossBgm");
 	//ダンスの前のSeのロード
-	m_beforeDanceSe = LoadSoundMem("data/sound/enemyDelete.mp3");
+	m_beforeDanceSe = m_dataManager.SearchSound("beforeDanceSe");
 	//敵の最大数を設定
 	m_pEnemy.resize(kMaxEnemy);
 	//アイテムの最大数を設定
@@ -166,7 +167,7 @@ void SceneMain::Init()
 	}
 	m_pPlayer->Init();
 	m_pPrincess->Init();
-	ChangeSoundVol(50);
+	ChangeSoundVol(150);
 }
 
 
@@ -206,7 +207,7 @@ void SceneMain::Update(Pad& pad)
 			//音楽の再生を止める
 			StopSoundFile();
 			//タイトルシーンに移行する
-			m_manager.ChangeScene(std::make_shared<SceneTitle>(m_manager));
+			m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager));
 
 			return;
 		}
@@ -445,7 +446,7 @@ void SceneMain::Update(Pad& pad)
 			case 1:
 				StopSoundMem(m_fieldBgm);
 				StopSoundMem(m_bossBgm);
-				m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
 				return;
 				break;
 
@@ -593,7 +594,7 @@ void SceneMain::Update(Pad& pad)
 			}
 			if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A])
 			{
-				m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
 				return;
 			}
 		}
@@ -711,6 +712,7 @@ void SceneMain::Draw()
 
 		}
 	}
+
 }
 
 bool SceneMain::AddItem(std::shared_ptr<ItemBase> pItem)

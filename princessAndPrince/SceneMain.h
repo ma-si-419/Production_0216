@@ -3,7 +3,6 @@
 #include <vector>
 #include<memory>
 #include<stack>
-#include"Fade.h"
 using namespace std;
 
 class Player;
@@ -24,7 +23,7 @@ struct popEnemy
 class SceneMain : public Scene
 {
 public:
-	SceneMain(SceneManager& manager,int stageNum);
+	SceneMain(SceneManager& sceneManager,DataManager& DataManager,int stageNum);
 	virtual ~SceneMain();
 
 	void Init();
@@ -157,4 +156,6 @@ private:
 	int m_beforeDanceSe;
 	//魔女の場所にパーティクルを出したか判断する
 	bool m_isWitchParticle;
+	//セレクトシーンに戻る
+	bool m_isBackSelectScene;
 };

@@ -1,11 +1,13 @@
 #include "SceneTitle.h"
 #include "SceneManager.h"
+#include "DataManager.h"
 #include "DxLib.h"
 #include "Game.h"
 #include "SceneSelect.h"
-SceneTitle::SceneTitle(SceneManager& manager) :
-	Scene(manager),
-	m_isKeyDown(false)
+SceneTitle::SceneTitle(SceneManager& sceneManager,DataManager& DataManager) :
+	Scene(sceneManager,DataManager),
+	m_isKeyDown(false),
+	m_handle(-1)
 {
 }
 
@@ -29,7 +31,7 @@ void SceneTitle::Update(Pad& pad)
 	 //Aƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ç
 	if (m_input.Buttons[12] && m_isKeyDown)
 	{
-		m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
 	}
 }
 

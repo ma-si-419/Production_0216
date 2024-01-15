@@ -95,6 +95,15 @@ void Princess::Init()
 	m_atk = kBaseAtk;
 	m_def = 0;
 	m_scale = kMagicScale;
+	//座標を参考にHpバーの位置を設定
+	m_hpBarPos.x = m_pos.x - kMaxBarWidth / 2;
+	m_hpBarPos.y = m_pos.y - kHpBarPosY;
+	//Hpの割合を計算してバーの長さを算出する
+	m_hpBarWidth = kMaxBarWidth * GetHpRate();
+	//血の量バーの処理
+	//上のHpバーよりも少し低い座標に表示させる
+	m_bloodBarPos.x = m_hpBarPos.x;
+	m_bloodBarPos.y = m_hpBarPos.y + kBarHeight * 2;
 }
 
 void Princess::Update()

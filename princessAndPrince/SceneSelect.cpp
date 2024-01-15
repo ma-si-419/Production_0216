@@ -1,5 +1,6 @@
 #include "SceneSelect.h"
 #include "SceneManager.h"
+#include "DataManager.h"
 #include "DxLib.h"
 #include "Game.h"
 #include "SceneMain.h"
@@ -14,14 +15,15 @@ namespace
 	//ポーズを開いた時の項目の数
 	constexpr int kMaxPauseNum = 2;
 }
-SceneSelect::SceneSelect(SceneManager& manager) :
-	Scene(manager),
+SceneSelect::SceneSelect(SceneManager& sceneManager,DataManager& DataManager) :
+	Scene(sceneManager,DataManager),
 	m_isKeyDown(false),
 	m_stageSelectNum(0),
 	m_pauseSelectNum(0),
 	m_isSelectKeyDown(false),
 	m_isPause(false),
-	m_isStatus(false)
+	m_isStatus(false),
+	m_isSelectScene(false)
 {
 }
 
@@ -58,14 +60,16 @@ void SceneSelect::Update(Pad& pad)
 	if (!m_isPause)
 	{
 		//Aボタンが押されたら
-		if (m_input.Buttons[XINPUT_BUTTON_A] && m_isKeyDown)
+		if (m_input.Buttons[XINPUT_BUTTON_A] && m_isKeyDown && !m_isSelectScene)
 		{
-			m_manager.ChangeScene(std::make_shared<SceneMain>(m_manager, m_stageSelectNum));
+			m_sceneManager.ChangeScene(std::make_shared<SceneMain>(m_sceneManager,m_dataManager, m_stageSelectNum));
+			m_isKeyDown = false;
+			m_isSelectScene = true;
 		}
 		//Bボタンを押したらタイトルに戻る
-		if (m_input.Buttons[XINPUT_BUTTON_B] && m_isKeyDown)
+		if (m_input.Buttons[XINPUT_BUTTON_B] && m_isKeyDown && !m_isSelectScene)
 		{
-			m_manager.ChangeScene(std::make_shared<SceneTitle>(m_manager));
+			m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager));
 		}
 		//Yボタンが押されたら
 		if (m_input.Buttons[XINPUT_BUTTON_Y] && m_isKeyDown && !m_isPause)
@@ -124,7 +128,7 @@ void SceneSelect::Update(Pad& pad)
 			m_isKeyDown = false;
 		}
 		//Aボタンが押されたらm_pauseSelectNumに応じて処理を行う
-		if (m_input.Buttons[XINPUT_BUTTON_A] && m_isKeyDown)
+		if (m_input.Buttons[XINPUT_BUTTON_A] && m_isKeyDown && !m_isSelectScene)
 		{
 			switch (m_pauseSelectNum)
 			{
@@ -135,11 +139,11 @@ void SceneSelect::Update(Pad& pad)
 				break;
 			case 1://おみせ
 				//ショップシーンに移行する
-				m_manager.ChangeScene(std::make_shared<SceneShop>(m_manager));
+				m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager));
 				break;
 			case 2://タイトル
 				//タイトルシーンに移行する
-				m_manager.ChangeScene(std::make_shared<SceneTitle>(m_manager));
+				m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager));
 				break;
 			}
 			m_isKeyDown = false;

@@ -1,7 +1,8 @@
 #include "Scene.h"
 
-Scene::Scene(SceneManager& manager) :
-	m_manager(manager)
+Scene::Scene(SceneManager& sceneManager,DataManager& DataManager) :
+	m_sceneManager(sceneManager),
+	m_dataManager(DataManager)
 {
 
 }

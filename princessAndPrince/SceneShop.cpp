@@ -1,5 +1,6 @@
 #include "SceneShop.h"
 #include "SceneManager.h"
+#include "DataManager.h"
 #include "DxLib.h"
 #include "Game.h"
 #include "SceneSelect.h"
@@ -15,8 +16,8 @@ namespace
 	//マックスレベル
 	constexpr int kMaxLevel = 19;
 }
-SceneShop::SceneShop(SceneManager& manager) :
-	Scene(manager),
+SceneShop::SceneShop(SceneManager& sceneManager,DataManager& DataManager) :
+	Scene(sceneManager,DataManager),
 	m_isKeyDown(false),
 	m_stageSelectNum(0),
 	m_isSelectKeyDown(false),
@@ -85,7 +86,7 @@ void SceneShop::Update(Pad& pad)
 	//Bボタンが押されたら
 	if (m_input.Buttons[13])
 	{
-		m_manager.ChangeScene(std::make_shared<SceneSelect>(m_manager));
+		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager,m_dataManager));
 	}
 	//Aボタンが押されたら
 	if (m_input.Buttons[12] && m_isAKeyDown)

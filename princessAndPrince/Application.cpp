@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "SceneManager.h"
+#include "DataManager.h"
 #include "SceneTitle.h"
 
 #include "Pad.h"
@@ -36,7 +37,8 @@ void Application::Run()
 {
 	{
 		SceneManager sceneManager;
-		sceneManager.ChangeScene(std::make_shared<SceneTitle>(sceneManager));
+		DataManager DataManager;
+		sceneManager.SetStartScene(std::make_shared<SceneTitle>(sceneManager,DataManager));
 
 		Pad pad;
 

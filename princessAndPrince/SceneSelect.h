@@ -4,7 +4,7 @@ class Player;
 class SceneSelect : public Scene
 {
 public:
-	SceneSelect(SceneManager& manager);
+	SceneSelect(SceneManager& sceneManager,DataManager& DataManager);
 	virtual ~SceneSelect();
 
 	void Init();
@@ -25,5 +25,7 @@ private:
 	bool m_isPause;
 	//ステータス画面を開いているかどうか
 	bool m_isStatus;
+	//ステージを決定した後に連打しないように
+	bool m_isSelectScene;
 };
 

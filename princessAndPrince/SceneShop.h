@@ -10,7 +10,7 @@ struct ItemPrice
 class SceneShop : public Scene
 {
 public:
-	SceneShop(SceneManager& manager);
+	SceneShop(SceneManager& sceneManager,DataManager& DataManager);
 	virtual ~SceneShop();
 
 	void Init();

@@ -5,7 +5,7 @@ class SceneTitle : public Scene
 {
 public:
 	//コンストラクタ
-	SceneTitle(SceneManager& manager);
+	SceneTitle(SceneManager& sceneManager,DataManager& DataManager);
 	//デストラクタ
 	virtual ~SceneTitle();
 	//初期化処理

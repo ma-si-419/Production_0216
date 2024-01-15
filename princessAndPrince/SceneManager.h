@@ -1,6 +1,7 @@
 #pragma once
 #include <list> 
 #include <memory>
+#include "Fade.h"
 class Pad;
 class Scene;
 class FileManager;
@@ -12,6 +13,9 @@ class SceneManager
 {
 private:
 	std::list<std::shared_ptr<Scene>>scenes_;
+	std::shared_ptr<Fade> m_pFade;
+	bool m_isChangeScene;
+	std::shared_ptr<Scene> m_nextScene;
 public:
 	SceneManager();
 	~SceneManager();
@@ -26,6 +30,7 @@ public:
 	/// </summary>
 	void Draw();
 
+	void SetStartScene(std::shared_ptr<Scene> nextScene);
 	/// <summary>
 	/// 現在実行中のシーンを引数で指定されたシーンに切り替える
 	/// </summary>
