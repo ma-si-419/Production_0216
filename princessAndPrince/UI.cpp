@@ -96,7 +96,7 @@ void UI::SceneClearUI()
 	if (m_timeCount > kShowTime)
 	{
 		int stringWidth = GetDrawStringWidth("ゲームクリア", -1);
-		DrawString((Game::kPlayScreenWidth - stringWidth) / 2, 200, "ゲームクリア", GetColor(255, 255, 255));
+		DrawStringToHandle((Game::kPlayScreenWidth - stringWidth) / 2, 200, "ゲームクリア", GetColor(255, 255, 255),);
 		//獲得したゴールドと経験値を表示する
 		DrawString(300, 500, "獲得経験値", GetColor(255, 255, 255));
 		DrawString(300, 600, "所持経験値", GetColor(255, 255, 255));

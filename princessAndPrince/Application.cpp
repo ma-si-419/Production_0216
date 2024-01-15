@@ -16,6 +16,11 @@ namespace
 
 void Application::Terminate()
 {
+	if (RemoveFontResourceEx(m_fontPath, FR_PRIVATE, NULL)) {
+	}
+	else {
+		MessageBox(NULL, "remove failure", "", MB_OK);
+	}
 	DxLib_End();
 }
 
@@ -30,6 +35,14 @@ bool Application::Init()
 		return false;	//異常終了
 	}
 	SetDrawScreen(DX_SCREEN_BACK);
+
+	m_fontPath = "data/PixelMplus12-Regular.ttf";
+	if (AddFontResourceEx(m_fontPath, FR_PRIVATE, NULL) > 0) {
+	}
+	else {
+		// フォント読込エラー処理
+		MessageBox(NULL, "フォント読込失敗", "", MB_OK);
+	}
 	return true;
 }
 

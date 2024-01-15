@@ -31,6 +31,7 @@ DataManager::DataManager()
 	graphMap["enemyGraph"] = LoadGraph("data/image/Enemy.png");
 	//背景のグラフィック
 	graphMap["bgGraph"] = LoadGraph("data/image/_bg.png");
+
 }
 
 DataManager::~DataManager()

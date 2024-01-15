@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <Windows.h>
 
 struct Size
 {
@@ -27,6 +28,8 @@ private:
 	/// 後処理を行う
 	/// </summary>
 	void Terminate();
+
+	LPCSTR m_fontPath; // 読み込むフォントファイルのパス
 
 public:
 
