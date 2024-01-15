@@ -119,6 +119,7 @@ void SceneShop::Update(Pad& pad)
 				//ŠŽ‹à‚ª’l’i‚æ‚è‚à‘å‚«‚©‚Á‚½‚ç
 				if (UserData::userGold >= m_playerItemPriceList[UserData::userAtkLevel])
 				{
+
 					UserData::userGold -= m_playerItemPriceList[UserData::userAtkLevel];
 					UserData::userAtkLevel++;
 				}

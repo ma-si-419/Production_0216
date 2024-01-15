@@ -5,6 +5,7 @@
 #include "Princess.h"
 #include "UserData.h"
 #include "SceneMain.h"
+#include "DataManager.h"
 namespace
 {
 	constexpr float kMaxBarWidth = 200.0f;
@@ -41,27 +42,27 @@ void UI::Draw()
 	//UIの背景(右側)表示
 	DrawBox(960, 0, Game::kScreenWidth, Game::kPlayScreenHeight, GetColor(100, 100, 100), true);
 	//入手した経験値の量をプレイヤーから取得して表示する	
-	DrawFormatString(Game::kScreenWidth - 300, 100,//座標
+	DrawFormatString(Game::kScreenWidth - 400, 100,//座標
 		GetColor(0, 0, 0), "取得経験値%d", m_pPlayer->GetExp());
 
 	//入手したゴールドの量をプレイヤーから取得して表示する
-	DrawFormatString(Game::kScreenWidth - 300, 200,//座標
+	DrawFormatString(Game::kScreenWidth - 400, 200,//座標
 		GetColor(0, 0, 0), "取得ゴールド%d", m_pPlayer->GetGold());
 
 	//攻撃力のレベルを表示する
-	DrawFormatString(Game::kScreenWidth - 200, 300,//座標
+	DrawFormatString(Game::kScreenWidth - 400, 300,//座標
 		GetColor(0, 0, 0), "こうげきLv　%d", UserData::userAtkLevel + 1);
 	//防御力のレベルを表示する	
-	DrawFormatString(Game::kScreenWidth - 200, 400,//座標
+	DrawFormatString(Game::kScreenWidth - 400, 400,//座標
 		GetColor(0, 0, 0), "ぼうぎょLv　%d", UserData::userDefLevel + 1);
 	//移動速度のレベルを表示する	
-	DrawFormatString(Game::kScreenWidth - 200, 500,//座標
+	DrawFormatString(Game::kScreenWidth - 400, 500,//座標
 		GetColor(0, 0, 0), "は や さLv　%d", UserData::userSpdLevel + 1);
 	//炎魔法のレベルを表示する	
-	DrawFormatString(Game::kScreenWidth - 200, 600,//座標
+	DrawFormatString(Game::kScreenWidth - 400, 600,//座標
 		GetColor(0, 0, 0), "ファイアLv　%d", UserData::userFireLevel + 1);
 	//風魔法のレベルを表示する
-	DrawFormatString(Game::kScreenWidth - 200, 700,//座標
+	DrawFormatString(Game::kScreenWidth - 400, 700,//座標
 		GetColor(0, 0, 0), "ウィンドLv　%d", UserData::userWindLevel + 1);
 	//今どちらの魔法を打っているかを表示する
 	if (m_pPrincess->GetMagicKind())
@@ -96,7 +97,14 @@ void UI::SceneClearUI()
 	if (m_timeCount > kShowTime)
 	{
 		int stringWidth = GetDrawStringWidth("ゲームクリア", -1);
-		DrawStringToHandle((Game::kPlayScreenWidth - stringWidth) / 2, 200, "ゲームクリア", GetColor(255, 255, 255),);
+		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 - 150, 200, "ゲ ー ム", GetColor(255, 255, 255));
+		DrawRectRotaGraph((Game::kPlayScreenWidth - stringWidth) / 2 + 100, static_cast<int>(200),
+			48, Game::kDirDeath * 16,
+			16, 16,
+			6.0,
+			0.0,
+			m_pPlayer->GetHandle(), true, false);
+		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 + 150, 200, "ク リ ア", GetColor(255, 255, 255));
 		//獲得したゴールドと経験値を表示する
 		DrawString(300, 500, "獲得経験値", GetColor(255, 255, 255));
 		DrawString(300, 600, "所持経験値", GetColor(255, 255, 255));

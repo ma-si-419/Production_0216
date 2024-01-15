@@ -9,6 +9,10 @@ DataManager::DataManager()
 	soundMap["cancelSe"] = LoadSoundMem("data/sound/cancelSe.mp3");
 	//カーソルを動かす時の効果音
 	soundMap["cursorSe"] = LoadSoundMem("data/sound/cursorSe.mp3");
+	//ショップでアイテムを買った時の効果音
+	soundMap["shopSe"] = LoadSoundMem("data/sound/shopSe.mp3");
+	//聖剣モードを発動した時の効果音の効果音
+	soundMap["specialModeSe"] = LoadSoundMem("data/sound/specialModeSe.mp3");
 	//敵にぶつかった時の音
 	soundMap["attackSe"] = LoadSoundMem("data/sound/attack3.mp3");
 	//ダンスするときの効果音
@@ -31,6 +35,7 @@ DataManager::DataManager()
 	graphMap["enemyGraph"] = LoadGraph("data/image/Enemy.png");
 	//背景のグラフィック
 	graphMap["bgGraph"] = LoadGraph("data/image/_bg.png");
+
 
 }
 

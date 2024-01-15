@@ -43,6 +43,8 @@ bool Application::Init()
 		// フォント読込エラー処理
 		MessageBox(NULL, "フォント読込失敗", "", MB_OK);
 	}
+	ChangeFont("PixelMplus12");
+	SetFontSize(48);
 	return true;
 }
 

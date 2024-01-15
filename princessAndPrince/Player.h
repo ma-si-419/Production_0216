@@ -33,6 +33,8 @@ public:
 	bool GetDeathFlag() { return m_isDeathFlag; }
 	//持っているゴールドの量を取得する
 	int GetGold() { return m_gold; }
+	//グラフハンドルを返す
+	int GetHandle() { return m_handle; }
 	//持っているゴールドを減らす
 	void SubGold(int subNum) { m_gold -= subNum; }
 	//持っている経験値の量を取得する
