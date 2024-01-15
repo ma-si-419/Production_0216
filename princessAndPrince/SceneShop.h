@@ -28,7 +28,13 @@ public:
 	int m_playerItemPriceList[20];
 	//魔女のアイテムの値段の配列
 	int m_princessItemPriceList[20];
-	//連続でAボタンが押されないように
-	bool m_isAKeyDown;
+	//カーソルを動かしたときの効果音
+	int m_cursorSe;
+	//フェード中に連打できないように
+	bool m_isFade;
+	//Bボタンを押したときの音
+	int m_cancelSe;
+	//アイテムを買った時の効果音
+	//アイテムを買えなかった時の効果音
 };
 

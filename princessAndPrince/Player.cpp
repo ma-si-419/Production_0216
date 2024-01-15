@@ -117,7 +117,7 @@ void Player::Update()
 		if (m_isDeathFlag)
 		{
 
-			if (pad & PAD_INPUT_UP)
+			if (pad & PAD_INPUT_UP || CheckHitKey(KEY_INPUT_W))
 			{
 				if (m_lastPad != 0)
 				{
@@ -131,7 +131,7 @@ void Player::Update()
 				}
 
 			}
-			else if (pad & PAD_INPUT_DOWN)
+			else if (pad & PAD_INPUT_DOWN || CheckHitKey(KEY_INPUT_S))
 			{
 				if (m_lastPad != 1)
 				{
@@ -144,7 +144,7 @@ void Player::Update()
 					m_pos.y = GetRand(10) + m_deathPos.y;
 				}
 			}
-			else if (pad & PAD_INPUT_LEFT)
+			else if (pad & PAD_INPUT_LEFT || CheckHitKey(KEY_INPUT_A))
 			{
 				if (m_lastPad != 2)
 				{
@@ -157,7 +157,7 @@ void Player::Update()
 					m_pos.y = GetRand(10) + m_deathPos.y;
 				}
 			}
-			else if (pad & PAD_INPUT_RIGHT)
+			else if (pad & PAD_INPUT_RIGHT || CheckHitKey(KEY_INPUT_D))
 			{
 				if (m_lastPad != 3)
 				{
@@ -214,13 +214,13 @@ void Player::Update()
 		m_moveVec.x = 0.0f;
 		m_moveVec.y = 0.0f;
 		//ÉÜÅ[ÉUÇÃKeyì¸óÕÇéÊìæ
-		if (pad & PAD_INPUT_UP)
+		if (pad & PAD_INPUT_UP || CheckHitKey(KEY_INPUT_W))
 		{
 			m_moveVec.y--;
 			m_dirY = -1;
 			m_isMove = true;
 		}
-		else if (pad & PAD_INPUT_DOWN)
+		else if (pad & PAD_INPUT_DOWN || CheckHitKey(KEY_INPUT_S))
 		{
 			m_moveVec.y++;
 			m_dirY = 1;
@@ -230,13 +230,13 @@ void Player::Update()
 		{
 			m_dirY = 0;
 		}
-		if (pad & PAD_INPUT_LEFT)
+		if (pad & PAD_INPUT_LEFT || CheckHitKey(KEY_INPUT_A))
 		{
 			m_moveVec.x--;
 			m_dirX = -1;
 			m_isMove = true;
 		}
-		else if (pad & PAD_INPUT_RIGHT)
+		else if (pad & PAD_INPUT_RIGHT || CheckHitKey(KEY_INPUT_D))
 		{
 			m_moveVec.x++;
 			m_dirX = 1;

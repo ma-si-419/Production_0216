@@ -3,6 +3,12 @@
 
 DataManager::DataManager()
 {
+	//カーソルを動かす時の効果音
+	soundMap["approveSe"] = LoadSoundMem("data/sound/approveSe.mp3");
+	//カーソルを動かす時の効果音
+	soundMap["cancelSe"] = LoadSoundMem("data/sound/cancelSe.mp3");
+	//カーソルを動かす時の効果音
+	soundMap["cursorSe"] = LoadSoundMem("data/sound/cursorSe.mp3");
 	//敵にぶつかった時の音
 	soundMap["attackSe"] = LoadSoundMem("data/sound/attack3.mp3");
 	//ダンスするときの効果音

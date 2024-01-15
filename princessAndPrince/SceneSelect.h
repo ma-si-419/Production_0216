@@ -27,5 +27,11 @@ private:
 	bool m_isStatus;
 	//ステージを決定した後に連打しないように
 	bool m_isSelectScene;
+	//決定ボタンを押したときの効果音
+	int m_appSe;
+	//カーソルを動かしたときの効果音
+	int m_cursorSe;
+	//キャンセルボタンを押したときの効果音
+	int m_cancelSe;
 };
 

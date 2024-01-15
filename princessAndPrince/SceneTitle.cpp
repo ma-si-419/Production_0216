@@ -6,9 +6,10 @@
 #include "SceneSelect.h"
 SceneTitle::SceneTitle(SceneManager& sceneManager,DataManager& DataManager) :
 	Scene(sceneManager,DataManager),
-	m_isKeyDown(false),
+	m_isKeyDown(true),
 	m_handle(-1)
 {
+	m_appSe = DataManager.SearchSound("approveSe");
 }
 
 SceneTitle::~SceneTitle()
@@ -23,15 +24,12 @@ void SceneTitle::Update(Pad& pad)
 {
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
-	//Aボタンが連続で押されないように
-	if (!m_input.Buttons[12])
-	{
-		m_isKeyDown = true;
-	}
 	 //Aボタンが押されたら
-	if (m_input.Buttons[12] && m_isKeyDown)
+	if (m_input.Buttons[XINPUT_BUTTON_A] && m_isKeyDown || CheckHitKey(KEY_INPUT_RETURN) && m_isKeyDown)
 	{
+		PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
+		m_isKeyDown = false;
 	}
 }
 

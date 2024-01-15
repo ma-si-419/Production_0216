@@ -19,5 +19,7 @@ private:
 	int m_handle;
 	//連続でキーが押されないようにするための変数
 	bool m_isKeyDown;
+	//ボタンを押したときの効果音
+	int m_appSe;
 };
 

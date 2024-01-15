@@ -143,14 +143,14 @@ void Princess::Update()
 		m_MagicCount++;
 		//ボタンの押されている状況をとる
 		//RBボタンが押されていたら
-		if (m_input.Buttons[XINPUT_BUTTON_RIGHT_SHOULDER])
+		if (m_input.Buttons[XINPUT_BUTTON_RIGHT_SHOULDER] || CheckHitKey(KEY_INPUT_L))
 		{
 			//回転させる処理を入れる
 			m_angle -= 0.03f;
 
 		}
 		//LBボタンが押されていたら
-		if (m_input.Buttons[XINPUT_BUTTON_LEFT_SHOULDER])
+		if (m_input.Buttons[XINPUT_BUTTON_LEFT_SHOULDER] || CheckHitKey(KEY_INPUT_J))
 		{
 			//回転させる処理を入れる
 			m_angle += 0.03f;
@@ -197,7 +197,7 @@ void Princess::Update()
 		m_drawState = Game::kStone;
 	}
 	//Aボタンが押されたら
-	if (m_input.Buttons[XINPUT_BUTTON_A] && !m_isLastKeyFlag || CheckHitKey(KEY_INPUT_Z))
+	if (m_input.Buttons[XINPUT_BUTTON_A] && !m_isLastKeyFlag || CheckHitKey(KEY_INPUT_Z) && !m_isLastKeyFlag)
 	{
 		//連続で切り替わらないように
 		m_isLastKeyFlag = true;
@@ -206,7 +206,7 @@ void Princess::Update()
 		//魔法を撃つ間隔をリセットする
 		m_MagicCount = 0;
 	}
-	else if (!m_input.Buttons[XINPUT_BUTTON_A])
+	else if (!m_input.Buttons[XINPUT_BUTTON_A] && !CheckHitKey(KEY_INPUT_Z))
 	{
 		//連続で切り替わらないように
 		m_isLastKeyFlag = false;
@@ -220,6 +220,7 @@ void Princess::Update()
 	//今向いている方向を計算する
 	m_result.x = cosf(m_angle);
 	m_result.y = sinf(m_angle);
+
 	m_result *= kBarLen;
 	m_magicVec.x = m_pos.x + m_result.x;
 	m_magicVec.y = m_pos.y - m_result.y;
@@ -265,14 +266,15 @@ void Princess::Draw() const
 
 	int srcX = kGraphWidth * kUseFrame[animEle];
 	int srcY = kGraphHeight * m_drawState;
-
 	//魔法を打つ方向に線を表示する
-	if (m_isMagic)
+	if (m_isMagic || m_pMain->GetSpecialMode())
 	{
 		DrawLine(m_pos.x, m_pos.y,//始点
 			m_pos.x + m_result.x, m_pos.y - m_result.y,//計算結果を始点に足して終点にする
-			GetColor(0, 0, 0));
+			GetColor(255, 255, 0));
+
 	}
+	
 	//画像のどこを切り取るかを指定して、切り取った画像を表示する
 	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
 		srcX, srcY,//切り取る位置
@@ -305,7 +307,7 @@ void Princess::Draw() const
 		(int)m_bloodBarPos.x + (int)m_bloodBarWidth,//始点の位置にバーの長さを足す
 		(int)m_bloodBarPos.y + (int)kBarHeight,//終点
 		GetColor(255, 0, 0), true);
-
+	
 
 #ifdef _DEBUG
 	m_circleCol.Draw(m_radius, 0x0000ff, false);

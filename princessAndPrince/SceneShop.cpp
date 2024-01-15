@@ -16,14 +16,16 @@ namespace
 	//マックスレベル
 	constexpr int kMaxLevel = 19;
 }
-SceneShop::SceneShop(SceneManager& sceneManager,DataManager& DataManager) :
-	Scene(sceneManager,DataManager),
+SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
+	Scene(sceneManager, DataManager),
 	m_isKeyDown(false),
 	m_stageSelectNum(0),
 	m_isSelectKeyDown(false),
 	m_loopCount(0),
-	m_isAKeyDown(false)
+	m_isFade(false)
 {
+	m_cursorSe = DataManager.SearchSound("cursolSe");
+	m_cancelSe = DataManager.SearchSound("cancelSe");
 }
 
 SceneShop::~SceneShop()
@@ -58,38 +60,56 @@ void SceneShop::Update(Pad& pad)
 {
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
-	//上キーが押されたら
-	if (m_input.Buttons[0] && !m_isSelectKeyDown)
+	if (!m_isSelectKeyDown)
 	{
-		m_stageSelectNum--;
-		if (m_stageSelectNum < 0)
+		//上キーが押されたら
+		if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W))
 		{
-			m_stageSelectNum = kMaxItemNum;
+			m_stageSelectNum--;
+			PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+			if (m_stageSelectNum < 0)
+			{
+				m_stageSelectNum = kMaxItemNum;
+			}
+			m_isSelectKeyDown = true;
 		}
-		m_isSelectKeyDown = true;
-	}
-	//下キーが入力されたら
-	else if (m_input.Buttons[1] && !m_isSelectKeyDown)
-	{
-		m_stageSelectNum++;
-		if (m_stageSelectNum > kMaxItemNum)
+		//下キーが入力されたら
+		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S))
 		{
-			m_stageSelectNum = 0;
+			m_stageSelectNum++;
+			PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+			if (m_stageSelectNum > kMaxItemNum)
+			{
+				m_stageSelectNum = 0;
+
+			}
+			m_isSelectKeyDown = true;
 		}
-		m_isSelectKeyDown = true;
 	}
 	//上キーと下キーが離されたら
-	else if (!m_input.Buttons[0] && !m_input.Buttons[1])
+	if (!m_input.Buttons[XINPUT_BUTTON_DPAD_UP] && !m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] &&
+		!CheckHitKey(KEY_INPUT_W) && !CheckHitKey(KEY_INPUT_S))
 	{
 		m_isSelectKeyDown = false;
 	}
-	//Bボタンが押されたら
-	if (m_input.Buttons[13])
+	if (m_isKeyDown)
 	{
-		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager,m_dataManager));
+		//Bボタンが押されたら
+		if (m_input.Buttons[XINPUT_BUTTON_B] || CheckHitKey(KEY_INPUT_ESCAPE))
+		{
+			//フェードしている間に連打されないためのif
+			if (!m_isFade)
+			{
+				PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
+				//シーン移行する
+				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
+				m_isKeyDown = false;
+				m_isFade = true;
+			}
+		}
 	}
 	//Aボタンが押されたら
-	if (m_input.Buttons[12] && m_isAKeyDown)
+	if (m_input.Buttons[XINPUT_BUTTON_A] && m_isKeyDown || CheckHitKey(KEY_INPUT_RETURN) && m_isKeyDown)
 	{
 		switch (m_stageSelectNum)
 		{
@@ -103,7 +123,7 @@ void SceneShop::Update(Pad& pad)
 					UserData::userAtkLevel++;
 				}
 			}
-			m_isAKeyDown = false;
+			m_isKeyDown = false;
 			break;
 		case 1:
 			if (UserData::userDefLevel < kMaxLevel)
@@ -115,7 +135,7 @@ void SceneShop::Update(Pad& pad)
 					UserData::userDefLevel++;
 				}
 			}
-			m_isAKeyDown = false;
+			m_isKeyDown = false;
 			break;
 		case 2:
 			if (UserData::userSpdLevel < kMaxLevel)
@@ -127,7 +147,7 @@ void SceneShop::Update(Pad& pad)
 					UserData::userSpdLevel++;
 				}
 			}
-			m_isAKeyDown = false;
+			m_isKeyDown = false;
 			break;
 		case 3:
 			if (UserData::userFireLevel < kMaxLevel)
@@ -139,7 +159,7 @@ void SceneShop::Update(Pad& pad)
 					UserData::userFireLevel++;
 				}
 			}
-			m_isAKeyDown = false;
+			m_isKeyDown = false;
 			break;
 		case 4:
 			if (UserData::userWindLevel < kMaxLevel)
@@ -151,13 +171,14 @@ void SceneShop::Update(Pad& pad)
 					UserData::userWindLevel++;
 				}
 			}
-			m_isAKeyDown = false;
+			m_isKeyDown = false;
 			break;
 		}
 	}
-	else if (!m_input.Buttons[12])
+	else if (!m_input.Buttons[XINPUT_BUTTON_A] && !CheckHitKey(KEY_INPUT_ESCAPE) &&
+		!CheckHitKey(KEY_INPUT_RETURN))
 	{
-		m_isAKeyDown = true;
+		m_isKeyDown = true;
 	}
 }
 

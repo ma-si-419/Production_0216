@@ -58,8 +58,8 @@ namespace
 	//クリア時の演出の時間
 	constexpr int kDanceTime = 60 + kResultTime;
 }
-SceneMain::SceneMain(SceneManager& sceneManager,DataManager& DataManager, int stageNum) :
-	Scene(sceneManager,DataManager),
+SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int stageNum) :
+	Scene(sceneManager, DataManager),
 	m_isMusicFlag(true),
 	m_enemyPopTimeCount(0),
 	m_isClearFlag(false),
@@ -190,14 +190,18 @@ void SceneMain::Update(Pad& pad)
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
 	//デバッグ用
-	if (m_input.Buttons[XINPUT_BUTTON_LEFT_THUMB])
+#ifdef _DEBUG
+	if (m_input.Buttons[XINPUT_BUTTON_LEFT_THUMB] || CheckHitKey(KEY_INPUT_0))
 	{
 		CountKillBoss();
 	}
+#endif 
+
+
 	if (!m_isPause)
 	{
 		//ポーズボタンが押されたら
-		if (m_input.Buttons[XINPUT_BUTTON_START])
+		if (m_input.Buttons[XINPUT_BUTTON_START] || CheckHitKey(KEY_INPUT_P))
 		{
 			m_isPause = true;
 		}
@@ -399,7 +403,7 @@ void SceneMain::Update(Pad& pad)
 		}
 		if (m_specialGauge >= kMaxSpecialGauge)
 		{
-			if (m_input.Buttons[XINPUT_BUTTON_Y])
+			if (m_input.Buttons[XINPUT_BUTTON_Y] || CheckHitKey(KEY_INPUT_SPACE))
 			{
 				m_isSpecialMode = true;
 			}
@@ -431,12 +435,12 @@ void SceneMain::Update(Pad& pad)
 	else if (m_isPause)
 	{
 		//Bボタンを押したらメインシーンに戻る
-		if (m_input.Buttons[XINPUT_BUTTON_B])
+		if (m_input.Buttons[XINPUT_BUTTON_B] || CheckHitKey(KEY_INPUT_ESCAPE))
 		{
 			m_isPause = false;
 		}
 		//Aボタンを押したら選択している項目に応じて処理を行う
-		if (m_input.Buttons[XINPUT_BUTTON_A])
+		if (m_input.Buttons[XINPUT_BUTTON_A] || CheckHitKey(KEY_INPUT_RETURN))
 		{
 			switch (m_pauseSelectNum)
 			{
@@ -449,31 +453,34 @@ void SceneMain::Update(Pad& pad)
 				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
 				return;
 				break;
-
 			}
 		}
-		//上キーが押されたら
-		if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] && !m_isSelectKeyDown)
+		if (!m_isSelectKeyDown)
 		{
-			m_pauseSelectNum--;
-			if (m_pauseSelectNum < 0)
+			//上キーが押されたら
+			if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W))
 			{
-				m_pauseSelectNum = kMaxPauseNum;
+				m_pauseSelectNum--;
+				if (m_pauseSelectNum < 0)
+				{
+					m_pauseSelectNum = kMaxPauseNum;
+				}
+				m_isSelectKeyDown = true;
 			}
-			m_isSelectKeyDown = true;
-		}
-		//下キーが入力されたら
-		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] && !m_isSelectKeyDown)
-		{
-			m_pauseSelectNum++;
-			if (m_pauseSelectNum > kMaxPauseNum)
+			//下キーが入力されたら
+			else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S))
 			{
-				m_pauseSelectNum = 0;
+				m_pauseSelectNum++;
+				if (m_pauseSelectNum > kMaxPauseNum)
+				{
+					m_pauseSelectNum = 0;
+				}
+				m_isSelectKeyDown = true;
 			}
-			m_isSelectKeyDown = true;
 		}
 		//上キーと下キーが離されたら
-		else if (!m_input.Buttons[XINPUT_BUTTON_DPAD_UP] && !m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN])
+		if (!m_input.Buttons[XINPUT_BUTTON_DPAD_UP] && !m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] &&
+			!CheckHitKey(KEY_INPUT_W) && !CheckHitKey(KEY_INPUT_S))
 		{
 			m_isSelectKeyDown = false;
 		}
@@ -592,7 +599,7 @@ void SceneMain::Update(Pad& pad)
 					m_pUi->ShowLeaveButton();
 				}
 			}
-			if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A])
+			if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A] || m_isEnd && CheckHitKey(KEY_INPUT_RETURN))
 			{
 				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
 				return;
@@ -804,8 +811,6 @@ void SceneMain::ChangeSoundVol(int volume)
 	ChangeVolumeSoundMem(volume, m_fieldBgm);
 	ChangeVolumeSoundMem(volume, m_bossBgm);
 	ChangeVolumeSoundMem(volume, m_beforeDanceSe);
-
-
 }
 
 bool SceneMain::AddMagic(MagicBase* pMagic)
