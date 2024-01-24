@@ -24,7 +24,7 @@ SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
 	m_loopCount(0),
 	m_isFade(false)
 {
-	m_cursorSe = DataManager.SearchSound("cursolSe");
+	m_cursorSe = DataManager.SearchSound("cursorSe");
 	m_cancelSe = DataManager.SearchSound("cancelSe");
 }
 
@@ -34,26 +34,27 @@ SceneShop::~SceneShop()
 
 void SceneShop::Init()
 {
+
+	//ファイルを開く
+	std::ifstream ifs("./data/ItemPriceTable.txt");
+	//帰ってきた値を返す配列
+	vector<string> tempS;
+	//配列を作成
+	char str[kArraySize];
+	//成功したら一行ずつ読み込む
+	while (ifs.getline(str, kArraySize))
 	{
-		//ファイルを開く
-		std::ifstream ifs("./data/ItemPriceTable.txt");
-		//帰ってきた値を返す配列
-		vector<string> tempS;
-		//配列を作成
-		char str[kArraySize];
-		//成功したら一行ずつ読み込む
-		while (ifs.getline(str, kArraySize))
-		{
-			//分割
-			tempS = MyString::split(str, ",");
-			ItemPrice tempItem;
-			tempItem.playerItemPrice = std::stoi(tempS[0]);
-			tempItem.princessItemPrice = std::stof(tempS[1]);
-			m_playerItemPriceList[m_loopCount] = tempItem.playerItemPrice;
-			m_princessItemPriceList[m_loopCount] = tempItem.princessItemPrice;
-			m_loopCount++;
-		}
+		//分割
+		tempS = MyString::split(str, ",");
+		ItemPrice tempItem;
+		tempItem.playerItemPrice = std::stoi(tempS[0]);
+		tempItem.princessItemPrice = std::stof(tempS[1]);
+		m_playerItemPriceList[m_loopCount] = tempItem.playerItemPrice;
+		m_princessItemPriceList[m_loopCount] = tempItem.princessItemPrice;
+		m_loopCount++;
 	}
+	ifs.close();
+
 }
 
 void SceneShop::Update(Pad& pad)

@@ -319,17 +319,20 @@ void Enemy::Update()
 				m_hitCount = 0;
 			}
 		}
-		//移動量の計算
-		m_moveVec = m_targetPos - m_pos;
-		m_moveVec.Normalize();
-		m_moveVec *= m_spd;
-		//移動処理
-		m_pos += m_moveVec;
-		m_pos -= m_knockBack;
-		//当たり判定の更新
-		m_circleCol.SetCenter(m_pos, m_radius * m_scale);
-		//弱点のY座標の更新
-		m_weakPos.y = m_pos.y + kShiftPosY;
+		if (m_nowState != Game::kStop)
+		{
+			//移動量の計算
+			m_moveVec = m_targetPos - m_pos;
+			m_moveVec.Normalize();
+			m_moveVec *= m_spd;
+			//移動処理
+			m_pos += m_moveVec;
+			m_pos -= m_knockBack;
+			//当たり判定の更新
+			m_circleCol.SetCenter(m_pos, m_radius * m_scale);
+			//弱点のY座標の更新
+			m_weakPos.y = m_pos.y + kShiftPosY;
+		}
 		if (m_moveVec.x > 0)
 		{
 			m_isLeftFlag = false;
@@ -387,7 +390,7 @@ void Enemy::HitPlayer(Player& player, bool weak)
 		//赤いエフェクトを出す
 		for (int i = 0; i < kParticleVol; i++)
 		{
-			m_pParticle = new Particle(m_hitPos, 40.0f,4.0f,5,1);
+			m_pParticle = new Particle(m_hitPos, 40.0f, 4.0f, 5, 1);
 			m_pMain->AddParticle(m_pParticle);
 		}
 		m_knockBack *= 0.6f;
@@ -399,7 +402,7 @@ void Enemy::HitPlayer(Player& player, bool weak)
 		//白いエフェクトを出す
 		for (int i = 0; i < kParticleVol; i++)
 		{
-			m_pParticle = new Particle(m_hitPos, 40.0f, 4.0f,5,0);
+			m_pParticle = new Particle(m_hitPos, 40.0f, 4.0f, 5, 0);
 			m_pMain->AddParticle(m_pParticle);
 		}
 	}

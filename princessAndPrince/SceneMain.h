@@ -3,6 +3,7 @@
 #include <vector>
 #include<memory>
 #include<stack>
+#include"UserData.h"
 using namespace std;
 
 class Player;
@@ -67,6 +68,8 @@ public:
 	void StartExpLoop() { m_isExpLoop = true; }
 	//音量を設定する
 	void ChangeSoundVol(int volume);
+	//次のレベルまでの経験値量を返す
+	int GetNextExp();
 
 private:
 	// グラフィックのハンドル
@@ -99,6 +102,8 @@ private:
 	int m_enemyPopTimeCount;
 	//敵の出現情報を管理する構造体をいれるスタック
 	stack<popEnemy> m_popEnemyList;
+	//経験値の情報が入っている配列
+	int m_expList[50];
 	//ボスの数を入れる変数
 	int m_bossCount;
 	//倒したボスの数を入れる変数
@@ -136,6 +141,8 @@ private:
 	int m_startLoopTimeCount;
 	//ゲームクリアした時に文字を出すタイミング
 	bool m_isClearString;
+	//ゲームオーバーしたときに文字を出すタイミング
+	bool m_isGameOverString;
 	//敵とぶつかったときの音
 	int m_attackSe;
 	//弱点にぶつかったときの音
@@ -154,8 +161,23 @@ private:
 	int m_bossBgm;
 	//最後のダンス前の音
 	int m_beforeDanceSe;
+	//カーソルを動かしたときの音
+	int m_cursorSe;
+	//決定ボタンを押したときの音
+	int m_appSe;
+	//Bボタンを押したときの音
+	int m_cancelSe;
 	//魔女の場所にパーティクルを出したか判断する
 	bool m_isWitchParticle;
+	//レベルアップしたかどうか判断する
+	bool m_isUpLevel;
+	//レベルアップの文字を出すY座標
+	int m_levelUpPosY;
+	//クリアできなかった時
+	bool m_isGameOver;
+	//リザルト画面で経験値とゴールドを半分にしたかどうか
+	bool m_isHalfGold;
+	bool m_isHalfExp;
 	//セレクトシーンに戻る
 	bool m_isBackSelectScene;
 };

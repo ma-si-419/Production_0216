@@ -33,6 +33,10 @@ public:
 	bool GetDeathFlag() { return m_isDeathFlag; }
 	//持っているゴールドの量を取得する
 	int GetGold() { return m_gold; }
+	//ゲームオーバーの時は持っているゴールドを半分減らす
+	void SubGoldGameOver() { m_gold *= 0.5; }
+	//ゲームオーバーの時は持っている経験値を半分減らす
+	void SubExpGameOver() { m_exp *= 0.5; }
 	//グラフハンドルを返す
 	int GetHandle() { return m_handle; }
 	//持っているゴールドを減らす

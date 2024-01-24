@@ -14,6 +14,8 @@ namespace
 	constexpr int kShowTime = 60;
 	//Exp表示するタイミング
 	constexpr int kExpShowTime = 120;
+	//フォントの大きさ(半角)
+	constexpr int kFontSize = 24;
 }
 UI::UI(Player* pPlayer, Princess* pPrincess, SceneMain* pMain) :
 	m_pPlayer(pPlayer),
@@ -21,7 +23,8 @@ UI::UI(Player* pPlayer, Princess* pPrincess, SceneMain* pMain) :
 	m_pMain(pMain),
 	m_timeCount(0),
 	m_isShowGold(false),
-	m_isLeaveButton(false)
+	m_isLeaveButton(false),
+	m_isClearUIEnd(false)
 {
 }
 
@@ -98,34 +101,113 @@ void UI::SceneClearUI()
 	{
 		int stringWidth = GetDrawStringWidth("ゲームクリア", -1);
 		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 - 150, 200, "ゲ ー ム", GetColor(255, 255, 255));
-		DrawRectRotaGraph((Game::kPlayScreenWidth - stringWidth) / 2 + 100, static_cast<int>(200),
+		DrawRectRotaGraph((Game::kPlayScreenWidth - stringWidth) / 2 + 100,200,
 			48, Game::kDirDeath * 16,
 			16, 16,
 			6.0,
 			0.0,
 			m_pPlayer->GetHandle(), true, false);
 		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 + 150, 200, "ク リ ア", GetColor(255, 255, 255));
+		//現在のレベルを表示する
+		DrawString(100, 400, "現在のレベル", GetColor(255, 255, 255));
+		DrawFormatString(700 - AlignmentRight(UserData::userMainLevel + 1), 400, GetColor(255, 255, 255), "%d", UserData::userMainLevel + 1);
 		//獲得したゴールドと経験値を表示する
-		DrawString(300, 500, "獲得経験値", GetColor(255, 255, 255));
-		DrawString(300, 600, "所持経験値", GetColor(255, 255, 255));
-		DrawString(300, 700, "獲得ゴールド", GetColor(255, 255, 255));
-		DrawString(300, 800, "所持ゴールド", GetColor(255, 255, 255));
+		DrawString(100, 500, "獲得経験値", GetColor(255, 255, 255));
+		DrawString(100, 600, "次のレベルまで", GetColor(255, 255, 255));
+		DrawString(100, 700, "獲得ゴールド", GetColor(255, 255, 255));
+		DrawString(100, 800, "所持ゴールド", GetColor(255, 255, 255));
 		m_pMain->SetEnd();
 	}
 	if (m_timeCount > kExpShowTime)
 	{
-		DrawFormatString(600, 500, GetColor(255, 255, 255), "%d", m_pPlayer->GetExp());
-		DrawFormatString(600, 600, GetColor(255, 255, 255), "%d", UserData::userExp);
+		DrawFormatString(700 - AlignmentRight(m_pPlayer->GetExp()), 500, GetColor(255, 255, 255), "%d", m_pPlayer->GetExp());
+		DrawFormatString(700 - AlignmentRight(m_pMain->GetNextExp()), 600, GetColor(255, 255, 255), "%d", m_pMain->GetNextExp());
 		m_pMain->StartExpLoop();
 	}
 	if (m_isShowGold)
 	{
-		DrawFormatString(600, 700, GetColor(255, 255, 255), "%d", m_pPlayer->GetGold());
-		DrawFormatString(600, 800, GetColor(255, 255, 255), "%d", UserData::userGold);
+		DrawFormatString(700 - AlignmentRight(m_pPlayer->GetGold()), 700, GetColor(255, 255, 255), "%d", m_pPlayer->GetGold());
+		DrawFormatString(700 - AlignmentRight(UserData::userGold), 800, GetColor(255, 255, 255), "%d", UserData::userGold);
 	}
 	if (m_isLeaveButton)
 	{
 		DrawCircle(400, 900, 20, GetColor(255, 255, 255), true);
 		DrawString(500, 900, "で戻る", GetColor(255, 255, 255));
 	}
+}
+
+void UI::GameOverUI()
+{
+	m_timeCount++;
+	//黒い少し透明なボックスを表示する
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+	DrawBox(0, 0, Game::kPlayScreenWidth, Game::kPlayScreenHeight,
+		GetColor(0, 0, 0), true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+	if (m_timeCount > kShowTime)
+	{
+		int stringWidth = GetDrawStringWidth("ゲームオーバー", -1);
+		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 - 150, 200, "ゲ ー ム", GetColor(255, 255, 255));
+		DrawRectRotaGraph((Game::kPlayScreenWidth - stringWidth) / 2 + 100,220,
+			16, Game::kDirDeath * 16,
+			16, 16,
+			6.0,
+			0.0,
+			m_pPlayer->GetHandle(), true, false);
+		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 + 150, 200, "オ ー バ ー", GetColor(255, 255, 255));
+		//現在のレベルを表示する
+		DrawString(100, 400, "現在のレベル", GetColor(255, 255, 255));
+		DrawFormatString(700 - AlignmentRight(UserData::userMainLevel + 1), 400, GetColor(255, 255, 255), "%d", UserData::userMainLevel + 1);
+		//獲得したゴールドと経験値を表示する
+		DrawString(100, 500, "獲得経験値", GetColor(255, 255, 255));
+		DrawString(100, 600, "次のレベルまで", GetColor(255, 255, 255));
+		DrawString(100, 700, "獲得ゴールド", GetColor(255, 255, 255));
+		DrawString(100, 800, "所持ゴールド", GetColor(255, 255, 255));
+		m_pMain->SetEnd();
+	}
+	if (m_timeCount > kExpShowTime)
+	{
+		DrawFormatString(700 - AlignmentRight(m_pPlayer->GetExp()), 500, GetColor(255, 255, 255), "%d", m_pPlayer->GetExp());
+		DrawFormatString(700 - AlignmentRight(m_pMain->GetNextExp()), 600, GetColor(255, 255, 255), "%d", m_pMain->GetNextExp());
+		m_pMain->StartExpLoop();
+	}
+	if (m_isShowGold)
+	{
+		DrawFormatString(700 - AlignmentRight(m_pPlayer->GetGold()), 700, GetColor(255, 255, 255), "%d", m_pPlayer->GetGold());
+		DrawFormatString(700 - AlignmentRight(UserData::userGold), 800, GetColor(255, 255, 255), "%d", UserData::userGold);
+	}
+	if (m_isLeaveButton)
+	{
+		DrawCircle(400, 900, 20, GetColor(255, 255, 255), true);
+		DrawString(500, 900, "で戻る", GetColor(255, 255, 255));
+	}
+}
+
+int UI::AlignmentRight(int num)
+{
+	if (num >= 10000)
+	{
+		return kFontSize * 5;
+	}
+	else if (num >= 10000)
+	{
+		return kFontSize * 4;
+	}
+	else if (num >= 1000)
+	{
+		return kFontSize * 3;
+	}
+	else if (num >= 100)
+	{
+		return kFontSize * 2;
+	}
+	else if (num >= 10)
+	{
+		return kFontSize * 1;
+	}
+	else
+	{
+		return kFontSize * 0;
+	}
+	return 0;
 }

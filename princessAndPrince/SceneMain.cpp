@@ -57,6 +57,10 @@ namespace
 	constexpr int kResultTime = 60 + kClearTime;
 	//クリア時の演出の時間
 	constexpr int kDanceTime = 60 + kResultTime;
+	//レベルアップの文字を出すY座標
+	constexpr int kLevelUpPosY = 400;
+	//レベルアップの文字が上がる限界Y座標
+	constexpr int kLevelUpPosYMax = 350;
 }
 SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int stageNum) :
 	Scene(sceneManager, DataManager),
@@ -68,7 +72,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_clearTime(0),
 	m_nextEnemyKind(0),
 	m_nextEnemyPopTime(0),
-	m_specialGauge(99.1f),
+	m_specialGauge(99.9f),
 	m_isSpecialMode(false),
 	m_isPause(false),
 	m_isStop(false),
@@ -86,7 +90,12 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_danceMusic(-1),
 	m_resultGold(-1),
 	m_resultExp(-1),
-	m_isWitchParticle(false)
+	m_isWitchParticle(false),
+	m_levelUpPosY(kLevelUpPosY),
+	m_isUpLevel(false),
+	m_isGameOver(false),
+	m_isHalfExp(true),
+	m_isHalfGold(true)
 
 {
 	//プレイヤーのグラフィックのロード
@@ -118,6 +127,12 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_bossBgm = m_dataManager.SearchSound("bossBgm");
 	//ダンスの前のSeのロード
 	m_beforeDanceSe = m_dataManager.SearchSound("beforeDanceSe");
+	//決定ボタンを押したときのSeのロード
+	m_appSe = m_dataManager.SearchSound("approveSe");
+	//カーソルを動かしたときの音のロード
+	m_cursorSe = m_dataManager.SearchSound("cursorSe");
+	//Bボタンを押したときの音
+	m_cancelSe = m_dataManager.SearchSound("cancelSe");
 	//敵の最大数を設定
 	m_pEnemy.resize(kMaxEnemy);
 	//アイテムの最大数を設定
@@ -165,6 +180,24 @@ void SceneMain::Init()
 		ifs.close();
 
 	}
+	{
+		//ファイルを開く
+		std::ifstream ifs("./data/expLevel.txt");
+		int loopCount = 0;
+		//帰ってきた値を返す配列
+		vector<string> tempS;
+		//配列を作成
+		char str[kArraySize];
+		//成功したら一行ずつ読み込む
+		while (ifs.getline(str, kArraySize))
+		{
+			int temp;
+			temp = std::stoi(str);
+			m_expList[loopCount] = temp;
+			loopCount++;
+		}
+		ifs.close();
+	}
 	m_pPlayer->Init();
 	m_pPrincess->Init();
 	ChangeSoundVol(150);
@@ -201,26 +234,39 @@ void SceneMain::Update(Pad& pad)
 	if (!m_isPause)
 	{
 		//ポーズボタンが押されたら
-		if (m_input.Buttons[XINPUT_BUTTON_START] || CheckHitKey(KEY_INPUT_P))
+		if (!m_pPrincess->IsDeath())
 		{
-			m_isPause = true;
+			if (m_input.Buttons[XINPUT_BUTTON_START] || CheckHitKey(KEY_INPUT_P))
+			{
+				m_isPause = true;
+			}
 		}
 		//シーン移動
 		if (m_pPrincess->IsDeath())
 		{
 			//音楽の再生を止める
 			StopSoundFile();
-			//タイトルシーンに移行する
-			m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager));
-
-			return;
+			for (auto& enemy : m_pEnemy)
+			{
+				if (enemy)
+				{
+					//エネミーの移動を止める
+					enemy->m_nowState = Game::kStop;
+				}
+			}
+			StopSoundMem(m_fieldBgm);
+			StopSoundMem(m_bossBgm);
+			m_pPlayer->m_nowState = Game::kStop;
+			m_isGameOver = true;
+			//リザルト画面に移行する
+			m_isResult = true;
 		}
 		//Enemyの数だけ回す後で仕様変更
 		//エネミーのスタックがなくなるまで回す
 		if (!m_popEnemyList.empty())
 		{
 			//ボスを倒したら敵を出てこないようにする
-			if (m_killBossCount < m_bossCount)
+			if (m_killBossCount < m_bossCount && !m_pPrincess->IsDeath())
 			{
 				m_enemyPopTimeCount++;
 			}
@@ -437,6 +483,7 @@ void SceneMain::Update(Pad& pad)
 		//Bボタンを押したらメインシーンに戻る
 		if (m_input.Buttons[XINPUT_BUTTON_B] || CheckHitKey(KEY_INPUT_ESCAPE))
 		{
+			PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
 			m_isPause = false;
 		}
 		//Aボタンを押したら選択している項目に応じて処理を行う
@@ -445,9 +492,12 @@ void SceneMain::Update(Pad& pad)
 			switch (m_pauseSelectNum)
 			{
 			case 0:
+				PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 				m_isPause = false;
 				break;
 			case 1:
+				m_isPause = false;
+				PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 				StopSoundMem(m_fieldBgm);
 				StopSoundMem(m_bossBgm);
 				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
@@ -460,6 +510,7 @@ void SceneMain::Update(Pad& pad)
 			//上キーが押されたら
 			if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W))
 			{
+				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
 				m_pauseSelectNum--;
 				if (m_pauseSelectNum < 0)
 				{
@@ -470,6 +521,7 @@ void SceneMain::Update(Pad& pad)
 			//下キーが入力されたら
 			else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S))
 			{
+				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
 				m_pauseSelectNum++;
 				if (m_pauseSelectNum > kMaxPauseNum)
 				{
@@ -494,120 +546,145 @@ void SceneMain::Update(Pad& pad)
 		m_clearTime++;
 		StopSoundMem(m_fieldBgm);
 		StopSoundMem(m_bossBgm);
-		//アイテムをとる時間をとる
-		if (m_clearTime > kClearTime)
+	}
+	//アイテムをとる時間をとる
+	if (m_clearTime > kClearTime)
+	{
+		//聖剣モードを止める
+		m_isSpecialMode = false;
+		//プレイヤーとエネミーの動きを止める
+		m_isStop = true;
+	}
+	//動きが止まって少ししたら
+	if (m_clearTime > kResultTime && m_clearTime < kDanceTime)
+	{
+		if (!CheckSoundMem(m_beforeDanceSe))
 		{
-			//聖剣モードを止める
-			m_isSpecialMode = false;
-			//プレイヤーとエネミーの動きを止める
-			m_isStop = true;
+			PlaySoundMem(m_beforeDanceSe, DX_PLAYTYPE_BACK);
 		}
-		//動きが止まって少ししたら
-		if (m_clearTime > kResultTime && m_clearTime < kDanceTime)
-		{
-			if (!CheckSoundMem(m_beforeDanceSe))
-			{
-				PlaySoundMem(m_beforeDanceSe, DX_PLAYTYPE_BACK);
-			}
 
-			//プリンセスの位置に白いエフェクトを出す
-			if (!m_isWitchParticle)
+		//プリンセスの位置に白いエフェクトを出す
+		if (!m_isWitchParticle)
+		{
+			for (int i = 0; i < kParticleVol; i++)
 			{
+				m_pParticle = new Particle(m_pPrincess->GetPos(), 40.0f, 4.0f, 5, 0);
+				AddParticle(m_pParticle);
+			}
+			m_isWitchParticle = true;
+		}
+
+
+		//マップ上にいる敵を消す
+		for (const auto& enemy : m_pEnemy)
+		{
+			if (enemy && enemy->m_nowState != Game::kDelete)
+			{
+				enemy->m_nowState = Game::kDelete;
+				Vec2 temp;
+				//消えるときにエフェクトを出す
+				temp = enemy->GetPos();
+				//白いエフェクトを出す
 				for (int i = 0; i < kParticleVol; i++)
 				{
-					m_pParticle = new Particle(m_pPrincess->GetPos(), 40.0f, 4.0f, 5, 0);
+					m_pParticle = new Particle(temp, 40.0f, 4.0f, 5, 0);
 					AddParticle(m_pParticle);
 				}
-				m_isWitchParticle = true;
+
 			}
-
-
-			//マップ上にいる敵を消す
-			for (const auto& enemy : m_pEnemy)
-			{
-				if (enemy && enemy->m_nowState != Game::kDelete)
-				{
-					enemy->m_nowState = Game::kDelete;
-					Vec2 temp;
-					//消えるときにエフェクトを出す
-					temp = enemy->GetPos();
-					//白いエフェクトを出す
-					for (int i = 0; i < kParticleVol; i++)
-					{
-						m_pParticle = new Particle(temp, 40.0f, 4.0f, 5, 0);
-						AddParticle(m_pParticle);
-					}
-
-				}
-			}
-			//プレイヤーを前に向ける
-			m_pPlayer->TurnFront();
-			m_pPrincess->TransStone();
-			PlaySoundMem(m_danceMusic, DX_PLAYTYPE_BACK);
-
 		}
-		//敵が消えた後に少しだけ間を開けて
-		if (m_clearTime > kDanceTime && !m_isResult)
-		{
-			//プレイヤーのクリア時の行動を入れる
-			m_pPlayer->ClearDance();
-		}
-		if (m_isResult)
-		{
-			m_isClearFlag = true;
-			int temp;
-			if (m_isExpLoop)
-			{
-				m_startLoopTimeCount++;
-				//経験値が0になるまでまわす
-				if (m_pPlayer->GetExp() != 0 &&
-					m_startLoopTimeCount > kStartLoopTime)//ループが始まるまで少し時間をとる
-				{
-					//減らす量を決める
-					temp = GetDigits(m_pPlayer->GetExp());
-					m_pPlayer->SubExp(temp);
-					UserData::userExp += temp;
-				}
-				else if (m_pPlayer->GetExp() == 0)
-				{
-					if (!CheckSoundMem(m_resultExp) && !m_isGoldLoop)
-					{
-						PlaySoundMem(m_resultExp, DX_PLAYTYPE_BACK);
-					}
-					//経験値のループが終わったらゴールドのループに行く
-					m_isExpLoop = false;
-					m_isGoldLoop = true;
-					m_pUi->ShowGold();
-				}
-			}
-			if (m_isGoldLoop)
-			{
+		//プレイヤーを前に向ける
+		m_pPlayer->TurnFront();
+		m_pPrincess->TransStone();
+		PlaySoundMem(m_danceMusic, DX_PLAYTYPE_BACK);
 
-				if (m_pPlayer->GetGold() != 0 &&
-					m_startLoopTimeCount > kStartGoldLoopTime)
-				{
-					//減らす量を決める
-					temp = GetDigits(m_pPlayer->GetGold());
-					m_pPlayer->SubGold(temp);
-					UserData::userGold += temp;
-				}
-				else if (m_pPlayer->GetGold() == 0)
-				{
-					if (!CheckSoundMem(m_resultGold) && !m_isEnd)
-						PlaySoundMem(m_resultGold, DX_PLAYTYPE_BACK);
-					m_isEnd = true;
-					m_pUi->ShowLeaveButton();
-				}
-			}
-			if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A] || m_isEnd && CheckHitKey(KEY_INPUT_RETURN))
+	}
+	//敵が消えた後に少しだけ間を開けて
+	if (m_clearTime > kDanceTime && !m_isResult)
+	{
+		//プレイヤーのクリア時の行動を入れる
+		m_pPlayer->ClearDance();
+	}
+	if (m_isResult)
+	{
+		m_isClearFlag = true;
+		int temp;
+		if (m_isExpLoop)
+		{
+			m_startLoopTimeCount++;
+			//ゲームオーバーだったら半分減らす
+			if (m_isHalfExp && m_isGameOver)
 			{
-				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
-				return;
+				m_pPlayer->SubExpGameOver();
+				m_isHalfExp = false;
 			}
+			//経験値が0になるまでまわす
+			if (m_pPlayer->GetExp() != 0 &&
+				m_startLoopTimeCount > kStartLoopTime)//ループが始まるまで少し時間をとる
+			{
+				//減らす量を決める
+				temp = GetDigits(m_pPlayer->GetExp());
+				m_pPlayer->SubExp(temp);
+				UserData::userExp += temp;
+				if (UserData::userExp >= m_expList[UserData::userMainLevel])
+				{
+					UserData::userMainLevel++;
+					m_isUpLevel = true;
+				}
+			}
+			else if (m_pPlayer->GetExp() == 0)
+			{
+				if (!CheckSoundMem(m_resultExp) && !m_isGoldLoop)
+				{
+					PlaySoundMem(m_resultExp, DX_PLAYTYPE_BACK);
+				}
+				//経験値のループが終わったらゴールドのループに行く
+				m_isExpLoop = false;
+				m_isGoldLoop = true;
+				m_pUi->ShowGold();
+			}
+		}
+		if (m_isGoldLoop)
+		{
+
+			if (m_isHalfGold && m_isGameOver)
+			{
+				m_pPlayer->SubGoldGameOver();
+				m_isHalfGold = false;
+			}
+			if (m_pPlayer->GetGold() != 0 &&
+				m_startLoopTimeCount > kStartGoldLoopTime)
+			{
+				//減らす量を決める
+				temp = GetDigits(m_pPlayer->GetGold());
+				m_pPlayer->SubGold(temp);
+				UserData::userGold += temp;
+			}
+			else if (m_pPlayer->GetGold() == 0)
+			{
+				if (!CheckSoundMem(m_resultGold) && !m_isEnd)
+					PlaySoundMem(m_resultGold, DX_PLAYTYPE_BACK);
+				m_isEnd = true;
+				m_pUi->ShowLeaveButton();
+			}
+		}
+		if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A] || m_isEnd && CheckHitKey(KEY_INPUT_RETURN))
+		{
+			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
+			return;
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////////
 
+	//クリア時にプレイヤーがレベルアップしていたら
+	if (m_isUpLevel)
+	{
+		if (m_levelUpPosY >= kLevelUpPosYMax)
+		{
+			m_levelUpPosY--;
+		}
+
+	}
 }
 
 void SceneMain::Draw()
@@ -694,6 +771,15 @@ void SceneMain::Draw()
 	if (m_isClearString)
 	{
 		m_pUi->SceneClearUI();
+	}
+	if (m_isGameOver)
+	{
+		m_pUi->GameOverUI();
+	}
+	//レベルアップしていたらレベルアップと表示する
+	if (m_isUpLevel)
+	{
+		DrawString(430, m_levelUpPosY, "LEVEL UP", GetColor(255, 255, 0));
 	}
 	//ポーズ画面を開いていたら
 	if (m_isPause)
@@ -811,6 +897,11 @@ void SceneMain::ChangeSoundVol(int volume)
 	ChangeVolumeSoundMem(volume, m_fieldBgm);
 	ChangeVolumeSoundMem(volume, m_bossBgm);
 	ChangeVolumeSoundMem(volume, m_beforeDanceSe);
+}
+
+int SceneMain::GetNextExp()
+{
+	return m_expList[UserData::userMainLevel] - UserData::userExp;
 }
 
 bool SceneMain::AddMagic(MagicBase* pMagic)

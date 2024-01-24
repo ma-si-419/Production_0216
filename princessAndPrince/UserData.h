@@ -9,6 +9,7 @@ static class UserData
 public:
 	static int userGold;
 	static int userExp;
+	static int userMainLevel;
 	static int userAtkLevel;
 	static int userDefLevel;
 	static int userSpdLevel;

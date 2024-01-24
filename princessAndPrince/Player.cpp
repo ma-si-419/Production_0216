@@ -87,7 +87,7 @@ Player::~Player()
 void Player::Init()
 {
 	m_atk = 2.0f + (UserData::userAtkLevel * 0.5f);
-	m_hp = 30;
+	m_hp = 30 + (UserData::userMainLevel * 2.0f);
 	m_spd = 1.5f + (UserData::userSpdLevel * 0.1f);
 	m_def = 1.0f + (UserData::userDefLevel * 0.3f);
 	m_nowHp = m_hp;
@@ -213,38 +213,42 @@ void Player::Update()
 
 		m_moveVec.x = 0.0f;
 		m_moveVec.y = 0.0f;
-		//ユーザのKey入力を取得
-		if (pad & PAD_INPUT_UP || CheckHitKey(KEY_INPUT_W))
+		if (m_nowState != Game::kStop)
 		{
-			m_moveVec.y--;
-			m_dirY = -1;
-			m_isMove = true;
-		}
-		else if (pad & PAD_INPUT_DOWN || CheckHitKey(KEY_INPUT_S))
-		{
-			m_moveVec.y++;
-			m_dirY = 1;
-			m_isMove = true;
-		}
-		else
-		{
-			m_dirY = 0;
-		}
-		if (pad & PAD_INPUT_LEFT || CheckHitKey(KEY_INPUT_A))
-		{
-			m_moveVec.x--;
-			m_dirX = -1;
-			m_isMove = true;
-		}
-		else if (pad & PAD_INPUT_RIGHT || CheckHitKey(KEY_INPUT_D))
-		{
-			m_moveVec.x++;
-			m_dirX = 1;
-			m_isMove = true;
-		}
-		else
-		{
-			m_dirX = 0;
+
+			//ユーザのKey入力を取得
+			if (pad & PAD_INPUT_UP || CheckHitKey(KEY_INPUT_W))
+			{
+				m_moveVec.y--;
+				m_dirY = -1;
+				m_isMove = true;
+			}
+			else if (pad & PAD_INPUT_DOWN || CheckHitKey(KEY_INPUT_S))
+			{
+				m_moveVec.y++;
+				m_dirY = 1;
+				m_isMove = true;
+			}
+			else
+			{
+				m_dirY = 0;
+			}
+			if (pad & PAD_INPUT_LEFT || CheckHitKey(KEY_INPUT_A))
+			{
+				m_moveVec.x--;
+				m_dirX = -1;
+				m_isMove = true;
+			}
+			else if (pad & PAD_INPUT_RIGHT || CheckHitKey(KEY_INPUT_D))
+			{
+				m_moveVec.x++;
+				m_dirX = 1;
+				m_isMove = true;
+			}
+			else
+			{
+				m_dirX = 0;
+			}
 		}
 
 		//取得したKey入力から、Playerキャラの方向を作成してそれを返す。
@@ -438,7 +442,7 @@ void Player::HitTreasure(TreasureBox* treasureBox)
 {
 	m_knockBack = m_moveVec;
 	m_knockBack.Normalize();
-	m_knockBack *= kKnockBackScale * treasureBox->GetKnockBackPow()*(GetRand(2) + 1);
+	m_knockBack *= kKnockBackScale * treasureBox->GetKnockBackPow() * (GetRand(2) + 1);
 	m_nowState = Game::kHitEnemy;
 }
 void Player::PickUpItem(std::shared_ptr<ItemBase> item)

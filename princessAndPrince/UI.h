@@ -18,11 +18,15 @@ public:
 	void Draw();
 	//シーンクリア時に行うUI表示
 	void SceneClearUI();
+	//ゲームオーバー時に行うUI表示
+	void GameOverUI();
 	bool IsEnd() { return m_isClearUIEnd; };
 	//ゴールドを表示する
 	void ShowGold() { m_isShowGold = true; }
 	//ボタンを押したらクリアを表示する
 	void ShowLeaveButton() { m_isLeaveButton = true; }
+	//数値を右揃えにする
+	int AlignmentRight(int num);
 private:
 	//プレイヤーのポインタを保存する
 	Player* m_pPlayer;

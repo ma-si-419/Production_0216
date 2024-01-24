@@ -41,7 +41,8 @@ namespace Game
 		kHitMagic,//–‚–@‚É‚Ô‚Â‚©‚Á‚½‚Æ‚«‚Ìó‘Ô
 		kDelete,//€‚ñ‚Å‚¢‚éó‘Ô
 		kNone,//‰½‚à‚È‚¢ó‘Ô
-		kHitEnemy//“G‚Æ‚Ô‚Â‚©‚Á‚½ó‘Ô
+		kHitEnemy,//“G‚Æ‚Ô‚Â‚©‚Á‚½ó‘Ô
+		kStop//ˆÚ“®‚ğ§ŒÀ‚µ‚Ä‚¢‚éó‘Ô
 	};
 	enum WitchState
 	{
