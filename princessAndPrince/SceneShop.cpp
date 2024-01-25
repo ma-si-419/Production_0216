@@ -26,6 +26,12 @@ namespace
 	//Princessのいる座標
 	constexpr int kPrincessPosX = 450;
 	constexpr int kPrincessPosY = 740;
+	//アイテムのサイズ
+	constexpr int kItemGraphSize = 32;
+	//アイテムのY座標
+	constexpr int kItemPosY = 400;
+	//まほうのY座標
+	constexpr int kMagicPosY = 650;
 }
 SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
 	Scene(sceneManager, DataManager),
@@ -44,6 +50,9 @@ SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
 	m_traderGraph = DataManager.SearchGraph("traderGraph");
 	m_playerGraph = DataManager.SearchGraph("playerGraph");
 	m_princessGraph = DataManager.SearchGraph("princessGraph");
+	m_bgGraph = DataManager.SearchGraph("shopBgGraph");
+	m_itemGraph = DataManager.SearchGraph("itemGraph");
+	m_itemFrameGraph = DataManager.SearchGraph("itemFrameGraph");
 }
 
 SceneShop::~SceneShop()
@@ -243,6 +252,8 @@ void SceneShop::Update(Pad& pad)
 
 void SceneShop::Draw()
 {
+	//背景を表示する
+	DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kPlayScreenHeight, m_bgGraph, true);
 	//商人を表示する
 	DrawExtendGraph(kGraphPosX, kGraphPosY, kGraphPosX + kGraphSize, kGraphPosY + kGraphSize, m_traderGraph,true);
 	//プレイヤーの背中を表示
@@ -261,24 +272,49 @@ void SceneShop::Draw()
 	//最初にいらっしゃいと表示する
 	if (m_isShowString)
 	{
-		DrawString(230, 250, "いらっしゃい", GetColor(255, 255, 255), true);
+		DrawString(230, 250, "いらっしゃい", GetColor(0, 0, 0), true);
 	}
 	if (m_isBuy && !m_isShowString)
 	{
-		DrawString(230, 250, "まいどあり", GetColor(255, 255, 255), true);
+		DrawString(230, 250, "まいどあり", GetColor(0, 0, 0), true);
 	}
 	else if(!m_isBuy && !m_isShowString)
 	{
-		DrawString(230, 250, "おかねないね", GetColor(255, 255, 255), true);
+		DrawString(230, 250, "おかねないね", GetColor(0, 0, 0), true);
 	}
 	//所持金を表示する
 	DrawFormatString(Game::kPlayScreenWidth, 50, GetColor(255, 255, 255), "%d", UserData::userGold);
 	//仮実装
-	DrawString(200, 100, "攻撃力", GetColor(255, 255, 255), true);
-	DrawString(200, 200, "防御力", GetColor(255, 255, 255), true);
-	DrawString(200, 300, "移動速度", GetColor(255, 255, 255), true);
-	DrawString(200, 400, "ファイア", GetColor(255, 255, 255), true);
-	DrawString(200, 500, "タイフーン", GetColor(255, 255, 255), true);
+	DrawRectRotaGraph(800, kItemPosY,
+		0, Game::kSword * kItemGraphSize,
+		kItemGraphSize, kItemGraphSize,
+		5.0,
+		0.0,
+		m_itemGraph, true, false);
+	DrawRectRotaGraph(1075, kItemPosY,
+		0, Game::kArmor * kItemGraphSize,
+		kItemGraphSize, kItemGraphSize,
+		5.0,
+		0.0,
+		m_itemGraph, true, false);
+	DrawRectRotaGraph(1350, kItemPosY,
+		0, Game::kBoots * kItemGraphSize,
+		kItemGraphSize, kItemGraphSize,
+		5.0,
+		0.0,
+		m_itemGraph, true, false);
+	DrawRectRotaGraph(930, kMagicPosY,
+		0, Game::kFire * kItemGraphSize,
+		kItemGraphSize, kItemGraphSize,
+		5.0,
+		0.0,
+		m_itemGraph, true, false);
+	DrawRectRotaGraph(1200, kMagicPosY,
+		0, Game::kTyphoon * kItemGraphSize,
+		kItemGraphSize, kItemGraphSize,
+		5.0,
+		0.0,
+		m_itemGraph, true, false);
 
 	//攻撃レベルがマックスだったらMAXと表示する
 	if (UserData::userAtkLevel == kMaxLevel)

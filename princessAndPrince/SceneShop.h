@@ -44,9 +44,15 @@ public:
 	int m_playerGraph;
 	//Princessのグラフィック
 	int m_princessGraph;
+	//Shopの背景
+	int m_bgGraph;
 	//入ってきたときに文章を表示させる
 	bool m_isShowString;
 	//アイテムを買えたかどうか
 	bool m_isBuy;
+	//アイテムのグラフィック
+	int m_itemGraph;
+	//アイテムのフレームのグラフィック
+	int m_itemFrameGraph;
 };
 

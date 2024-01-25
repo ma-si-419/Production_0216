@@ -56,4 +56,10 @@ void DataManager::Init()
 	graphMap["bgGraph"] = LoadGraph("data/image/_bg.png");
 	//商人のグラフィック
 	graphMap["traderGraph"] = LoadGraph("data/image/trader.png");
+	//ショップの背景
+	graphMap["shopBgGraph"] = LoadGraph("data/image/shopBg.png");
+	//アイテムの画像
+	graphMap["itemGraph"] = LoadGraph("data/image/item.png");
+	//アイテムのフレーム
+	graphMap["itemFrameGraph"] = LoadGraph("data/image/frame.png");
 }

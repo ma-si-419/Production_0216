@@ -50,4 +50,16 @@ namespace Game
 		kStone,//Î‚É‚È‚Á‚Ä‚¢‚éó‘Ô
 		kBreak//‰ó‚³‚ê‚½ó‘Ô
 	};
+	enum ItemGraph
+	{
+		kArmor,
+		kDropCoin,
+		kDropExp,
+		kDropPortion,
+		kSword,
+		kBoots,
+		kDropTreasure,
+		kFire,
+		kTyphoon
+	};
 }
