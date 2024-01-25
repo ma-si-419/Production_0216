@@ -35,6 +35,18 @@ public:
 	//Bボタンを押したときの音
 	int m_cancelSe;
 	//アイテムを買った時の効果音
+	int m_buySe;
 	//アイテムを買えなかった時の効果音
+	int m_missBuySe;
+	//商人のグラフィック
+	int m_traderGraph;
+	//プレイヤーのグラフィック
+	int m_playerGraph;
+	//Princessのグラフィック
+	int m_princessGraph;
+	//入ってきたときに文章を表示させる
+	bool m_isShowString;
+	//アイテムを買えたかどうか
+	bool m_isBuy;
 };
 

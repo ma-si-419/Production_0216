@@ -7,6 +7,8 @@ public:
 	DataManager();
 	~DataManager();
 
+	void Init();
+
 	int SearchSound(std::string str) { return soundMap[str]; };
 	int SearchGraph(std::string str) { return graphMap[str]; };
 	int GetFontHandle() { return m_fontHandle; }

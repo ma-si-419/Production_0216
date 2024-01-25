@@ -208,7 +208,9 @@ void Princess::Update()
 			m_isFire = !m_isFire;
 			//魔法を撃つ間隔をリセットする
 			m_MagicCount = 0;
+#ifdef _DEBUG
 			m_nowHp -= 10;
+#endif
 		}
 		else if (!m_input.Buttons[XINPUT_BUTTON_A] && !CheckHitKey(KEY_INPUT_Z))
 		{

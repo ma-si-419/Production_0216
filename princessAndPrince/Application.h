@@ -15,8 +15,10 @@ struct Size
 class Application
 {
 private:
-	Size windowSize_;
+	Size m_isWindowSize;
 
+	bool m_isScreen;
+	bool m_isPush;
 	//ƒVƒ“ƒOƒ‹ƒgƒ“‚Ì‚½‚ß‚Éprivate‚É
 	Application() {};
 

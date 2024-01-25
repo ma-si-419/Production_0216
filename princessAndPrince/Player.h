@@ -101,4 +101,8 @@ private:
 	int m_danceCount;
 	//クリア時の演出で回った数をカウントする
 	int m_turnCount;
+	//コインを拾った時の効果音
+	int m_coinSe;
+	//経験値を拾った時の効果音
+	int m_expSe;
 };

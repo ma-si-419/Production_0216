@@ -70,6 +70,10 @@ public:
 	void ChangeSoundVol(int volume);
 	//次のレベルまでの経験値量を返す
 	int GetNextExp();
+	//コインの効果音を返す
+	int GetCoinSe() { return m_coinSe; };
+	//経験値の効果音を返す
+	int GetExpSe() { return m_expSe; };
 
 private:
 	// グラフィックのハンドル
@@ -167,6 +171,10 @@ private:
 	int m_appSe;
 	//Bボタンを押したときの音
 	int m_cancelSe;
+	//コインを拾った時の音
+	int m_coinSe;
+	//経験値を拾った時の音
+	int m_expSe;
 	//魔女の場所にパーティクルを出したか判断する
 	bool m_isWitchParticle;
 	//レベルアップしたかどうか判断する

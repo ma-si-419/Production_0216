@@ -3,6 +3,17 @@
 
 DataManager::DataManager()
 {
+	
+
+
+}
+
+DataManager::~DataManager()
+{
+}
+
+void DataManager::Init()
+{
 	//カーソルを動かす時の効果音
 	soundMap["approveSe"] = LoadSoundMem("data/sound/approveSe.mp3");
 	//カーソルを動かす時の効果音
@@ -27,6 +38,14 @@ DataManager::DataManager()
 	soundMap["bossBgm"] = LoadSoundMem("data/sound/mainBgm1.mp3");
 	//ダンスの前の敵がいなくなる時の音
 	soundMap["beforeDanceSe"] = LoadSoundMem("data/sound/enemyDelete.mp3");
+	//コインを拾った時の音
+	soundMap["coinSe"] = LoadSoundMem("data/sound/coinSe.mp3");
+	//経験値を拾った時の音
+	soundMap["expSe"] = LoadSoundMem("data/sound/expSe.mp3");
+	//ショップでアイテムを買った時の音
+	soundMap["buySe"] = LoadSoundMem("data/sound/buySe.mp3");
+	//ショップでアイテムを買えなかった時の音
+	soundMap["missBuySe"] = LoadSoundMem("data/sound/missBuySe.mp3");
 	//プレイヤーのグラフィック
 	graphMap["playerGraph"] = LoadGraph("data/image/Monkey.png");
 	//プリンセスのグラフィック
@@ -35,10 +54,6 @@ DataManager::DataManager()
 	graphMap["enemyGraph"] = LoadGraph("data/image/Enemy.png");
 	//背景のグラフィック
 	graphMap["bgGraph"] = LoadGraph("data/image/_bg.png");
-
-
-}
-
-DataManager::~DataManager()
-{
+	//商人のグラフィック
+	graphMap["traderGraph"] = LoadGraph("data/image/trader.png");
 }

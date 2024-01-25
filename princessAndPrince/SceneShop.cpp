@@ -15,6 +15,17 @@ namespace
 	constexpr int kArraySize = 81;
 	//マックスレベル
 	constexpr int kMaxLevel = 19;
+	//店主のいる座標
+	constexpr int kGraphPosX = 200;
+	constexpr int kGraphPosY = 300;
+	//店主の大きさ
+	constexpr int kGraphSize = 48 * 8;
+	//Playerのいる座標
+	constexpr int kPlayerPosX = 350;
+	constexpr int kPlayerPosY = 750;
+	//Princessのいる座標
+	constexpr int kPrincessPosX = 450;
+	constexpr int kPrincessPosY = 740;
 }
 SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
 	Scene(sceneManager, DataManager),
@@ -22,10 +33,17 @@ SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
 	m_stageSelectNum(0),
 	m_isSelectKeyDown(false),
 	m_loopCount(0),
-	m_isFade(false)
+	m_isFade(false),
+	m_isShowString(true),
+	m_isBuy(false)
 {
 	m_cursorSe = DataManager.SearchSound("cursorSe");
 	m_cancelSe = DataManager.SearchSound("cancelSe");
+	m_buySe = DataManager.SearchSound("buySe");
+	m_missBuySe = DataManager.SearchSound("missBuySe");
+	m_traderGraph = DataManager.SearchGraph("traderGraph");
+	m_playerGraph = DataManager.SearchGraph("playerGraph");
+	m_princessGraph = DataManager.SearchGraph("princessGraph");
 }
 
 SceneShop::~SceneShop()
@@ -34,7 +52,7 @@ SceneShop::~SceneShop()
 
 void SceneShop::Init()
 {
-
+	
 	//ファイルを開く
 	std::ifstream ifs("./data/ItemPriceTable.txt");
 	//帰ってきた値を返す配列
@@ -117,12 +135,19 @@ void SceneShop::Update(Pad& pad)
 		case 0:
 			if (UserData::userAtkLevel < kMaxLevel)
 			{
+				m_isShowString = false;
 				//所持金が値段よりも大きかったら
 				if (UserData::userGold >= m_playerItemPriceList[UserData::userAtkLevel])
 				{
-
+					m_isBuy = true;
+					PlaySoundMem(m_buySe, DX_PLAYTYPE_BACK);
 					UserData::userGold -= m_playerItemPriceList[UserData::userAtkLevel];
 					UserData::userAtkLevel++;
+				}
+				else
+				{
+					m_isBuy = false;
+					PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
 				}
 			}
 			m_isKeyDown = false;
@@ -130,11 +155,19 @@ void SceneShop::Update(Pad& pad)
 		case 1:
 			if (UserData::userDefLevel < kMaxLevel)
 			{
+				m_isShowString = false;
 				//所持金が値段よりも大きかったら
 				if (UserData::userGold >= m_playerItemPriceList[UserData::userDefLevel])
 				{
+					m_isBuy = true;
+					PlaySoundMem(m_buySe, DX_PLAYTYPE_BACK);
 					UserData::userGold -= m_playerItemPriceList[UserData::userDefLevel];
 					UserData::userDefLevel++;
+				}
+				else
+				{
+					m_isBuy = false;
+					PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
 				}
 			}
 			m_isKeyDown = false;
@@ -142,11 +175,19 @@ void SceneShop::Update(Pad& pad)
 		case 2:
 			if (UserData::userSpdLevel < kMaxLevel)
 			{
+				m_isShowString = false;
 				//所持金が値段よりも大きかったら
 				if (UserData::userGold >= m_playerItemPriceList[UserData::userSpdLevel])
 				{
+					m_isBuy = true;
+					PlaySoundMem(m_buySe, DX_PLAYTYPE_BACK);
 					UserData::userGold -= m_playerItemPriceList[UserData::userSpdLevel];
 					UserData::userSpdLevel++;
+				}
+				else
+				{
+					m_isBuy = false;
+					PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
 				}
 			}
 			m_isKeyDown = false;
@@ -154,11 +195,19 @@ void SceneShop::Update(Pad& pad)
 		case 3:
 			if (UserData::userFireLevel < kMaxLevel)
 			{
+				m_isShowString = false;
 				//所持金が値段よりも大きかったら
-				if (UserData::userGold >= m_playerItemPriceList[UserData::userFireLevel])
+				if (UserData::userGold >= m_princessItemPriceList[UserData::userFireLevel])
 				{
-					UserData::userGold -= m_playerItemPriceList[UserData::userFireLevel];
+					m_isBuy = true;
+					PlaySoundMem(m_buySe, DX_PLAYTYPE_BACK);
+					UserData::userGold -= m_princessItemPriceList[UserData::userFireLevel];
 					UserData::userFireLevel++;
+				}
+				else
+				{
+					m_isBuy = false;
+					PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
 				}
 			}
 			m_isKeyDown = false;
@@ -166,11 +215,19 @@ void SceneShop::Update(Pad& pad)
 		case 4:
 			if (UserData::userWindLevel < kMaxLevel)
 			{
+				m_isShowString = false;
 				//所持金が値段よりも大きかったら
-				if (UserData::userGold >= m_playerItemPriceList[UserData::userWindLevel])
+				if (UserData::userGold >= m_princessItemPriceList[UserData::userWindLevel])
 				{
-					UserData::userGold -= m_playerItemPriceList[UserData::userWindLevel];
+					m_isBuy = true;
+					PlaySoundMem(m_buySe, DX_PLAYTYPE_BACK);
+					UserData::userGold -= m_princessItemPriceList[UserData::userWindLevel];
 					UserData::userWindLevel++;
+				}
+				else
+				{
+					m_isBuy = false;
+					PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
 				}
 			}
 			m_isKeyDown = false;
@@ -186,6 +243,34 @@ void SceneShop::Update(Pad& pad)
 
 void SceneShop::Draw()
 {
+	//商人を表示する
+	DrawExtendGraph(kGraphPosX, kGraphPosY, kGraphPosX + kGraphSize, kGraphPosY + kGraphSize, m_traderGraph,true);
+	//プレイヤーの背中を表示
+	DrawRectRotaGraph(kPlayerPosX,kPlayerPosY,
+		0, 64,
+		16,16,
+		8.0,
+		0.0,
+		m_playerGraph, true, false);
+	DrawRectRotaGraph(kPrincessPosX, kPrincessPosY,
+		0, 40,
+		14, 20,
+		8.0,
+		0.0,
+		m_princessGraph, true, false);
+	//最初にいらっしゃいと表示する
+	if (m_isShowString)
+	{
+		DrawString(230, 250, "いらっしゃい", GetColor(255, 255, 255), true);
+	}
+	if (m_isBuy && !m_isShowString)
+	{
+		DrawString(230, 250, "まいどあり", GetColor(255, 255, 255), true);
+	}
+	else if(!m_isBuy && !m_isShowString)
+	{
+		DrawString(230, 250, "おかねないね", GetColor(255, 255, 255), true);
+	}
 	//所持金を表示する
 	DrawFormatString(Game::kPlayScreenWidth, 50, GetColor(255, 255, 255), "%d", UserData::userGold);
 	//仮実装

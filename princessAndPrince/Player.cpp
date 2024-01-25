@@ -77,6 +77,7 @@ Player::Player(SceneMain* pMain) :
 	m_radius = Game::kRadius;
 	//状態を初期化
 	m_nowState = Game::kNormal;
+
 }
 
 Player::~Player()
@@ -100,6 +101,9 @@ void Player::Init()
 	//上のHpバーよりも少し低い座標に表示させる
 	m_bloodBarPos.x = m_hpBarPos.x;
 	m_bloodBarPos.y = m_hpBarPos.y + kBarHeight * 2;
+	//コインの効果音を設定する
+	m_coinSe = m_pMain->GetCoinSe();
+	m_expSe = m_pMain->GetExpSe();
 }
 
 void Player::Update()
@@ -453,11 +457,13 @@ void Player::PickUpItem(std::shared_ptr<ItemBase> item)
 		printfDx("バグ");
 		break;
 	case Game::kExp:
+		PlaySoundMem(m_expSe, DX_PLAYTYPE_BACK);
 		//持っている経験値量を増やす
 		item->m_nowState = Game::kNone;
 		item->MoveItem(this);
 		break;
 	case Game::kGold:
+		PlaySoundMem(m_coinSe, DX_PLAYTYPE_BACK);
 		//持っているお金を増やす
 		item->m_nowState = Game::kNone;
 		item->MoveItem(this);

@@ -26,10 +26,15 @@ void Application::Terminate()
 
 bool Application::Init()
 {
-	windowSize_ = { kScreenWidth,kScreenHeight };
+	m_isScreen = true;
+	SetChangeScreenModeGraphicsSystemResetFlag(false);
+	ChangeWindowMode(m_isScreen);	//非スクリーン
 
-	ChangeWindowMode(true);	//非スクリーン
-	SetGraphMode(windowSize_.w, windowSize_.h, 32);
+	m_isWindowSize = { kScreenWidth,kScreenHeight };
+
+	m_isPush = true;
+
+	SetGraphMode(m_isWindowSize.w, m_isWindowSize.h, 32);
 
 	if (DxLib_Init() == -1) {	//初期化に失敗したらアプリを落とす
 		return false;	//異常終了
@@ -53,16 +58,27 @@ void Application::Run()
 	{
 		SceneManager sceneManager;
 		DataManager DataManager;
-		sceneManager.SetStartScene(std::make_shared<SceneTitle>(sceneManager,DataManager));
+		DataManager.Init();
+		sceneManager.SetStartScene(std::make_shared<SceneTitle>(sceneManager, DataManager));
 
 		Pad pad;
 
-		while (ProcessMessage() != -1) 
+		while (ProcessMessage() != -1)
 		{
 			// このフレームの開始時刻を覚えておく
 			LONGLONG start = GetNowHiPerformanceCount();
 			ClearDrawScreen();
-
+			if (CheckHitKey(KEY_INPUT_F1) && m_isPush)
+			{
+				m_isScreen = !m_isScreen;
+				ChangeWindowMode(m_isScreen);
+				DataManager.Init();
+				m_isPush = false;
+			}
+			else if (!CheckHitKey(KEY_INPUT_F1))
+			{
+				m_isPush = true;
+			}
 			pad.Update();
 			sceneManager.Update(pad);
 			sceneManager.Draw();
@@ -79,5 +95,5 @@ void Application::Run()
 
 const Size& Application::GetWindowSize() const
 {
-	return windowSize_;
+	return m_isWindowSize;
 }

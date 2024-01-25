@@ -133,6 +133,10 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_cursorSe = m_dataManager.SearchSound("cursorSe");
 	//Bボタンを押したときの音
 	m_cancelSe = m_dataManager.SearchSound("cancelSe");
+	//コインを拾った時の音
+	m_coinSe = m_dataManager.SearchSound("coinSe");
+	//コインを拾った時の音
+	m_expSe = m_dataManager.SearchSound("expSe");
 	//敵の最大数を設定
 	m_pEnemy.resize(kMaxEnemy);
 	//アイテムの最大数を設定
@@ -200,7 +204,7 @@ void SceneMain::Init()
 	}
 	m_pPlayer->Init();
 	m_pPrincess->Init();
-	ChangeSoundVol(150);
+//	ChangeSoundVol(150);
 }
 
 
