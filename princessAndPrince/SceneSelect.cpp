@@ -28,6 +28,9 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager) :
 	m_appSe = DataManager.SearchSound("approveSe");
 	m_cursorSe = DataManager.SearchSound("cursorSe");
 	m_cancelSe = DataManager.SearchSound("cancelSe");
+	m_playerGraph = DataManager.SearchGraph("playerGraph");
+	m_princessGraph = DataManager.SearchGraph("princessGraph");
+	m_bgGraph = DataManager.SearchGraph("");
 }
 
 SceneSelect::~SceneSelect()

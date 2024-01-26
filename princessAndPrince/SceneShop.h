@@ -16,8 +16,16 @@ public:
 	void Init();
 	void Update(Pad& pad);
 	void Draw();
+	/// <summary>
+	/// 桁数に応じて数値を右揃えにする
+	/// </summary>
+	/// <param name="num">右揃えにしたい数値</param>
+	/// <returns>右揃えにしたい数値*フォントの大きさ</returns>
+	int ArrRight(int num);
+
+private:
 	//今選択している項目を保存する
-	int m_stageSelectNum;
+	int m_itemSelectNum;
 	//連続でキーが押されてないように
 	bool m_isKeyDown;
 	//カーソルが連続で移動しないように
@@ -54,5 +62,9 @@ public:
 	int m_itemGraph;
 	//アイテムのフレームのグラフィック
 	int m_itemFrameGraph;
+	//アイテムのフレームを拡大縮小する変数
+	float m_itemFrameRatio;
+	//アイテムフレームを拡大しているか縮小しているか
+	int m_isFrameRatio;
 };
 

@@ -33,5 +33,11 @@ private:
 	int m_cursorSe;
 	//キャンセルボタンを押したときの効果音
 	int m_cancelSe;
+	//プレイヤーのグラフィック
+	int m_playerGraph;
+	//Princessのグラフィック
+	int m_princessGraph;
+	//背景のグラフィック
+	int m_bgGraph;
 };
 

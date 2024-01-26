@@ -72,7 +72,6 @@ void Application::Run()
 			{
 				m_isScreen = !m_isScreen;
 				ChangeWindowMode(m_isScreen);
-				DataManager.Init();
 				m_isPush = false;
 			}
 			else if (!CheckHitKey(KEY_INPUT_F1))
