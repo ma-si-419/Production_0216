@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "Game.h"
 class Player;
 class SceneSelect : public Scene
 {
@@ -39,5 +40,11 @@ private:
 	int m_princessGraph;
 	//背景のグラフィック
 	int m_bgGraph;
+	//選んでいるシーンの背景
+	int m_selectSceneBgGraph;
+	//プレイヤーが向いている方向
+	Game::Dir m_dir;
+	//プレイヤーのアニメーション
+	int m_animFrame;
 };
 

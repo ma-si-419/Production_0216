@@ -55,6 +55,6 @@ void Fade::Draw()
 {
 	//âÊñ ëSëÃÇ…çïÇ¢î†ÇèoÇ∑
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_alphaNum);
-	DrawBox(0, 0, Game::kPlayScreenWidth, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
+	DrawBox(0, 0, Game::kScreenWidth, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }	

@@ -14,6 +14,28 @@ namespace
 	constexpr int kMaxSceneNum = 2;
 	//ポーズを開いた時の項目の数
 	constexpr int kMaxPauseNum = 2;
+	//選んでいるステージを表示する座標(始点と終点まで)
+	constexpr int kSelectSceneStartPosX = 400;
+	constexpr int kSelectSceneStartPosY = 180;
+	constexpr int kSelectSceneEndPosX = 1300;
+	constexpr int kSelectSceneEndPosY = 900;
+	//プレイヤーを表示する座標
+	constexpr int kPlayerPosX = 850;
+	constexpr int kPlayerPosY = Game::kPlayScreenHeight * 0.5f;
+	//魔女を表示する座標
+	constexpr int kPrincessPosX = 750;
+	constexpr int kPrincessPosY = Game::kPlayScreenHeight * 0.5f;
+	//プレイヤーのグラフィックの大きさ
+	constexpr int kGraphWidth = 16;
+	constexpr int kGraphHeight = 16;
+	//キャラクターの大きさ
+	constexpr float kCharcterScale = 6.0f;
+	//アニメーションの使う場所
+	constexpr int kUseFrame[] = { 1,2,3,2 };
+	//アニメーション１コマのフレーム数
+	constexpr int kAnimFrameNum = 12;
+	// アニメーションの１サイクルのフレーム数
+	constexpr int kAnimFrameCycle = _countof(kUseFrame) * kAnimFrameNum;
 }
 SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager) :
 	Scene(sceneManager, DataManager),
@@ -23,14 +45,17 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager) :
 	m_isSelectKeyDown(false),
 	m_isPause(false),
 	m_isStatus(false),
-	m_isSelectScene(false)
+	m_isSelectScene(false),
+	m_animFrame(kAnimFrameNum),
+	m_dir(Game::kDirDown)
 {
 	m_appSe = DataManager.SearchSound("approveSe");
 	m_cursorSe = DataManager.SearchSound("cursorSe");
 	m_cancelSe = DataManager.SearchSound("cancelSe");
 	m_playerGraph = DataManager.SearchGraph("playerGraph");
 	m_princessGraph = DataManager.SearchGraph("princessGraph");
-	m_bgGraph = DataManager.SearchGraph("");
+	m_bgGraph = DataManager.SearchGraph("selectBgGraph");
+	m_selectSceneBgGraph = DataManager.SearchGraph("bgGraph");
 }
 
 SceneSelect::~SceneSelect()
@@ -212,10 +237,34 @@ void SceneSelect::Update(Pad& pad)
 			}
 		}
 	}
+	//0序残が起きないように
+	if (m_animFrame == 0)m_animFrame = 1;
 }
 
 void SceneSelect::Draw()
 {
+	//背景の下に今選んでいるステージを表示する
+	DrawExtendGraph(kSelectSceneStartPosX, kSelectSceneStartPosY, kSelectSceneEndPosX, kSelectSceneEndPosY, m_selectSceneBgGraph, true);
+	//背景の表示
+	DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kPlayScreenHeight, m_bgGraph, true);
+	//プレイヤーと魔女を表示する
+	int animEle = m_animFrame / kAnimFrameNum;
+	//画像のどこを切り取るか計算
+	int srcX = kGraphWidth * kUseFrame[animEle];
+	int srcY = kGraphHeight * m_dir;
+	DrawRectRotaGraph(kPlayerPosX, kPlayerPosY,
+		srcX, srcY,
+		kGraphWidth, kGraphHeight,
+		kCharcterScale,
+		0.0,
+		m_playerGraph, true, false);
+	DrawRectRotaGraph(kPrincessPosX, kPrincessPosY,
+		0, 20,
+		14, 20,
+		6.0,
+		0.0,
+		m_princessGraph, true, false);
+	//選んでいるステージを表示する
 	DrawFormatString(300, 300, GetColor(255, 255, 255), "%d,%d", UserData::userGold, UserData::userExp);
 	DrawFormatString(200, 200, GetColor(255, 255, 255), "%d", m_stageSelectNum);
 	DrawFormatString(400, 400, GetColor(255, 255, 255), "ステージ%d", m_stageSelectNum + 1);

@@ -62,6 +62,8 @@ private:
 	int m_itemGraph;
 	//アイテムのフレームのグラフィック
 	int m_itemFrameGraph;
+	//所持ゴールドを表示する時の後ろのボックス
+	int m_backBoxGraph;
 	//アイテムのフレームを拡大縮小する変数
 	float m_itemFrameRatio;
 	//アイテムフレームを拡大しているか縮小しているか

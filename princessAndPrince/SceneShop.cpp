@@ -60,6 +60,18 @@ namespace
 	constexpr int kWindItemPosX = 1145;
 	//値段を表示するポジション
 	constexpr int kPricePos = 72;
+	//所持金を表示するボックスの横幅
+	constexpr int kBoxWidth = 500;
+	//所持金を表示するボックスの縦幅
+	constexpr int kBoxHeight = 100;
+	//所持金を表示するボックスの座標
+	constexpr int kBoxPosX = 1000;
+	constexpr int kBoxPosY = 100;
+	//所持金を表示する座標
+	constexpr int kGoldPosX = 1415;
+	constexpr int kGoldPosY = 130;
+	//所持金のGを表示する座標
+	constexpr int kGPosX= 1450;
 }
 SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
 	Scene(sceneManager, DataManager),
@@ -83,6 +95,7 @@ SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
 	m_bgGraph = DataManager.SearchGraph("shopBgGraph");
 	m_itemGraph = DataManager.SearchGraph("itemGraph");
 	m_itemFrameGraph = DataManager.SearchGraph("itemFrameGraph");
+	m_backBoxGraph = DataManager.SearchGraph("backBoxGraph");
 }
 
 SceneShop::~SceneShop()
@@ -330,8 +343,10 @@ void SceneShop::Draw()
 		DrawString(230, 250, "おかねないね", GetColor(0, 0, 0), true);
 	}
 	//所持金を表示する
-	DrawFormatString(Game::kPlayScreenWidth, 50, GetColor(0, 0, 0), "%d", UserData::userGold);
-	//仮実装
+	DrawExtendGraph(kBoxPosX, kBoxPosY,kBoxPosX + kBoxWidth,kBoxPosY + kBoxHeight, m_backBoxGraph, true);
+	DrawFormatString(kGoldPosX - ArrRight(UserData::userGold), kGoldPosY, GetColor(255, 255, 255), "%d", UserData::userGold);
+	DrawString(kGPosX, kGoldPosY, "G", GetColor(255, 255, 255));
+	//アイテムの表示
 	DrawRectRotaGraph(800, kItemPosY,
 		0, Game::kSword * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
@@ -422,7 +437,7 @@ void SceneShop::Draw()
 		DrawFormatString(kFireItemPosX + kPricePos - ArrRight(UserData::userFireLevel + 1), kPrincessItemLevelPosY, GetColor(0, 0, 0), " %d", UserData::userFireLevel + 1);
 		//値段の表示
 		DrawString(kFireItemPosX, kPrincessItemLevelPosY + kFontSize, "G", GetColor(0, 0, 0));
-		DrawFormatString(kFireItemPosX + kPricePos - ArrRight(m_playerItemPriceList[UserData::userFireLevel]), kPrincessItemLevelPosY + kFontSize, GetColor(0, 0, 0), " %d", m_playerItemPriceList[UserData::userFireLevel]);
+		DrawFormatString(kFireItemPosX + kPricePos - ArrRight(m_playerItemPriceList[UserData::userFireLevel]), kPrincessItemLevelPosY + kFontSize, GetColor(0, 0, 0), " %d", m_princessItemPriceList[UserData::userFireLevel]);
 	}
 	//風魔法のレベルがマックスだったらMAXと表示する
 	if (UserData::userWindLevel == kMaxLevel)
@@ -437,7 +452,7 @@ void SceneShop::Draw()
 		DrawFormatString(kWindItemPosX + kPricePos - ArrRight(UserData::userWindLevel + 1), kPrincessItemLevelPosY, GetColor(0, 0, 0), " %d", UserData::userWindLevel + 1);
 		//値段の表示
 		DrawString(kWindItemPosX, kPrincessItemLevelPosY + kFontSize, "G", GetColor(0, 0, 0));
-		DrawFormatString(kWindItemPosX + kPricePos - ArrRight(m_playerItemPriceList[UserData::userWindLevel]), kPrincessItemLevelPosY + kFontSize, GetColor(0, 0, 0), " %d", m_playerItemPriceList[UserData::userWindLevel]);
+		DrawFormatString(kWindItemPosX + kPricePos - ArrRight(m_playerItemPriceList[UserData::userWindLevel]), kPrincessItemLevelPosY + kFontSize, GetColor(0, 0, 0), " %d", m_princessItemPriceList[UserData::userWindLevel]);
 	}
 	switch (m_itemSelectNum)
 	{
@@ -466,7 +481,19 @@ void SceneShop::Draw()
 
 int SceneShop::ArrRight(int num)
 {
-	if (num >= 1000)
+	if (num >= 1000000)
+	{
+		return 6 * kHalfFontSize;
+	}
+	else if (num >= 100000)
+	{
+		return 5 * kHalfFontSize;
+	}
+	else if (num >= 10000)
+	{
+		return 4 * kHalfFontSize;
+	}
+	else if (num >= 1000)
 	{
 		return 3 * kHalfFontSize;
 	}
