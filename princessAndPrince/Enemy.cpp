@@ -61,7 +61,8 @@ Enemy::Enemy(SceneMain* pMain) :
 	m_pTreasureBox(nullptr),
 	m_scale(0.0f),
 	m_srcY(0),
-	m_knockBackPow(0)
+	m_knockBackPow(0),
+	m_itemHandle(0)
 {
 	m_animFrame = 0;
 	m_nowState = Game::kNormal;
@@ -269,6 +270,7 @@ void Enemy::Update()
 						= std::make_shared<Blood>();
 					//血を落とす処理
 					pBlood->Init(m_pos);
+					pBlood->SetHandle(m_itemHandle);
 					m_pMain->AddItem(pBlood);
 					//経験値のメモリの確保
 					std::shared_ptr<Exp> pExp
@@ -276,6 +278,7 @@ void Enemy::Update()
 					//経験値を落とす処理
 					pExp->Init(m_pos);
 					pExp->SetExp(m_haveExp);
+					pExp->SetHandle(m_itemHandle);
 					m_pMain->AddItem(pExp);
 					//お金のメモリ確保
 					std::shared_ptr<Gold> pGold
@@ -283,11 +286,13 @@ void Enemy::Update()
 					//お金を落とす処理
 					pGold->Init(m_pos);
 					pGold->SetPrice(m_haveGold);
+					pGold->SetHandle(m_itemHandle);
 					m_pMain->AddItem(pGold);
 					if (GetRand(100) < kDropProb)
 					{
 						m_pTreasureBox = new TreasureBox(m_pMain);
 						m_pTreasureBox->Init(m_pos);
+						m_pTreasureBox->SetHandle(m_itemHandle);
 						//メインに宝箱を生成する関数を作成する
 						m_pMain->AddTreasure(m_pTreasureBox);
 					}
@@ -434,6 +439,7 @@ void Enemy::HitMagic(MagicBase* magic)
 			= std::make_shared<Blood>();
 		//血を落とす処理
 		pBlood->Init(m_pos);
+		pBlood->SetHandle(m_itemHandle);
 		m_pMain->AddItem(pBlood);
 		//経験値のメモリの確保
 		std::shared_ptr<Exp> pExp
@@ -441,6 +447,7 @@ void Enemy::HitMagic(MagicBase* magic)
 		//経験値を落とす処理
 		pExp->SetExp(m_haveExp);
 		pExp->Init(m_pos);
+		pExp->SetHandle(m_itemHandle);
 		m_pMain->AddItem(pExp);
 		//お金のメモリ確保
 		std::shared_ptr<Gold> pGold
@@ -448,11 +455,13 @@ void Enemy::HitMagic(MagicBase* magic)
 		//お金を落とす処理
 		pGold->SetPrice(m_haveGold);
 		pGold->Init(m_pos);
+		pGold->SetHandle(m_itemHandle);
 		m_pMain->AddItem(pGold);
 		if (GetRand(100) < kDropProb)
 		{
 			m_pTreasureBox = new TreasureBox(m_pMain);
 			m_pTreasureBox->Init(m_pos);
+			m_pTreasureBox->SetHandle(m_itemHandle);
 			//メインに宝箱を生成する関数を作成する
 			m_pMain->AddTreasure(m_pTreasureBox);
 		}

@@ -114,6 +114,8 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_enemyHandle = m_dataManager.SearchGraph("enemyGraph");
 	//背景のグラフィックのロード
 	m_bgHandle = m_dataManager.SearchGraph("bgGraph");
+	//アイテムのグラフィックのロード
+	m_itemHandle = m_dataManager.SearchGraph("itemGraph");
 	//ぶつかったときの音のロード
 	m_attackSe = m_dataManager.SearchSound("attackSe");
 	//ダンスの音のロード
@@ -327,7 +329,8 @@ void SceneMain::Update(Pad& pad)
 							PlaySoundMem(m_attackSe, DX_PLAYTYPE_BACK);
 						}
 						//魔女とエネミーがぶつかったとき
-						if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle()))
+						if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle())&&
+							m_pPrincess->m_nowState != Game::kDelete)
 						{
 							//魔女のダメージ処理を行う,エネミーのノックバックを行う
 							m_pPrincess->HitEnemy(*enemy);
@@ -839,6 +842,7 @@ bool SceneMain::CreateEnemy(int enemyKind)
 		m_pEnemy[i] = make_shared<Enemy>(this);
 		m_pEnemy[i]->SetHandle(m_enemyHandle);
 		m_pEnemy[i]->Init(enemyKind);
+		m_pEnemy[i]->SetItemHandle(m_itemHandle);
 		//登録したら終了
 		return true;
 	}

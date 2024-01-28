@@ -32,6 +32,8 @@ public:
 	CircleCol GetColCircle() { return m_circleCol; }
 	//ノックバックの大きさを返す
 	float GetKnockBackPow() { return m_knockBackPow; }
+	//グラフィックハンドルを設定する
+	void SetHandle(int handle) { m_handle = handle; }
 	
 	//状態を管理する
 	Game::State m_nowState;

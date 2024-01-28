@@ -81,6 +81,7 @@ private:
 	int m_princessHandle;
 	int m_enemyHandle;
 	int m_bgHandle;
+	int m_itemHandle;
 	// プレイヤー
 	Player* m_pPlayer;
 	//お姫様

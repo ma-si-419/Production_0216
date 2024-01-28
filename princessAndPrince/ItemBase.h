@@ -33,6 +33,8 @@ public:
 	void SetPrice(int gold) { m_haveGold = gold; }
 	//経験値の量を設定する
 	void SetExp(int exp) { m_haveExp = exp; }
+	//グラフィックのハンドルを設定する
+	void SetHandle(int handle) { m_handle = handle; }
 	//お金と経験値を取得した時は画面右上まで移動させる
 	void MoveItem(Player* player);
 

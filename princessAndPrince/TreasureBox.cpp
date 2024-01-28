@@ -104,6 +104,7 @@ void TreasureBox::Update()
 						= std::make_shared<Blood>();
 					//血の初期化処理
 					pBlood->Init(m_pos);
+					pBlood->SetHandle(m_handle);
 					//血を落とす処理
 					m_pMain->AddItem(pBlood);
 				}
@@ -118,6 +119,7 @@ void TreasureBox::Update()
 					//経験値の初期化処理
 					pExp->Init(m_pos);
 					pExp->SetExp(5);
+					pExp->SetHandle(m_handle);
 					//経験値を落とす処理
 					m_pMain->AddItem(pExp);
 				}
@@ -132,6 +134,7 @@ void TreasureBox::Update()
 					//お金の初期化処理
 					pGold->Init(m_pos);
 					pGold->SetPrice(5);
+					pGold->SetHandle(m_handle);
 
 					//お金を落とす処理
 					m_pMain->AddItem(pGold);
@@ -140,12 +143,13 @@ void TreasureBox::Update()
 			else if (randomNumber == 3)
 			{
 				//体力回復アイテムを落とす処理を作る
-				//お金のメモリ確保
+				//ポーションのメモリ確保
 				std::shared_ptr<Portion> pPortion
 					= std::make_shared<Portion>();
-				//お金の初期化処理
+				//ポーションの初期化処理
 				pPortion->Init(m_pos);
-				//お金を落とす処理
+				pPortion->SetHandle(m_handle);
+				//ポーションを落とす処理
 				m_pMain->AddItem(pPortion);
 			}
 			//状態を変化させる
@@ -167,10 +171,12 @@ void TreasureBox::Update()
 void TreasureBox::Draw()
 {
 	
-	//色のついたBoxで仮実装
-	DrawBox((int)m_pos.x - kHalfGraphSize, (int)m_pos.y - kHalfGraphSize,
-		m_pos.x + kHalfGraphSize, m_pos.y + kHalfGraphSize,
-		GetColor(255, 255, 0), true);
+	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
+		0, Game::kDropTreasure * 32,
+		32, 32,
+		2.0,
+		0.0,
+		m_handle, true, false);
 	//当たり判定の表示
 #ifdef _DEBUG
 	m_circleCol.Draw(m_colScale, 0x0000ff, false);
@@ -218,6 +224,7 @@ void TreasureBox::HitMagic()
 					= std::make_shared<Blood>();
 				//血の初期化処理
 				pBlood->Init(m_pos);
+				pBlood->SetHandle(m_handle);
 				//血を落とす処理
 				m_pMain->AddItem(pBlood);
 			}
@@ -232,6 +239,7 @@ void TreasureBox::HitMagic()
 				//経験値の初期化処理
 				pExp->Init(m_pos);
 				pExp->SetExp(5);
+				pExp->SetHandle(m_handle);
 				//経験値を落とす処理
 				m_pMain->AddItem(pExp);
 			}
@@ -246,7 +254,7 @@ void TreasureBox::HitMagic()
 				//お金の初期化処理
 				pGold->Init(m_pos);
 				pGold->SetPrice(5);
-
+				pGold->SetHandle(m_handle);
 				//お金を落とす処理
 				m_pMain->AddItem(pGold);
 			}
@@ -254,12 +262,13 @@ void TreasureBox::HitMagic()
 		else if (randomNumber == 3)
 		{
 			//体力回復アイテムを落とす処理を作る
-			//お金のメモリ確保
+			//ポーションのメモリ確保
 			std::shared_ptr<Portion> pPortion
 				= std::make_shared<Portion>();
-			//お金の初期化処理
+			//ポーションの初期化処理
 			pPortion->Init(m_pos);
-			//お金を落とす処理
+			pPortion->SetHandle(m_handle);
+			//ポーションを落とす処理
 			m_pMain->AddItem(pPortion);
 		}
 		//状態を変化させる

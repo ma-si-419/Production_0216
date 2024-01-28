@@ -4,7 +4,7 @@
 namespace
 {
 	//ƒAƒCƒeƒ€‚Ì‘å‚«‚³
-	constexpr float kColScale = 40.0f;
+	constexpr float kColScale = 18.0f;
 
 	//UI‚ÌêŠ
 	constexpr int kUiPosX = Game::kScreenWidth - 300;

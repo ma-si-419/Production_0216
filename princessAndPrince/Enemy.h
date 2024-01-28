@@ -46,6 +46,8 @@ public:
 	Vec2 GetMoveVec() { return m_moveVec; }
 	//移動速度を返す
 	float GetKnockBackPow() { return m_knockBackPow; }
+	//アイテムのハンドルを設定する
+	void SetItemHandle(int handle) { m_itemHandle = handle; }
 private:
 	//SceneMainのポインタをもつ
 	SceneMain* m_pMain;
@@ -87,5 +89,7 @@ private:
 	float m_knockBackPow;
 	//パーティクルのポインタ
 	Particle* m_pParticle;
+	//アイテムのハンドル
+	int m_itemHandle;
 };
 

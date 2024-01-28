@@ -167,12 +167,12 @@ void SceneShop::Update(Pad& pad)
 		{
 			if (m_itemSelectNum < 3)
 			{
-				m_itemSelectNum -= 2;
+				m_itemSelectNum += 3;
 				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
 			}
 			if (m_itemSelectNum > kMaxItemNum)
 			{
-				m_itemSelectNum = 0;
+				m_itemSelectNum = kMaxItemNum;
 
 			}
 			m_isSelectKeyDown = true;
@@ -182,7 +182,7 @@ void SceneShop::Update(Pad& pad)
 		{
 			if (m_itemSelectNum > 2)
 			{
-				m_itemSelectNum += 2;
+				m_itemSelectNum -= 3;
 				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
 			}
 			if (m_itemSelectNum > kMaxItemNum)
