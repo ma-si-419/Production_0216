@@ -71,7 +71,7 @@ namespace
 	constexpr int kGoldPosX = 1415;
 	constexpr int kGoldPosY = 130;
 	//所持金のGを表示する座標
-	constexpr int kGPosX= 1450;
+	constexpr int kGPosX = 1450;
 }
 SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
 	Scene(sceneManager, DataManager),
@@ -133,22 +133,58 @@ void SceneShop::Update(Pad& pad)
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
 	if (!m_isSelectKeyDown)
 	{
-		//上キーが押されたら
-		if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W))
+		//右キーが押されたら
+		if (m_input.Buttons[XINPUT_BUTTON_DPAD_RIGHT] || CheckHitKey(KEY_INPUT_D))
 		{
-			m_itemSelectNum--;
-			PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+			if (m_itemSelectNum != 2 && m_itemSelectNum != 4)
+			{
+				m_itemSelectNum++;
+				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+			}
 			if (m_itemSelectNum < 0)
 			{
 				m_itemSelectNum = kMaxItemNum;
 			}
 			m_isSelectKeyDown = true;
 		}
+		//左キーが入力されたら
+		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_LEFT] || CheckHitKey(KEY_INPUT_A))
+		{
+			if (m_itemSelectNum != 0 && m_itemSelectNum != 3)
+			{
+				m_itemSelectNum--;
+				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+			}
+			if (m_itemSelectNum > kMaxItemNum)
+			{
+				m_itemSelectNum = 0;
+
+			}
+			m_isSelectKeyDown = true;
+		}
 		//下キーが入力されたら
 		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S))
 		{
-			m_itemSelectNum++;
-			PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+			if (m_itemSelectNum < 3)
+			{
+				m_itemSelectNum -= 2;
+				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+			}
+			if (m_itemSelectNum > kMaxItemNum)
+			{
+				m_itemSelectNum = 0;
+
+			}
+			m_isSelectKeyDown = true;
+		}
+		//上キーが入力されたら
+		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W))
+		{
+			if (m_itemSelectNum > 2)
+			{
+				m_itemSelectNum += 2;
+				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+			}
 			if (m_itemSelectNum > kMaxItemNum)
 			{
 				m_itemSelectNum = 0;
@@ -157,9 +193,10 @@ void SceneShop::Update(Pad& pad)
 			m_isSelectKeyDown = true;
 		}
 	}
-	//上キーと下キーが離されたら
+	//上下左右キーが離されたら
 	if (!m_input.Buttons[XINPUT_BUTTON_DPAD_UP] && !m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] &&
-		!CheckHitKey(KEY_INPUT_W) && !CheckHitKey(KEY_INPUT_S))
+		!m_input.Buttons[XINPUT_BUTTON_DPAD_RIGHT] && !m_input.Buttons[XINPUT_BUTTON_DPAD_LEFT] &&
+		!CheckHitKey(KEY_INPUT_W) && !CheckHitKey(KEY_INPUT_A) && !CheckHitKey(KEY_INPUT_S) && !CheckHitKey(KEY_INPUT_D))
 	{
 		m_isSelectKeyDown = false;
 	}
@@ -343,7 +380,7 @@ void SceneShop::Draw()
 		DrawString(230, 250, "おかねないね", GetColor(0, 0, 0), true);
 	}
 	//所持金を表示する
-	DrawExtendGraph(kBoxPosX, kBoxPosY,kBoxPosX + kBoxWidth,kBoxPosY + kBoxHeight, m_backBoxGraph, true);
+	DrawExtendGraph(kBoxPosX, kBoxPosY, kBoxPosX + kBoxWidth, kBoxPosY + kBoxHeight, m_backBoxGraph, true);
 	DrawFormatString(kGoldPosX - ArrRight(UserData::userGold), kGoldPosY, GetColor(255, 255, 255), "%d", UserData::userGold);
 	DrawString(kGPosX, kGoldPosY, "G", GetColor(255, 255, 255));
 	//アイテムの表示
@@ -391,7 +428,7 @@ void SceneShop::Draw()
 		DrawFormatString(kAtkItemPosX + kPricePos - ArrRight(UserData::userAtkLevel + 1), kPlayerItemLevelPosY, GetColor(0, 0, 0), " %d", UserData::userAtkLevel + 1);
 		//値段の表示
 		DrawString(kAtkItemPosX, kPlayerItemLevelPosY + kFontSize, "G", GetColor(0, 0, 0));
-		DrawFormatString(kAtkItemPosX + kPricePos - ArrRight(m_playerItemPriceList[UserData::userAtkLevel]), kPlayerItemLevelPosY + kFontSize,GetColor(0, 0, 0), " %d", m_playerItemPriceList[UserData::userAtkLevel]);
+		DrawFormatString(kAtkItemPosX + kPricePos - ArrRight(m_playerItemPriceList[UserData::userAtkLevel]), kPlayerItemLevelPosY + kFontSize, GetColor(0, 0, 0), " %d", m_playerItemPriceList[UserData::userAtkLevel]);
 
 	}
 	//防御レベルがマックスだったらMAXと表示する
