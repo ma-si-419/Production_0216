@@ -71,7 +71,7 @@ void DataManager::Init()
 	//エネミーのグラフィック
 	graphMap["enemyGraph"] = LoadGraph("data/image/Enemy.png");
 	//背景のグラフィック
-	graphMap["bgGraph"] = LoadGraph("data/image/_bg.png");
+	graphMap["bgGraph"] = LoadGraph("data/image/fieldBg.png");
 	//商人のグラフィック
 	graphMap["traderGraph"] = LoadGraph("data/image/trader.png");
 	//ショップの背景

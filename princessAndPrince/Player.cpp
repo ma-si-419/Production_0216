@@ -87,10 +87,10 @@ Player::~Player()
 
 void Player::Init()
 {
-	m_atk = 2.0f + (UserData::userAtkLevel * 0.5f);
+	m_atk = 2.0f + (UserData::userAtkLevel * 0.5f) + (UserData::userMainLevel * 0.1f);
 	m_hp = 30 + (UserData::userMainLevel * 2.0f);
-	m_spd = 1.5f + (UserData::userSpdLevel * 0.1f);
-	m_def = 1.0f + (UserData::userDefLevel * 0.3f);
+	m_spd = 1.5f + (UserData::userSpdLevel * 0.1f) + (UserData::userMainLevel * 0.02f);
+	m_def = 1.0f + (UserData::userDefLevel * 0.3f) + (UserData::userMainLevel * 0.05f);
 	m_nowHp = m_hp;
 	//座標を参考にHpバーの位置を設定
 	m_hpBarPos.x = m_pos.x - kMaxBarWidth / 2;
@@ -186,6 +186,10 @@ void Player::Update()
 			bool isAnimEnd = false;
 			if (m_animFrame / kAnimFrameNum == 2)
 			{
+				if (m_pMain->GetSpecialMode())
+				{
+					m_revivalCount += kRevivalTime;
+				}
 				m_revivalCount++;
 				isAnimEnd = true;
 			}
@@ -512,6 +516,10 @@ void Player::DeathMove()
 	//ノックバック処理
 	if (m_knockBack.x != 0 || m_knockBack.y != 0)
 	{
+		if (m_pMain->GetSpecialMode())
+		{
+			m_knockBackTime += 100;
+		}
 		m_knockBackTime++;
 		//死亡演出
 		if (m_knockBackTime < 20)
@@ -533,7 +541,10 @@ void Player::DeathMove()
 		}
 		else
 		{
-			m_dir = Game::kDirDeath;
+			if (!m_pMain->GetSpecialMode())
+			{
+				m_dir = Game::kDirDeath;
+			}
 		}
 		//一定時間ノックバックしたら
 		if (m_knockBackTime > 100)

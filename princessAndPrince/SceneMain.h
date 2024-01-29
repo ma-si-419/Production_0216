@@ -82,6 +82,8 @@ public:
 	int GetBloodSe() { return m_bloodSe; }
 	//血を渡したときの効果音を返す
 	int  GetPassBloodSe() { return m_passBloodSe; }
+	//選ばれたシーンに合わせてエネミーの情報を入れる
+	void SetEnemyInfo(int stageNum);
 
 private:
 	// グラフィックのハンドル
@@ -111,6 +113,8 @@ private:
 	vector<Particle*> m_pParticleArray;
 	//音楽が複数個流れないように
 	bool m_isMusicFlag;
+	//セレクトシーンで選んだステージ
+	int m_selectScene;
 	//敵の出現間隔
 	int m_enemyPopTimeCount;
 	//敵の出現情報を管理する構造体をいれるスタック

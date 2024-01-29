@@ -34,7 +34,8 @@ public:
 	float GetKnockBackPow() { return m_knockBackPow; }
 	//グラフィックハンドルを設定する
 	void SetHandle(int handle) { m_handle = handle; }
-	
+	//経験値とお金の量を設定する
+	void SerGoldAndExp(int gold,int exp){}
 	//状態を管理する
 	Game::State m_nowState;
 
@@ -66,5 +67,9 @@ private:
 	int m_knockBackTime;
 	//ノックバックの大きさを決める変数
 	float m_knockBackPow;
+	//出てくるお金の金額
+	int m_gold;
+	//出てくる経験値の量
+	int m_exp;
 };
 

@@ -11,7 +11,7 @@
 namespace
 {
 	//ステージの数
-	constexpr int kMaxSceneNum = 2;
+	constexpr int kMaxSceneNum = 7;
 	//ポーズを開いた時の項目の数
 	constexpr int kMaxPauseNum = 2;
 	//選んでいるステージを表示する座標(始点と終点まで)
@@ -135,17 +135,6 @@ void SceneSelect::Update(Pad& pad)
 			//上キーが押されたら
 			if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W))
 			{
-				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
-				m_stageSelectNum--;
-				if (m_stageSelectNum < 0)
-				{
-					m_stageSelectNum = kMaxSceneNum;
-				}
-				m_isSelectKeyDown = true;
-			}
-			//下キーが入力されたら
-			else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S))
-			{
 				m_stageSelectNum++;
 				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
 				if (m_stageSelectNum > kMaxSceneNum)
@@ -153,6 +142,18 @@ void SceneSelect::Update(Pad& pad)
 					m_stageSelectNum = 0;
 				}
 				m_isSelectKeyDown = true;
+			}
+			//下キーが入力されたら
+			else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S))
+			{
+				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+				m_stageSelectNum--;
+				if (m_stageSelectNum < 0)
+				{
+					m_stageSelectNum = kMaxSceneNum;
+				}
+				m_isSelectKeyDown = true;
+			
 			}
 		}
 	}

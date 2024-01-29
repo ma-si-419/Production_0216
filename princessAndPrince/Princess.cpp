@@ -26,7 +26,7 @@ namespace
 	// アニメーションの１サイクルのフレーム数
 	constexpr int kAnimFrameCycle = _countof(kUseFrame) * kAnimFrameNum;
 	//ノックバックの大きさ
-	constexpr int kKnockBackScale = 6;
+	constexpr int kKnockBackScale = 28;
 	//基本的な魔法の大きさ
 	constexpr float kMagicScale = 15;
 	//Hpバーの横の長さ
@@ -333,7 +333,7 @@ void Princess::HitEnemy(Enemy& enemy)
 	Vec2 knockBack;
 	knockBack = m_pos - enemy.GetPos();
 	knockBack.Normalize();
-	knockBack *= kKnockBackScale;
+	knockBack *= kKnockBackScale * enemy.GetSpd();
 	//衝突点の座標
 	m_hitPos = (enemy.GetPos() + m_pos) / 2;
 	//白いエフェクトを出す

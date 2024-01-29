@@ -63,6 +63,8 @@ namespace
 	constexpr int kLevelUpPosYMax = 350;
 	//聖剣モードを始めるまでの時間
 	constexpr int kSpecialModeStartTime = 30;
+	//フォントの半分の大きさ
+	constexpr int kFontHalfSize = 24;
 }
 SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int stageNum) :
 	Scene(sceneManager, DataManager),
@@ -98,7 +100,8 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_isGameOver(false),
 	m_isHalfExp(true),
 	m_isHalfGold(true),
-	m_lastSpace(true)
+	m_lastSpace(true),
+	m_selectScene(stageNum)
 
 {
 	//プレイヤーのグラフィックのロード
@@ -174,33 +177,7 @@ SceneMain::~SceneMain()
 void SceneMain::Init()
 {
 	{
-		//ファイルを開く
-		std::ifstream ifs("./data/EnemyInfo.txt");
-		//帰ってきた値を返す配列
-		vector<string> tempS;
-		//配列を作成
-		char str[kArraySize];
-		//成功したら一行ずつ読み込む
-		while (ifs.getline(str, kArraySize))
-		{
-			//分割
-			tempS = MyString::split(str, ",");
-			popEnemy tempEnemy;
-			tempEnemy.enemyKind = std::stoi(tempS[0]);
-			tempEnemy.popTime = std::stof(tempS[1]);
-			m_popEnemyList.push(tempEnemy);
-		}
-		//最初に出てくるエネミーの情報を入れる
-		popEnemy firstEnemyInfo = m_popEnemyList.top();
-		m_nextEnemyPopTime = firstEnemyInfo.popTime;
-		m_nextEnemyKind = firstEnemyInfo.enemyKind;
-		//スタックの中の読み取った情報を消す
-		m_popEnemyList.pop();
-		//ファイルを閉じる
-		ifs.close();
-
-	}
-	{
+		SetEnemyInfo(m_selectScene);
 		//ファイルを開く
 		std::ifstream ifs("./data/expLevel.txt");
 		int loopCount = 0;
@@ -270,6 +247,7 @@ void SceneMain::Update(Pad& pad)
 			{
 				if (enemy)
 				{
+					if(enemy->m_nowState != Game::kDelete)
 					//エネミーの移動を止める
 					enemy->m_nowState = Game::kStop;
 				}
@@ -291,7 +269,7 @@ void SceneMain::Update(Pad& pad)
 				m_enemyPopTimeCount++;
 			}
 			//設定した時間になったら
-			if (m_enemyPopTimeCount > m_nextEnemyPopTime * 20)
+			if (m_enemyPopTimeCount > m_nextEnemyPopTime * 40)
 			{
 				//カウントを初期化
 				m_enemyPopTimeCount = 0;
@@ -824,22 +802,25 @@ void SceneMain::Draw()
 	//ポーズ画面を開いていたら
 	if (m_isPause)
 	{
-		int stringWidth = GetDrawStringWidth("つづける", 0);
-		DrawString(Game::kPlayScreenWidth / 2 - stringWidth, 700,
-			"つづける", GetColor(0, 0, 0));
-		stringWidth = GetDrawStringWidth("やめる", 0);
-		DrawString(Game::kPlayScreenWidth / 2 - stringWidth, 800,
-			"やめる", GetColor(0, 0, 0));
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 170);
+		DrawBox(0, 0, Game::kPlayScreenWidth, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		int stringWidth = GetStringLength("つづける") * kFontHalfSize;
+		DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2, 700,
+			"つづける", GetColor(255, 255, 255));
+		stringWidth = GetStringLength("やめる") * kFontHalfSize;
+		DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2, 800,
+			"やめる", GetColor(255, 255, 255));
 		switch (m_pauseSelectNum)
 		{
 		case 0:
-			stringWidth = GetDrawStringWidth("つづける", 0);
-			DrawString(Game::kPlayScreenWidth / 2 - stringWidth, 700,
+			stringWidth = GetStringLength("つづける") * kFontHalfSize;
+			DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2, 700,
 				"つづける", GetColor(255, 0, 0));
 			break;
 		case 1:
-			stringWidth = GetDrawStringWidth("やめる", 0);
-			DrawString(Game::kPlayScreenWidth / 2 - stringWidth, 800,
+			stringWidth = GetStringLength("やめる") * kFontHalfSize;
+			DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2, 800,
 				"やめる", GetColor(255, 0, 0));
 			break;
 
@@ -943,6 +924,67 @@ void SceneMain::ChangeSoundVol(int volume)
 int SceneMain::GetNextExp()
 {
 	return m_expList[UserData::userMainLevel] - UserData::userExp;
+}
+
+void SceneMain::SetEnemyInfo(int stageNum)
+{
+	//ファイルを開く
+	std::ifstream ifs;
+	if (stageNum == 0)
+	{
+		ifs = std::ifstream("./data/enemy/EnemyInfo1.txt");
+	}
+	else if (stageNum == 1)
+	{
+		ifs = std::ifstream("./data/enemy/EnemyInfo2.txt");
+	}
+	else if (stageNum == 2)
+	{
+		ifs = std::ifstream("./data/enemy/EnemyInfo3.txt");
+	}
+	else if (stageNum == 3)
+	{
+		ifs = std::ifstream("./data/enemy/EnemyInfo4.txt");
+	}
+	else if (stageNum == 4)
+	{
+		ifs = std::ifstream("./data/enemy/EnemyInfo5.txt");
+	}
+	else if (stageNum == 5)
+	{
+		ifs = std::ifstream("./data/enemy/EnemyInfo6.txt");
+	}
+	else if (stageNum == 6)
+	{
+		ifs = std::ifstream("./data/enemy/EnemyInfo7.txt");
+	}
+	else if (stageNum == 7)
+	{
+		ifs = std::ifstream("./data/enemy/EnemyInfo8.txt");
+	}
+	//帰ってきた値を返す配列
+	vector<string> tempS;
+	//配列を作成
+	char str[kArraySize];
+	//成功したら一行ずつ読み込む
+	while (ifs.getline(str, kArraySize))
+	{
+		//分割
+		tempS = MyString::split(str, ",");
+		popEnemy tempEnemy;
+		tempEnemy.enemyKind = std::stoi(tempS[0]);
+		tempEnemy.popTime = std::stof(tempS[1]);
+		m_popEnemyList.push(tempEnemy);
+	}
+	//最初に出てくるエネミーの情報を入れる
+	popEnemy firstEnemyInfo = m_popEnemyList.top();
+	m_nextEnemyPopTime = firstEnemyInfo.popTime;
+	m_nextEnemyKind = firstEnemyInfo.enemyKind;
+	//スタックの中の読み取った情報を消す
+	m_popEnemyList.pop();
+	//ファイルを閉じる
+	ifs.close();
+
 }
 
 bool SceneMain::AddMagic(MagicBase* pMagic)

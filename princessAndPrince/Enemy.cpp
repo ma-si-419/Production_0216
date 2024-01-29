@@ -24,7 +24,7 @@ namespace
 	//ノックバックの大きさ
 	constexpr int kKnockBackScale = 3;
 	//エネミーが宝箱を落とす確率(Max100)
-	constexpr int kDropProb = 100;
+	constexpr int kDropProb = 30;
 	//マジックにヒットするインターバル
 	constexpr int kHitMagicInterval = 30;
 	//プレイヤーにヒットするインターバル
@@ -81,12 +81,12 @@ void Enemy::Init(int kinds)
 	////////////////////////////
 	if (kinds == static_cast<int>(goblin))
 	{
-		m_hp = 12;
+		m_hp = 10;
 		m_atk = 3.0f;
 		m_spd = 0.2f;
 		m_scale = kEnemySize;
 		m_srcY = 0;
-		m_haveGold = GetRand(5) + 3;
+		m_haveGold = GetRand(8) + 5;
 		m_haveExp = GetRand(3) + 1;
 		m_kind = goblin;
 		m_isBoss = false;
@@ -94,12 +94,12 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(boar))
 	{
-		m_hp = 7;
-		m_atk = 1.0f;
-		m_spd = 0.5f;
+		m_hp = 5;
+		m_atk = 2.0f;
+		m_spd = 0.75f;
 		m_scale = kEnemySize;
 		m_srcY = 1;
-		m_haveGold = GetRand(10) + 8;
+		m_haveGold = GetRand(15) + 10;
 		m_haveExp = GetRand(5) + 2;
 		m_kind = boar;
 		m_isBoss = false;
@@ -108,13 +108,13 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(doragon))
 	{
-		m_hp = 20;
+		m_hp = 15;
 		m_atk = 20.0f;
-		m_spd = 0.1f;
+		m_spd = 0.08f;
 		m_scale = kEnemySize;
 		m_srcY = 2;
-		m_haveGold = GetRand(100) + 50;
-		m_haveExp = GetRand(10) + 5;
+		m_haveGold = GetRand(150) + 100;
+		m_haveExp = GetRand(30) + 30;
 		m_kind = doragon;
 		m_isBoss = false;
 		m_knockBackPow = 4;
@@ -122,27 +122,27 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(skeleton))
 	{
-		m_hp = 15;
-		m_atk = 3.0f;
-		m_spd = 0.3f;
+		m_hp = 30;
+		m_atk = 6.0f;
+		m_spd = 0.4f;
 		m_scale = kEnemySize;
 		m_srcY = 3;
 		m_kind = skeleton;
-		m_haveGold = GetRand(20) + 20;
-		m_haveExp = GetRand(10) + 3;
+		m_haveGold = GetRand(40) + 30;
+		m_haveExp = GetRand(20) + 10;
 		m_isBoss = false;
 		m_knockBackPow = 2;
 	}
 	else if (kinds == static_cast<int>(snowman))
 	{
-		m_hp = 50;
+		m_hp = 80;
 		m_atk = 5.0f;
 		m_spd = 0.1f;
 		m_scale = kEnemySize;
 		m_srcY = 4;
 		m_kind = snowman;
-		m_haveGold = GetRand(150) + 50;
-		m_haveExp = GetRand(20) + 10;
+		m_haveGold = GetRand(100) + 50;
+		m_haveExp = GetRand(100) + 100;
 		m_isBoss = false;
 		m_knockBackPow = 1;
 	}
@@ -155,7 +155,7 @@ void Enemy::Init(int kinds)
 		m_srcY = 0;
 		m_kind = bossGoblin;
 		m_haveGold = GetRand(150) + 100;
-		m_haveExp = GetRand(20) + 10;
+		m_haveExp = GetRand(40) + 30;
 		m_isBoss = true;
 		m_knockBackPow = 2;
 	}
@@ -167,8 +167,8 @@ void Enemy::Init(int kinds)
 		m_scale = kBossSize;
 		m_srcY = 1;
 		m_kind = bossBoar;
-		m_haveGold = GetRand(150) + 150;
-		m_haveExp = GetRand(30) + 15;
+		m_haveGold = GetRand(300) + 200;
+		m_haveExp = GetRand(50) + 50;
 		m_isBoss = true;
 		m_knockBackPow = 3;
 
@@ -176,13 +176,13 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(bossDoragon))
 	{
 		m_hp = 60;
-		m_atk = 25.0f;
-		m_spd = 0.1f;
+		m_atk = 30.0f;
+		m_spd = 0.08f;
 		m_scale = kBossSize;
 		m_srcY = 2;
 		m_kind = bossDoragon;
-		m_haveGold = GetRand(300) + 500;
-		m_haveExp = GetRand(50) + 50;
+		m_haveGold = GetRand(500) + 800;
+		m_haveExp = GetRand(100) + 100;
 		m_isBoss = true;
 		m_knockBackPow = 3;
 	}
@@ -194,8 +194,8 @@ void Enemy::Init(int kinds)
 		m_scale = kBossSize;
 		m_srcY = 3;
 		m_kind = bossSkeleton;
-		m_haveGold = GetRand(300) + 300;
-		m_haveExp = GetRand(40) + 40;
+		m_haveGold = GetRand(400) + 400;
+		m_haveExp = GetRand(100) + 80;
 		m_isBoss = true;
 		m_knockBackPow = 2;
 	}
@@ -208,7 +208,7 @@ void Enemy::Init(int kinds)
 		m_srcY = 4;
 		m_kind = bossSnowman;
 		m_haveGold = GetRand(1000) + 1000;
-		m_haveExp = GetRand(100) + 100;
+		m_haveExp = GetRand(500) + 500;
 		m_isBoss = true;
 		m_knockBackPow = 1;
 	}
@@ -292,6 +292,7 @@ void Enemy::Update()
 						m_pTreasureBox = new TreasureBox(m_pMain);
 						m_pTreasureBox->Init(m_pos);
 						m_pTreasureBox->SetHandle(m_itemHandle);
+						m_pTreasureBox->SerGoldAndExp(m_haveGold, m_haveExp);
 						//メインに宝箱を生成する関数を作成する
 						m_pMain->AddTreasure(m_pTreasureBox);
 					}

@@ -118,7 +118,7 @@ void TreasureBox::Update()
 						= std::make_shared<Exp>();
 					//経験値の初期化処理
 					pExp->Init(m_pos);
-					pExp->SetExp(5);
+					pExp->SetExp(m_exp);
 					pExp->SetHandle(m_handle);
 					//経験値を落とす処理
 					m_pMain->AddItem(pExp);
@@ -133,7 +133,7 @@ void TreasureBox::Update()
 						= std::make_shared<Gold>();
 					//お金の初期化処理
 					pGold->Init(m_pos);
-					pGold->SetPrice(5);
+					pGold->SetPrice(m_gold);
 					pGold->SetHandle(m_handle);
 
 					//お金を落とす処理
@@ -238,7 +238,7 @@ void TreasureBox::HitMagic()
 					= std::make_shared<Exp>();
 				//経験値の初期化処理
 				pExp->Init(m_pos);
-				pExp->SetExp(5);
+				pExp->SetExp(m_exp);
 				pExp->SetHandle(m_handle);
 				//経験値を落とす処理
 				m_pMain->AddItem(pExp);
@@ -253,7 +253,7 @@ void TreasureBox::HitMagic()
 					= std::make_shared<Gold>();
 				//お金の初期化処理
 				pGold->Init(m_pos);
-				pGold->SetPrice(5);
+				pGold->SetPrice(m_gold);
 				pGold->SetHandle(m_handle);
 				//お金を落とす処理
 				m_pMain->AddItem(pGold);

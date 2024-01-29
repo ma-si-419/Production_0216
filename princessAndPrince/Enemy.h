@@ -48,6 +48,8 @@ public:
 	float GetKnockBackPow() { return m_knockBackPow; }
 	//アイテムのハンドルを設定する
 	void SetItemHandle(int handle) { m_itemHandle = handle; }
+	//移動速度を取得する
+	float GetSpd() { return m_spd; }
 private:
 	//SceneMainのポインタをもつ
 	SceneMain* m_pMain;
