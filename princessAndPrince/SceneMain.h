@@ -24,7 +24,7 @@ struct popEnemy
 class SceneMain : public Scene
 {
 public:
-	SceneMain(SceneManager& sceneManager,DataManager& DataManager,int stageNum);
+	SceneMain(SceneManager& sceneManager, DataManager& DataManager, int stageNum);
 	virtual ~SceneMain();
 
 	void Init();
@@ -74,6 +74,14 @@ public:
 	int GetCoinSe() { return m_coinSe; };
 	//経験値の効果音を返す
 	int GetExpSe() { return m_expSe; };
+	//風魔法の効果音を返す
+	int GetWindMagicSe() { return m_windMagicSe; }
+	//ポーションの効果音を返す
+	int GetPortionSe() { return m_portionSe; }
+	//血を拾った時の効果音を返す
+	int GetBloodSe() { return m_bloodSe; }
+	//血を渡したときの効果音を返す
+	int  GetPassBloodSe() { return m_passBloodSe; }
 
 private:
 	// グラフィックのハンドル
@@ -189,4 +197,19 @@ private:
 	bool m_isHalfExp;
 	//セレクトシーンに戻る
 	bool m_isBackSelectScene;
+	//聖剣モードが始まった時にカウントする
+	int m_specialModeStartCount;
+	//前のフレームスペースを押していたか
+	bool m_lastSpace;
+	//風魔法の効果音
+	int m_windMagicSe;
+	//聖剣モードを始めるときに鳴らす効果音
+	int m_specialModeSe;
+	//ポーションをとった際の効果音
+	int m_portionSe;
+	//血を拾った時の効果音
+	int m_bloodSe;
+	//血を渡したときの効果音
+	int m_passBloodSe;
+
 };

@@ -60,6 +60,7 @@ namespace Game
 		kBoots,
 		kDropTreasure,
 		kFire,
-		kTyphoon
+		kTyphoon,
+		kDropBlood
 	};
 }

@@ -104,6 +104,8 @@ void Player::Init()
 	//コインの効果音を設定する
 	m_coinSe = m_pMain->GetCoinSe();
 	m_expSe = m_pMain->GetExpSe();
+	m_portionSe = m_pMain->GetPortionSe();
+	m_bloodSe = m_pMain->GetBloodSe();
 }
 
 void Player::Update()
@@ -475,9 +477,11 @@ void Player::PickUpItem(std::shared_ptr<ItemBase> item)
 		{
 			m_nowBlood++;
 		}
+		PlaySoundMem(m_bloodSe, DX_PLAYTYPE_BACK);
 		item->m_nowState = Game::kDelete;
 		break;
 	case Game::kPortion:
+		PlaySoundMem(m_portionSe, DX_PLAYTYPE_BACK);
 		//プレイヤーの体力を全回復させる
 		m_nowHp = m_hp;
 		item->m_nowState = Game::kDelete;

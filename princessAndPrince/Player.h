@@ -63,7 +63,9 @@ public:
 	void TurnFront() { m_dir = Game::kDirDown; }
 	//今動いているベクトルを取得する
 	Vec2 GetMoveVec() { return m_moveVec; }
-
+	//聖剣モードを始めるときによぶ
+	void SetSpecialMode() { m_dir = Game::kDirDeath; m_animFrame = 24; }
+	void StartSpecialMode() { m_dir = Game::kDirDown; m_animFrame = 0; }
 private:
 	//シーンメインのポインタを入れる
 	SceneMain* m_pMain;
@@ -105,4 +107,8 @@ private:
 	int m_coinSe;
 	//経験値を拾った時の効果音
 	int m_expSe;
+	//ポーションをとった時の効果音
+	int m_portionSe;
+	//血を拾った時の効果音
+	int m_bloodSe;
 };

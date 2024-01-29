@@ -2,6 +2,7 @@
 #include "Princess.h"
 #include "DxLib.h"
 #include "UserData.h"
+#include "cmath"
 namespace
 {
 
@@ -13,6 +14,10 @@ namespace
 	constexpr float kWindSpeed = 0.3f;
 	//風魔法が回る速度
 	constexpr float kWindSpinSpeed = 0.1f;
+	//グラフィックの大きさ
+	constexpr int kGraphSize = 32;
+	//魔法の大きさ
+	constexpr float kMagicSize = 2.0f;
 
 }
 
@@ -82,6 +87,7 @@ void MagicBase::Init(int MagicNum)
 void MagicBase::Update()
 {
 	m_magicPos += m_moveVec;
+	m_graphAngle = -std::atan2(m_moveVec.x,m_moveVec.y);
 	//風魔法を行っていたら
 	if (!m_isFire)
 	{
@@ -96,6 +102,14 @@ void MagicBase::Update()
 		else
 		{
 			m_moveVec *= -m_windLength;
+		}
+		if (m_magicPos.x > Game::kPlayScreenWidth / 2)
+		{
+			m_turnFlag = true;
+		}
+		else
+		{
+			m_turnFlag = false;
 		}
 	}
 	// 縦軸の移動制限
@@ -116,15 +130,25 @@ void MagicBase::Draw()
 {
 	if (m_isFire)
 	{
-			DrawBox(m_magicPos.x - m_scale / 2, m_magicPos.y - m_scale / 2,
-				m_magicPos.x + m_scale / 2, m_magicPos.y + m_scale / 2,
-			GetColor(255, 0, 0), true);
+		DrawRectRotaGraph(m_magicPos.x, m_magicPos.y,
+			0, Game::kFire * kGraphSize,
+			kGraphSize, kGraphSize,
+			kMagicSize,
+			m_graphAngle,
+			m_handle,
+			true,
+			0,0);
 	}
 	else if (!m_isFire)
 	{
-		DrawBox(m_magicPos.x - m_scale / 2, m_magicPos.y - m_scale / 2,
-			m_magicPos.x + m_scale / 2, m_magicPos.y + m_scale / 2,
-			GetColor(0, 255, 0), true);
+		DrawRectRotaGraph(m_magicPos.x, m_magicPos.y,
+			0, Game::kTyphoon * kGraphSize,
+			kGraphSize, kGraphSize,
+			kMagicSize,
+			0,
+			m_handle,
+			true,
+			m_turnFlag,0);
 	}
 	m_circleCol.Draw(m_scale,0,0);
 }

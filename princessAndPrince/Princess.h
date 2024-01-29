@@ -24,8 +24,10 @@ public:
 	float GetBloodRate() { return m_nowBlood / m_maxBlood; }
 	//持っている血の量を取得する
 	float GetBlood() { return m_nowBlood; }
+	//魔法のハンドル設定する
+	void SetMagicHandle(int handle) { m_magicHandle = handle; }
 	//Playerから血を受け取るときに使う
-	void ReceiveBlood(float blood) { m_nowBlood += blood; }
+	void ReceiveBlood(float blood);
 	//体力が0かどうか判断する関数
 	bool IsDeath();
 	//今魔法を打っているかを取得する
@@ -38,6 +40,8 @@ public:
 	float GetAtk() { return m_atk; }
 	//石の状態にする
 	void TransStone() {m_drawState = Game::kStone; }
+	//聖剣モードを始めるときに呼ぶ
+	void StartSpecialMode() { m_drawState = Game::kMagic; m_animFrame = 0; }
 private:
 	//メインシーンのポインタを保存する変数
 	SceneMain* m_pMain;
@@ -87,5 +91,11 @@ private:
 	Vec2 m_hitPos;
 	//魔女の描画する状態を表す
 	Game::WitchState m_drawState;
+	//魔法のグラフィックハンドル
+	int m_magicHandle;
+	//風魔法の効果音
+	int m_windMagicSe;
+	//プレイヤーから血を受け取った時にならす効果音
+	int m_passBloodSe;
 };
 

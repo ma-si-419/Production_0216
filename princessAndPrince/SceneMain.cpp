@@ -61,6 +61,8 @@ namespace
 	constexpr int kLevelUpPosY = 400;
 	//レベルアップの文字が上がる限界Y座標
 	constexpr int kLevelUpPosYMax = 350;
+	//聖剣モードを始めるまでの時間
+	constexpr int kSpecialModeStartTime = 30;
 }
 SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int stageNum) :
 	Scene(sceneManager, DataManager),
@@ -72,7 +74,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_clearTime(0),
 	m_nextEnemyKind(0),
 	m_nextEnemyPopTime(0),
-	m_specialGauge(99.9f),
+	m_specialGauge(100),
 	m_isSpecialMode(false),
 	m_isPause(false),
 	m_isStop(false),
@@ -95,7 +97,8 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_isUpLevel(false),
 	m_isGameOver(false),
 	m_isHalfExp(true),
-	m_isHalfGold(true)
+	m_isHalfGold(true),
+	m_lastSpace(true)
 
 {
 	//プレイヤーのグラフィックのロード
@@ -110,6 +113,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_pPrincess = new Princess(this);
 	//プリンセスのメンバ変数にアクセス
 	m_pPrincess->SetHandle(m_princessHandle);
+	m_pPrincess->SetMagicHandle(m_dataManager.SearchGraph("itemGraph"));
 	//敵のグラフィックのロード
 	m_enemyHandle = m_dataManager.SearchGraph("enemyGraph");
 	//背景のグラフィックのロード
@@ -139,6 +143,16 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_coinSe = m_dataManager.SearchSound("coinSe");
 	//コインを拾った時の音
 	m_expSe = m_dataManager.SearchSound("expSe");
+	//風魔法を出したときの効果音
+	m_windMagicSe = m_dataManager.SearchSound("windMagicSe");
+	//聖剣モードを始めるときにならす効果音
+	m_specialModeSe = m_dataManager.SearchSound("specialModeSe");
+	//ポーションをとった時の効果音
+	m_portionSe = m_dataManager.SearchSound("portionSe");
+	//血を拾った時の効果音
+	m_bloodSe = m_dataManager.SearchSound("bloodSe");
+	//血を渡した時の効果音
+	m_passBloodSe = m_dataManager.SearchSound("passBloodSe");
 	//敵の最大数を設定
 	m_pEnemy.resize(kMaxEnemy);
 	//アイテムの最大数を設定
@@ -206,7 +220,7 @@ void SceneMain::Init()
 	}
 	m_pPlayer->Init();
 	m_pPrincess->Init();
-//	ChangeSoundVol(150);
+	//	ChangeSoundVol(150);
 }
 
 
@@ -312,7 +326,7 @@ void SceneMain::Update(Pad& pad)
 						//プレイヤーとエネミーがぶつかったとき
 						if (m_pPlayer->m_nowState != Game::kDelete &&//プレイヤーが死んでいないときに
 							IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&//プレイヤーとエネミーがぶつかったら
-							enemy->m_nowState != Game::kHitPlayer)//エネミーがkDeleteじゃないときのみ
+							enemy->m_nowState != Game::kHitPlayer && enemy->m_nowState != Game::kStop)//エネミーがkDeleteじゃないときのみ
 						{
 							//エネミーのダメージ処理を行う
 							enemy->HitPlayer(*m_pPlayer, IsCollision(m_pPlayer->GetColCircle(), enemy->GetWeakCircle()));
@@ -329,8 +343,8 @@ void SceneMain::Update(Pad& pad)
 							PlaySoundMem(m_attackSe, DX_PLAYTYPE_BACK);
 						}
 						//魔女とエネミーがぶつかったとき
-						if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle())&&
-							m_pPrincess->m_nowState != Game::kDelete)
+						if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle()) &&
+							m_pPrincess->m_nowState != Game::kDelete && enemy->m_nowState != Game::kStop)
 						{
 							//魔女のダメージ処理を行う,エネミーのノックバックを行う
 							m_pPrincess->HitEnemy(*enemy);
@@ -456,13 +470,32 @@ void SceneMain::Update(Pad& pad)
 		}
 		if (m_specialGauge >= kMaxSpecialGauge)
 		{
-			if (m_input.Buttons[XINPUT_BUTTON_Y] || CheckHitKey(KEY_INPUT_SPACE))
+			if (m_lastSpace)
 			{
-				m_isSpecialMode = true;
+				if (m_input.Buttons[XINPUT_BUTTON_Y] || CheckHitKey(KEY_INPUT_SPACE))
+				{
+					m_isSpecialMode = true;
+					m_isStop = true;
+					m_specialModeStartCount = 0;
+					m_pPlayer->SetSpecialMode();
+					m_pPrincess->StartSpecialMode();
+					m_lastSpace = false;
+					PlaySoundMem(m_specialModeSe, DX_PLAYTYPE_BACK);
+				}
+			}
+		}
+		if (m_isSpecialMode && m_isStop)
+		{
+			m_specialModeStartCount++;
+			if (m_specialModeStartCount > kSpecialModeStartTime)
+			{
+				m_isStop = false;
+				m_pPlayer->StartSpecialMode();
+				m_lastSpace = true;
 			}
 		}
 		//聖剣モード発動中だったら
-		if (m_isSpecialMode)
+		if (m_isSpecialMode && !m_isStop)
 		{
 			//少しずつゲージを減らしていく
 			m_specialGauge -= 0.2f;

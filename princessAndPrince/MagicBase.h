@@ -18,6 +18,8 @@ public:
 	void Draw();
 	//当たり判定を取得する
 	CircleCol GetCircleCol() { return m_circleCol; }
+	//ハンドルを取得する
+	void SetHandle(int handle) { m_handle = handle; }
 	//攻撃力を取得する
 	float GetAtk();
 	//状態を管理する
@@ -50,5 +52,11 @@ private:
 	float m_windLength;
 	//プレイヤーのどちらに生成される風か判断する
 	bool m_isRightWind;
+	//グラフィック
+	int m_handle;
+	//画像を反転させるかどうか
+	bool m_turnFlag;
+	//画像の角度
+	float m_graphAngle;
 };
 

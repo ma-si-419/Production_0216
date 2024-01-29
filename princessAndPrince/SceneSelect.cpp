@@ -52,6 +52,7 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager) :
 	m_appSe = DataManager.SearchSound("approveSe");
 	m_cursorSe = DataManager.SearchSound("cursorSe");
 	m_cancelSe = DataManager.SearchSound("cancelSe");
+	m_bgm = DataManager.SearchSound("selectBgm");
 	m_playerGraph = DataManager.SearchGraph("playerGraph");
 	m_princessGraph = DataManager.SearchGraph("princessGraph");
 	m_bgGraph = DataManager.SearchGraph("selectBgGraph");
@@ -72,6 +73,10 @@ void SceneSelect::End()
 
 void SceneSelect::Update(Pad& pad)
 {
+	if (!CheckSoundMem(m_bgm) && !m_isSelectScene)
+	{
+		PlaySoundMem(m_bgm, DX_PLAYTYPE_LOOP);
+	}
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
 	//ボタンが連続で押されないための処理
@@ -100,6 +105,7 @@ void SceneSelect::Update(Pad& pad)
 				//Aボタンが押されたら
 				if (m_input.Buttons[XINPUT_BUTTON_A] || CheckHitKey(KEY_INPUT_RETURN))
 				{
+					StopSoundMem(m_bgm);
 					PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 					m_sceneManager.ChangeScene(std::make_shared<SceneMain>(m_sceneManager, m_dataManager, m_stageSelectNum));
 					m_isKeyDown = false;
@@ -108,6 +114,7 @@ void SceneSelect::Update(Pad& pad)
 				//Bボタンを押したらタイトルに戻る
 				else if (m_input.Buttons[XINPUT_BUTTON_B] || CheckHitKey(KEY_INPUT_ESCAPE))
 				{
+					StopSoundMem(m_bgm);
 					PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
 					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager));
 					m_isKeyDown = false;
@@ -204,6 +211,7 @@ void SceneSelect::Update(Pad& pad)
 						break;
 					case 1://おみせ
 					{
+						StopSoundMem(m_bgm);
 						//ショップシーンに移行する
 						m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager));
 						m_isSelectScene = true;
@@ -211,6 +219,7 @@ void SceneSelect::Update(Pad& pad)
 					break;
 					case 2://タイトル
 					{
+						StopSoundMem(m_bgm);
 						//タイトルシーンに移行する
 						m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager));
 						m_isSelectScene = true;

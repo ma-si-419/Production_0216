@@ -33,9 +33,9 @@ void DataManager::Init()
 	//リザルト画面の経験値の効果音
 	soundMap["resultExpSe"] = LoadSoundMem("data/sound/exp1.mp3");
 	//フィールドのBgm
-	soundMap["fieldBgm"] = LoadSoundMem("data/sound/mainBgm2.mp3");
+	soundMap["fieldBgm"] = LoadSoundMem("data/sound/fieldBgm.wav");
 	//ボスが出てきた時のBgm
-	soundMap["bossBgm"] = LoadSoundMem("data/sound/mainBgm1.mp3");
+	soundMap["bossBgm"] = LoadSoundMem("data/sound/bossBgm.wav");
 	//ダンスの前の敵がいなくなる時の音
 	soundMap["beforeDanceSe"] = LoadSoundMem("data/sound/enemyDelete.mp3");
 	//コインを拾った時の音
@@ -46,6 +46,24 @@ void DataManager::Init()
 	soundMap["buySe"] = LoadSoundMem("data/sound/buySe.mp3");
 	//ショップでアイテムを買えなかった時の音
 	soundMap["missBuySe"] = LoadSoundMem("data/sound/missBuySe.mp3");
+	//聖剣モードを始めるときに鳴らす効果音
+	soundMap["specialModeSe"] = LoadSoundMem("data/sound/specialModeSe.mp3");
+	//風魔法の効果音
+	soundMap["windMagicSe"] = LoadSoundMem("data/sound/windMagic.mp3");
+	//ポーションを拾った時の効果音
+	soundMap["portionSe"] = LoadSoundMem("data/sound/portionSe.mp3");
+	//弱点じゃないところにぶつかった時の効果音
+	soundMap["hitSe"] = LoadSoundMem("data/sound/hitSe.mp3");
+	//血を拾った時の効果音
+	soundMap["bloodSe"] = LoadSoundMem("data/sound/bloodSe1.mp3");
+	//血を渡したときの効果音
+	soundMap["passBloodSe"] = LoadSoundMem("data/sound/passBloodSe.mp3");
+	//ショップのBGM
+	soundMap["shopBgm"] = LoadSoundMem("data/sound/shopBgm.wav");
+	//セレクトシーンのBgm
+	soundMap["selectBgm"] = LoadSoundMem("data/sound/selectBgm.wav");
+	//タイトルシーンのBgm
+	soundMap["titleBgm"] = LoadSoundMem("data/sound/titleBgm.wav");
 	//プレイヤーのグラフィック
 	graphMap["playerGraph"] = LoadGraph("data/image/Monkey.png");
 	//プリンセスのグラフィック
@@ -66,4 +84,6 @@ void DataManager::Init()
 	graphMap["itemFrameGraph"] = LoadGraph("data/image/frame.png");
 	//ゴールドやステージ名を出すときに後ろに出すボックス
 	graphMap["backBoxGraph"] = LoadGraph("data/image/backBox.png");
+	
+
 }

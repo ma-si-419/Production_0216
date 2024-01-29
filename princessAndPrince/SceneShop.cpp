@@ -31,7 +31,7 @@ namespace
 	//アイテムのY座標
 	constexpr int kItemPosY = 330;
 	//まほうのY座標
-	constexpr int kMagicPosY = 650;
+	constexpr int kMagicPosY = 655;
 	//フォントの大きさ
 	constexpr int kFontSize = 48;
 	//フォントの半角の大きさ(数字)
@@ -72,6 +72,8 @@ namespace
 	constexpr int kGoldPosY = 130;
 	//所持金のGを表示する座標
 	constexpr int kGPosX = 1450;
+	//商品の後ろに表示するボックスの大きさ
+	constexpr int kItemBackBox = 180;
 }
 SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
 	Scene(sceneManager, DataManager),
@@ -89,6 +91,7 @@ SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
 	m_cancelSe = DataManager.SearchSound("cancelSe");
 	m_buySe = DataManager.SearchSound("buySe");
 	m_missBuySe = DataManager.SearchSound("missBuySe");
+	m_bgm = DataManager.SearchSound("shopBgm");
 	m_traderGraph = DataManager.SearchGraph("traderGraph");
 	m_playerGraph = DataManager.SearchGraph("playerGraph");
 	m_princessGraph = DataManager.SearchGraph("princessGraph");
@@ -129,6 +132,10 @@ void SceneShop::Init()
 
 void SceneShop::Update(Pad& pad)
 {
+	if (!CheckSoundMem(m_bgm) && !m_isFade)
+	{
+		PlaySoundMem(m_bgm, DX_PLAYTYPE_LOOP);
+	}
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
 	if (!m_isSelectKeyDown)
@@ -146,6 +153,8 @@ void SceneShop::Update(Pad& pad)
 				m_itemSelectNum = kMaxItemNum;
 			}
 			m_isSelectKeyDown = true;
+			m_isMoveCursor = true;
+			m_isShowString = false;
 		}
 		//左キーが入力されたら
 		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_LEFT] || CheckHitKey(KEY_INPUT_A))
@@ -161,6 +170,8 @@ void SceneShop::Update(Pad& pad)
 
 			}
 			m_isSelectKeyDown = true;
+			m_isMoveCursor = true;
+			m_isShowString = false;
 		}
 		//下キーが入力されたら
 		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S))
@@ -176,6 +187,8 @@ void SceneShop::Update(Pad& pad)
 
 			}
 			m_isSelectKeyDown = true;
+			m_isMoveCursor = true;
+			m_isShowString = false;
 		}
 		//上キーが入力されたら
 		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W))
@@ -191,6 +204,8 @@ void SceneShop::Update(Pad& pad)
 
 			}
 			m_isSelectKeyDown = true;
+			m_isMoveCursor = true;
+			m_isShowString = false;
 		}
 	}
 	//上下左右キーが離されたら
@@ -209,6 +224,7 @@ void SceneShop::Update(Pad& pad)
 			if (!m_isFade)
 			{
 				PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
+				StopSoundMem(m_bgm);
 				//シーン移行する
 				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
 				m_isKeyDown = false;
@@ -219,6 +235,7 @@ void SceneShop::Update(Pad& pad)
 	//Aボタンが押されたら
 	if (m_input.Buttons[XINPUT_BUTTON_A] && m_isKeyDown || CheckHitKey(KEY_INPUT_RETURN) && m_isKeyDown)
 	{
+		m_isMoveCursor = false;
 		switch (m_itemSelectNum)
 		{
 		case 0:
@@ -351,6 +368,17 @@ void SceneShop::Draw()
 {
 	//背景を表示する
 	DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kPlayScreenHeight, m_bgGraph, true);
+	//商品の後ろにボックスを表示
+	DrawBox(710, kPlayerItemFramePosY + 10,
+		710 + kItemBackBox, kPlayerItemFramePosY + kItemBackBox, GetColor(200, 152, 104), true);
+	DrawBox(985, kPlayerItemFramePosY + 10,
+		985 + kItemBackBox, kPlayerItemFramePosY + kItemBackBox, GetColor(200, 152, 104), true);
+	DrawBox(1260, kPlayerItemFramePosY + 10,
+		1260 + kItemBackBox, kPlayerItemFramePosY + kItemBackBox, GetColor(200, 152, 104), true);
+	DrawBox(845, kPrincessItemFramePosY + 10,
+		845 + kItemBackBox, kPrincessItemFramePosY + kItemBackBox, GetColor(200, 152, 104), true);
+	DrawBox(1110, kPrincessItemFramePosY + 10,
+		1110 + kItemBackBox, kPrincessItemFramePosY + kItemBackBox, GetColor(200, 152, 104), true);
 	//商人を表示する
 	DrawExtendGraph(kGraphPosX, kGraphPosY, kGraphPosX + kGraphSize, kGraphPosY + kGraphSize, m_traderGraph, true);
 	//プレイヤーの背中を表示
@@ -366,18 +394,50 @@ void SceneShop::Draw()
 		8.0,
 		0.0,
 		m_princessGraph, true, false);
+	int stringWidth;
 	//最初にいらっしゃいと表示する
 	if (m_isShowString)
 	{
-		DrawString(230, 250, "いらっしゃい", GetColor(0, 0, 0), true);
+		stringWidth = GetStringLength("いらっしゃい") * kHalfFontSize;
+		DrawString(250 - stringWidth / 2, 250, "いらっしゃい", GetColor(0, 0, 0), true);
 	}
-	if (m_isBuy && !m_isShowString)
+	if (m_isBuy && !m_isShowString && !m_isMoveCursor)
 	{
-		DrawString(230, 250, "まいどあり", GetColor(0, 0, 0), true);
+		stringWidth = GetStringLength("まいどあり") * kHalfFontSize;
+		DrawString(250 - stringWidth / 2, 250, "まいどあり", GetColor(0, 0, 0), true);
 	}
-	else if (!m_isBuy && !m_isShowString)
+	else if (!m_isBuy && !m_isShowString && !m_isMoveCursor)
 	{
-		DrawString(230, 250, "おかねないね", GetColor(0, 0, 0), true);
+		stringWidth = GetStringLength("おかねないね") * kHalfFontSize;
+		DrawString(250 - stringWidth / 2, 250, "おかねないね", GetColor(0, 0, 0), true);
+	}
+	if (m_isMoveCursor && !m_isShowString)
+	{
+		switch (m_itemSelectNum)
+		{
+		case 0:
+			stringWidth = GetStringLength("こうげきあがるよ") * kHalfFontSize;
+			DrawString(250 - stringWidth / 2, 250, "こうげきあがるよ", GetColor(0, 0, 0), true);
+			break;
+		case 1:
+			stringWidth = GetStringLength("ぼうぎょあがるよ") * kHalfFontSize;
+			DrawString(250 - stringWidth / 2, 250, "ぼうぎょあがるよ", GetColor(0, 0, 0), true);
+			break;
+		case 2:
+			stringWidth = GetStringLength("そくどあがるよ") * kHalfFontSize;
+			DrawString(250 - stringWidth / 2, 250, "そくどあがるよ", GetColor(0, 0, 0), true);
+			break;
+		case 3:
+			stringWidth = GetStringLength("ファイアつよくなるよ") * kHalfFontSize;
+			DrawString(250 - stringWidth / 2, 250, "ファイアつよくなるよ", GetColor(0, 0, 0), true);
+			break;
+		case 4:
+			stringWidth = GetStringLength("ウィンドつよくなるよ") * kHalfFontSize;
+			DrawString(250 - stringWidth / 2, 250, "ウィンドつよくなるよ", GetColor(0, 0, 0), true);
+			break;
+		default:
+			break;
+		}
 	}
 	//所持金を表示する
 	DrawExtendGraph(kBoxPosX, kBoxPosY, kBoxPosX + kBoxWidth, kBoxPosY + kBoxHeight, m_backBoxGraph, true);
@@ -406,7 +466,7 @@ void SceneShop::Draw()
 		0, Game::kFire * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
 		4.0,
-		0.0,
+		4.72,
 		m_itemGraph, true, false);
 	DrawRectRotaGraph(1200, kMagicPosY,
 		0, Game::kTyphoon * kItemGraphSize,
@@ -496,20 +556,60 @@ void SceneShop::Draw()
 	case 0:
 		DrawExtendGraph(700 - static_cast<int>(m_itemFrameRatio), kPlayerItemFramePosY - static_cast<int>(m_itemFrameRatio),
 			700 + kFrameSize + static_cast<int>(m_itemFrameRatio), kPlayerItemFramePosY + kFrameSize + static_cast<int>(m_itemFrameRatio), m_itemFrameGraph, true);
+		DrawExtendGraph(975, kPlayerItemFramePosY,
+			975 + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+		DrawExtendGraph(1250, kPlayerItemFramePosY,
+			1250 + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+		DrawExtendGraph(835, kPrincessItemFramePosY,
+			835 + kFrameSize, kPrincessItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+		DrawExtendGraph(1100, kPrincessItemFramePosY,
+			1100 + kFrameSize, kPrincessItemFramePosY + kFrameSize, m_itemFrameGraph, true);
 		break;
 	case 1:
+		DrawExtendGraph(700, kPlayerItemFramePosY,
+			700 + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
 		DrawExtendGraph(975 - static_cast<int>(m_itemFrameRatio), kPlayerItemFramePosY - static_cast<int>(m_itemFrameRatio),
 			975 + kFrameSize + static_cast<int>(m_itemFrameRatio), kPlayerItemFramePosY + kFrameSize + static_cast<int>(m_itemFrameRatio), m_itemFrameGraph, true);
+		DrawExtendGraph(1250, kPlayerItemFramePosY,
+			1250 + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+		DrawExtendGraph(835, kPrincessItemFramePosY,
+			835 + kFrameSize, kPrincessItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+		DrawExtendGraph(1100, kPrincessItemFramePosY,
+			1100 + kFrameSize, kPrincessItemFramePosY + kFrameSize, m_itemFrameGraph, true);
 		break;
 	case 2:
+		DrawExtendGraph(700, kPlayerItemFramePosY,
+			700 + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+		DrawExtendGraph(975, kPlayerItemFramePosY,
+			975 + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
 		DrawExtendGraph(1250 - static_cast<int>(m_itemFrameRatio), kPlayerItemFramePosY - static_cast<int>(m_itemFrameRatio),
 			1250 + kFrameSize + static_cast<int>(m_itemFrameRatio), kPlayerItemFramePosY + kFrameSize + static_cast<int>(m_itemFrameRatio), m_itemFrameGraph, true);
+		DrawExtendGraph(835, kPrincessItemFramePosY,
+			835 + kFrameSize, kPrincessItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+		DrawExtendGraph(1100, kPrincessItemFramePosY,
+			1100 + kFrameSize, kPrincessItemFramePosY + kFrameSize, m_itemFrameGraph, true);
 		break;
 	case 3:
+		DrawExtendGraph(700, kPlayerItemFramePosY,
+			700 + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+		DrawExtendGraph(975, kPlayerItemFramePosY,
+			975 + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+		DrawExtendGraph(1250, kPlayerItemFramePosY,
+			1250 + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
 		DrawExtendGraph(835 - static_cast<int>(m_itemFrameRatio), kPrincessItemFramePosY - static_cast<int>(m_itemFrameRatio),
 			835 + kFrameSize + static_cast<int>(m_itemFrameRatio), kPrincessItemFramePosY + kFrameSize + static_cast<int>(m_itemFrameRatio), m_itemFrameGraph, true);
+		DrawExtendGraph(1100, kPrincessItemFramePosY,
+			1100 + kFrameSize, kPrincessItemFramePosY + kFrameSize, m_itemFrameGraph, true);
 		break;
 	case 4:
+		DrawExtendGraph(700, kPlayerItemFramePosY,
+			700 + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+		DrawExtendGraph(975, kPlayerItemFramePosY,
+			975 + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+		DrawExtendGraph(1250, kPlayerItemFramePosY,
+			1250 + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+		DrawExtendGraph(835, kPrincessItemFramePosY,
+			835 + kFrameSize, kPrincessItemFramePosY + kFrameSize, m_itemFrameGraph, true);
 		DrawExtendGraph(1100 - static_cast<int>(m_itemFrameRatio), kPrincessItemFramePosY - static_cast<int>(m_itemFrameRatio),
 			1100 + kFrameSize + static_cast<int>(m_itemFrameRatio), kPrincessItemFramePosY + kFrameSize + static_cast<int>(m_itemFrameRatio), m_itemFrameGraph, true);
 		break;

@@ -75,31 +75,6 @@ void Enemy::Init(int kinds)
 {
 	m_animFrame = 0;
 	int bornPos = GetRand(3);
-	switch (bornPos)
-	{
-		//左方向から出てくる
-	case 0:
-		m_pos.x = 0;
-		m_pos.y = GetRand(Game::kPlayScreenHeight);
-		break;
-		//上方向から出てくる
-	case 1:
-		m_pos.x = GetRand(Game::kPlayScreenWidth);
-		m_pos.y = 0;
-		break;
-		//右方向から出てくる
-	case 2:
-		m_pos.x = Game::kPlayScreenWidth;
-		m_pos.y = GetRand(Game::kPlayScreenHeight);
-		break;
-		//下方向から出てくる
-	case 3:
-		m_pos.x = GetRand(Game::kPlayScreenWidth);
-		m_pos.y = Game::kPlayScreenHeight;
-		break;
-	default:
-		break;
-	}
 	m_radius = Game::kRadius;
 	////////////////////////////
 	/*エネミーのステータス設定*/
@@ -236,6 +211,30 @@ void Enemy::Init(int kinds)
 		m_haveExp = GetRand(100) + 100;
 		m_isBoss = true;
 		m_knockBackPow = 1;
+	}
+	switch (bornPos)
+	{
+		//左方向から出てくる
+	case 0:
+		m_pos.x = -kGraphWidth;
+		m_pos.y = GetRand(Game::kPlayScreenHeight);
+		break;
+		//上方向から出てくる
+	case 1:
+		m_pos.x = GetRand(Game::kPlayScreenWidth);
+		m_pos.y = -kGraphHeight;
+		break;
+		//右方向から出てくる
+	case 2:
+		m_pos.x = Game::kPlayScreenWidth + kGraphWidth;
+		m_pos.y = GetRand(Game::kPlayScreenHeight);
+		break;
+		//下方向から出てくる
+	case 3:
+		m_pos.x = GetRand(Game::kPlayScreenWidth);
+		m_pos.y = Game::kPlayScreenHeight + kGraphHeight;
+	default:
+		break;
 	}
 }
 

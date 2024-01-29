@@ -28,7 +28,7 @@ namespace
 	//ノックバックの大きさ
 	constexpr int kKnockBackScale = 6;
 	//基本的な魔法の大きさ
-	constexpr float kMagicScale = 20;
+	constexpr float kMagicScale = 15;
 	//Hpバーの横の長さ
 	constexpr float kMaxBarWidth = 60;
 	//Hpバーの縦の長さ
@@ -104,6 +104,9 @@ void Princess::Init()
 	//上のHpバーよりも少し低い座標に表示させる
 	m_bloodBarPos.x = m_hpBarPos.x;
 	m_bloodBarPos.y = m_hpBarPos.y + kBarHeight * 2;
+	//風魔法の効果音を入れる
+	m_windMagicSe = m_pMain->GetWindMagicSe();
+	m_passBloodSe = m_pMain->GetPassBloodSe();
 }
 
 void Princess::Update()
@@ -169,6 +172,7 @@ void Princess::Update()
 					//魔法を撃つ
 					m_pMagic = new MagicBase(this, m_scale);
 					m_pMagic->Init(0);
+					m_pMagic->SetHandle(m_magicHandle);
 					m_pMain->AddMagic(m_pMagic);
 
 				}
@@ -186,7 +190,9 @@ void Princess::Update()
 					{
 						m_pMagic = new MagicBase(this, m_scale);
 						m_pMagic->Init(i);
+						m_pMagic->SetHandle(m_magicHandle);
 						m_pMain->AddMagic(m_pMagic);
+						PlaySoundMem(m_windMagicSe, DX_PLAYTYPE_BACK);
 					}
 				}
 			}
@@ -342,6 +348,16 @@ void Princess::HitEnemy(Enemy& enemy)
 		m_nowHp = 0;
 	}
 	enemy.HitPrincess(knockBack);
+}
+
+void Princess::ReceiveBlood(float blood)
+{
+	m_nowBlood += blood;
+	if (blood > 0)
+	{
+
+		PlaySoundMem(m_passBloodSe, DX_PLAYTYPE_BACK);
+	}
 }
 
 bool Princess::IsDeath()

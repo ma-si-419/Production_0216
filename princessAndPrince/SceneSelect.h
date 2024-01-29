@@ -46,5 +46,7 @@ private:
 	Game::Dir m_dir;
 	//プレイヤーのアニメーション
 	int m_animFrame;
+	//bgm
+	int m_bgm;
 };
 

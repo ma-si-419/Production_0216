@@ -10,6 +10,7 @@ SceneTitle::SceneTitle(SceneManager& sceneManager,DataManager& DataManager) :
 	m_handle(-1)
 {
 	m_appSe = DataManager.SearchSound("approveSe");
+	m_bgm = DataManager.SearchSound("titleBgm");
 }
 
 SceneTitle::~SceneTitle()
@@ -22,11 +23,16 @@ void SceneTitle::Init()
 
 void SceneTitle::Update(Pad& pad)
 {
+	if (!CheckSoundMem(m_bgm) && m_isKeyDown)
+	{
+		PlaySoundMem(m_bgm, DX_PLAYTYPE_LOOP);
+	}
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
 	 //Aƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ç
 	if (m_input.Buttons[XINPUT_BUTTON_A] && m_isKeyDown || CheckHitKey(KEY_INPUT_RETURN) && m_isKeyDown)
 	{
+		StopSoundMem(m_bgm);
 		PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
 		m_isKeyDown = false;

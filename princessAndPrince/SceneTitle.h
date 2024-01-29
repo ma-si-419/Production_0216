@@ -21,5 +21,7 @@ private:
 	bool m_isKeyDown;
 	//ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½‚Æ‚«‚ÌŒø‰Ê‰¹
 	int m_appSe;
+	//bgm
+	int m_bgm;
 };
 

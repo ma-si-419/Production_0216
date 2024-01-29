@@ -58,6 +58,8 @@ private:
 	bool m_isShowString;
 	//アイテムを買えたかどうか
 	bool m_isBuy;
+	//カーソルを動かしたかどうか
+	bool m_isMoveCursor;
 	//アイテムのグラフィック
 	int m_itemGraph;
 	//アイテムのフレームのグラフィック
@@ -68,5 +70,7 @@ private:
 	float m_itemFrameRatio;
 	//アイテムフレームを拡大しているか縮小しているか
 	int m_isFrameRatio;
+	//Bgm
+	int m_bgm;
 };
 
