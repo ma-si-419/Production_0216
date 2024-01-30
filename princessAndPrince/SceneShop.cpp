@@ -25,7 +25,7 @@ namespace
 	constexpr int kPlayerPosY = 750;
 	//Princessのいる座標
 	constexpr int kPrincessPosX = 450;
-	constexpr int kPrincessPosY = 740;
+	constexpr int kPrincessPosY = 750;
 	//アイテムのサイズ
 	constexpr int kItemGraphSize = 32;
 	//アイテムのY座標
@@ -389,9 +389,9 @@ void SceneShop::Draw()
 		0.0,
 		m_playerGraph, true, false);
 	DrawRectRotaGraph(kPrincessPosX, kPrincessPosY,
-		0, 40,
-		14, 20,
-		8.0,
+		0, 48,
+		24, 24,
+		6.0,
 		0.0,
 		m_princessGraph, true, false);
 	int stringWidth;

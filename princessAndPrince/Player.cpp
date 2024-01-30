@@ -67,7 +67,7 @@ Player::Player(SceneMain* pMain) :
 	m_danceCount(0)
 {
 	//‰ŠúÀ•W‚ğ–‚—‚Ì—×‚Éİ’è
-	m_pos.x = Game::kPlayScreenWidth / 2 + 70;
+	m_pos.x = Game::kPlayScreenWidth / 2 + 100;
 	m_pos.y = Game::kPlayScreenHeight / 2;
 	//Å‰‚ÌŒü‚«‚ğ‰ºŒü‚«‚Éİ’è
 	m_dir = Game::kDirDown;

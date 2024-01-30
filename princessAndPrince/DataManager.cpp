@@ -84,6 +84,10 @@ void DataManager::Init()
 	graphMap["itemFrameGraph"] = LoadGraph("data/image/frame.png");
 	//ゴールドやステージ名を出すときに後ろに出すボックス
 	graphMap["backBoxGraph"] = LoadGraph("data/image/backBox.png");
-	
-
+	//背景画像まとめ
+	graphMap["allFieldBgGraph"] = LoadGraph("data/image/allFieldBg.png");
+	//ショップ画像
+	graphMap["shopGraph"] = LoadGraph("data/image/shop.png");
+	//選んでいるシーンのフレーム
+	graphMap["selectSceneFrameGraph"] = LoadGraph("data/image/selectSceneFrame.png");
 }

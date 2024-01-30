@@ -13,8 +13,8 @@ namespace
 	constexpr float kSpeed = 3.0f;
 
 	// キャラクターのサイズ
-	constexpr int kGraphWidth = 14;
-	constexpr int kGraphHeight = 20;
+	constexpr int kGraphWidth = 24;
+	constexpr int kGraphHeight = 24;
 	// 半分のサイズ
 	constexpr float kGraphHalfWidth = kGraphWidth / 2.0f;
 	constexpr float kGraphHalfHeight = kGraphHeight / 2.0f;
@@ -48,7 +48,7 @@ namespace
 	//同時に出す風魔法の数
 	constexpr int kWindVol = 2;
 	//キャラの拡大率
-	constexpr float kCharcterScale = 6.0f;
+	constexpr float kCharcterScale = 5.0f;
 	//ベースの攻撃力
 	constexpr float kBaseAtk = 1.0f;
 	//揺れる大きさ

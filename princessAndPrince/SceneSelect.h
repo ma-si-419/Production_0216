@@ -5,7 +5,7 @@ class Player;
 class SceneSelect : public Scene
 {
 public:
-	SceneSelect(SceneManager& sceneManager,DataManager& DataManager);
+	SceneSelect(SceneManager& sceneManager, DataManager& DataManager);
 	virtual ~SceneSelect();
 
 	void Init();
@@ -13,6 +13,9 @@ public:
 
 	void Update(Pad& pad);
 	void Draw();
+
+	//シーン選択時の演出
+	void MoveScene(bool up);
 private:
 	//今選択しているシーンを保存する
 	int m_stageSelectNum;
@@ -46,7 +49,24 @@ private:
 	Game::Dir m_dir;
 	//プレイヤーのアニメーション
 	int m_animFrame;
+	//ショップのアニメーション
+	int m_shopAnimFrame;
+	//ショップのアニメーションを切り取る座標
+	int m_shopSrcX;
 	//bgm
 	int m_bgm;
+	//背景画像を切り取る座標
+	int m_cutBgPosY;
+	//演出の間動かせないようにする
+	bool m_isStaging;
+	//シーンが上がっているか下がっているか
+	bool m_isSceneUp;
+	//ショップのグラフィック
+	int m_shopGraph;
+	//選んでいるシーンのフレーム
+	int m_selectSceneFrame;
+	//ステージ名の表記
+	int m_backBoxGraph;
+	//ステージ変更をしたかどうか
+	bool m_isChangeStage;
 };
-
