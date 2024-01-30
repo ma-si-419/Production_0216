@@ -47,7 +47,9 @@ namespace
 	//フォントの半分の大きさ
 	constexpr int kFontHalfSize = 24;
 	//タイトルの座標X
-	constexpr int kTitlePosX = 380;
+	constexpr int kTitlePosX = 390;
+	//タイトルの座標Y
+	constexpr int kTitlePosY = 115;
 }
 SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager) :
 	Scene(sceneManager, DataManager),
@@ -324,7 +326,7 @@ void SceneSelect::Draw()
 	DrawExtendGraph(kSelectSceneStartPosX, kSelectSceneStartPosY, kSelectSceneEndPosX, kSelectSceneEndPosY - 50,
 		m_selectSceneFrame, true);
 	//ステージ名の表示
-	DrawExtendGraph(100, 90, 700, 180, m_backBoxGraph, true);
+	DrawExtendGraph(70, 90, 730, 180, m_backBoxGraph, true);
 	//プレイヤーと魔女を表示する
 	int animEle = m_animFrame / kAnimFrameNum;
 	//画像のどこを切り取るか計算
@@ -368,35 +370,35 @@ void SceneSelect::Draw()
 		{
 		case 0:
 			stringWidth = GetStringLength("冒険の始まり") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, 120, "冒険の始まり", GetColor(255, 255, 255));
+			DrawString(kTitlePosX - stringWidth, kTitlePosY, "冒険の始まり", GetColor(255, 255, 255));
 			break;
 		case 1:
 			stringWidth = GetStringLength("よみがえれ姫") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, 120, "よみがえれ姫", GetColor(255, 255, 255));
+			DrawString(kTitlePosX - stringWidth, kTitlePosY, "よみがえれ姫", GetColor(255, 255, 255));
 			break;
 		case 2:
 			stringWidth = GetStringLength("怒りのパワー") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, 120, "怒りのパワー", GetColor(255, 255, 255));
+			DrawString(kTitlePosX - stringWidth, kTitlePosY, "怒りのパワー", GetColor(255, 255, 255));
 			break;
 		case 3:
 			stringWidth = GetStringLength("イノシシ注意報") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, 120, "イノシシ注意報", GetColor(255, 255, 255));
+			DrawString(kTitlePosX - stringWidth, kTitlePosY, "イノシシ注意報", GetColor(255, 255, 255));
 			break;
 		case 4:
 			stringWidth = GetStringLength("アブナイ肝試し") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, 120, "アブナイ肝試し", GetColor(255, 255, 255));
+			DrawString(kTitlePosX - stringWidth, kTitlePosY, "アブナイ肝試し", GetColor(255, 255, 255));
 			break;
 		case 5:
 			stringWidth = GetStringLength("ドラゴンの巣窟") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, 120, "ドラゴンの巣窟", GetColor(255, 255, 255));
+			DrawString(kTitlePosX - stringWidth, kTitlePosY, "ドラゴンの巣窟", GetColor(255, 255, 255));
 			break;
 		case 6:
 			stringWidth = GetStringLength("雪に潜む者たち") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, 120, "雪に潜む者たち", GetColor(255, 255, 255));
+			DrawString(kTitlePosX - stringWidth, kTitlePosY, "雪に潜む者たち", GetColor(255, 255, 255));
 			break;
 		case 7:
 			stringWidth = GetStringLength("俺たちの戦いはこれからだ") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, 120, "俺たちの戦いはこれからだ", GetColor(255, 255, 255));
+			DrawString(kTitlePosX - stringWidth, kTitlePosY, "俺たちの戦いはこれからだ", GetColor(255, 255, 255));
 			break;
 		default:
 			break;

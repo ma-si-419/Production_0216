@@ -26,6 +26,7 @@ void Application::Terminate()
 
 bool Application::Init()
 {
+	SetWindowText("姫と王子");
 	m_isScreen = true;
 	SetChangeScreenModeGraphicsSystemResetFlag(false);
 	ChangeWindowMode(m_isScreen);	//非スクリーン

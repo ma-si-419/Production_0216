@@ -23,5 +23,7 @@ private:
 	int m_appSe;
 	//bgm
 	int m_bgm;
+	//背景のグラフィック
+	int m_bgGraph;
 };
 

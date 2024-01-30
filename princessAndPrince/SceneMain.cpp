@@ -76,7 +76,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_clearTime(0),
 	m_nextEnemyKind(0),
 	m_nextEnemyPopTime(0),
-	m_specialGauge(100),
+	m_specialGauge(0),
 	m_isSpecialMode(false),
 	m_isPause(false),
 	m_isStop(false),
@@ -101,7 +101,8 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_isHalfExp(true),
 	m_isHalfGold(true),
 	m_lastSpace(true),
-	m_selectScene(stageNum)
+	m_selectScene(stageNum),
+	m_pauseGraph(0)
 
 {
 	//プレイヤーのグラフィックのロード
@@ -123,6 +124,8 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_bgHandle = m_dataManager.SearchGraph("bgGraph");
 	//アイテムのグラフィックのロード
 	m_itemHandle = m_dataManager.SearchGraph("itemGraph");
+	//ポーズを開いたときに出る画像のロード
+	m_pauseGraph = m_dataManager.SearchGraph("PAUSEGraph");
 	//ぶつかったときの音のロード
 	m_attackSe = m_dataManager.SearchSound("attackSe");
 	//ダンスの音のロード
@@ -806,21 +809,23 @@ void SceneMain::Draw()
 		DrawBox(0, 0, Game::kPlayScreenWidth, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		int stringWidth = GetStringLength("つづける") * kFontHalfSize;
-		DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2, 700,
+		DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2 - 50, 700,
 			"つづける", GetColor(255, 255, 255));
 		stringWidth = GetStringLength("やめる") * kFontHalfSize;
-		DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2, 800,
+		DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2 - 50, 800,
 			"やめる", GetColor(255, 255, 255));
+		DrawGraph(0,0, m_pauseGraph, true);
+		
 		switch (m_pauseSelectNum)
 		{
 		case 0:
 			stringWidth = GetStringLength("つづける") * kFontHalfSize;
-			DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2, 700,
+			DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2 - 50, 700,
 				"つづける", GetColor(255, 0, 0));
 			break;
 		case 1:
 			stringWidth = GetStringLength("やめる") * kFontHalfSize;
-			DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2, 800,
+			DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2 - 50, 800,
 				"やめる", GetColor(255, 0, 0));
 			break;
 

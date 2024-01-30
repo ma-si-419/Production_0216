@@ -90,4 +90,11 @@ void DataManager::Init()
 	graphMap["shopGraph"] = LoadGraph("data/image/shop.png");
 	//選んでいるシーンのフレーム
 	graphMap["selectSceneFrameGraph"] = LoadGraph("data/image/selectSceneFrame.png");
+	//タイトルシーンの背景
+	graphMap["titleSceneBgGraph"] = LoadGraph("data/image/titleBg.png");
+	//ゲーム開始時に出るREADY
+	graphMap["READYGraph"] = LoadGraph("data/image/READY.png");
+	//ポーズ時に出るPAUSE
+	graphMap["PAUSEGraph"] = LoadGraph("data/image/PAUSE.png");
+
 }

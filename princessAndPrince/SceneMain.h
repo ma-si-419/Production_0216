@@ -215,5 +215,7 @@ private:
 	int m_bloodSe;
 	//血を渡したときの効果音
 	int m_passBloodSe;
+	//ポーズを開いたときに出る文字
+	int m_pauseGraph;
 
 };

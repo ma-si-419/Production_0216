@@ -7,10 +7,12 @@
 SceneTitle::SceneTitle(SceneManager& sceneManager,DataManager& DataManager) :
 	Scene(sceneManager,DataManager),
 	m_isKeyDown(true),
-	m_handle(-1)
+	m_handle(-1),
+	m_bgGraph(0)
 {
 	m_appSe = DataManager.SearchSound("approveSe");
 	m_bgm = DataManager.SearchSound("titleBgm");
+	m_bgGraph = DataManager.SearchGraph("titleSceneBgGraph");
 }
 
 SceneTitle::~SceneTitle()
@@ -41,6 +43,7 @@ void SceneTitle::Update(Pad& pad)
 
 void SceneTitle::Draw()
 {
+	DrawGraph(0,0,m_bgGraph,true);
 	int DrawWidth = GetDrawStringWidth("•P‚Æ‰¤Žq", -1);
 
 	DrawString((Game::kPlayScreenWidth - DrawWidth) / 2, Game::kPlayScreenHeight / 2,
