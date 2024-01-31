@@ -27,6 +27,10 @@ public:
 	void ShowLeaveButton() { m_isLeaveButton = true; }
 	//数値を右揃えにする
 	int AlignmentRight(int num);
+	//statusを表示する
+	void DrawStatus();
+	//獲得したゴールドと経験値を表示する
+	void DrawGetItem();
 private:
 	//プレイヤーのポインタを保存する
 	Player* m_pPlayer;

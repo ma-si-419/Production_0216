@@ -18,7 +18,7 @@ namespace
 	//グラフィックの半分の大きさ
 	constexpr int kHalfGraphSize = 40;
 	//宝箱の大きさ
-	constexpr int kColScale = 45;
+	constexpr int kColScale = 30;
 	//魔法にヒットするインターバル
 	constexpr int kHitMagicInterval = 30;
 	//ノックバックの大きさ
