@@ -10,7 +10,7 @@ struct ItemPrice
 class SceneShop : public Scene
 {
 public:
-	SceneShop(SceneManager& sceneManager,DataManager& DataManager);
+	SceneShop(SceneManager& sceneManager,DataManager& DataManager,int selectSceneNum);
 	virtual ~SceneShop();
 
 	void Init();
@@ -72,5 +72,7 @@ private:
 	int m_isFrameRatio;
 	//Bgm
 	int m_bgm;
+	//セレクトシーンで選んでいたシーンを保存する
+	int m_selectSceneNum;
 };
 

@@ -5,7 +5,7 @@ class Player;
 class SceneSelect : public Scene
 {
 public:
-	SceneSelect(SceneManager& sceneManager, DataManager& DataManager);
+	SceneSelect(SceneManager& sceneManager, DataManager& DataManager,int selectSceneNum);
 	virtual ~SceneSelect();
 
 	void Init();

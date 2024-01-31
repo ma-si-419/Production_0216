@@ -75,7 +75,7 @@ namespace
 	//商品の後ろに表示するボックスの大きさ
 	constexpr int kItemBackBox = 180;
 }
-SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
+SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager,int selectSceneNum) :
 	Scene(sceneManager, DataManager),
 	m_isKeyDown(false),
 	m_itemSelectNum(0),
@@ -85,7 +85,8 @@ SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager) :
 	m_isShowString(true),
 	m_isBuy(false),
 	m_isFrameRatio(true),
-	m_itemFrameRatio(0)
+	m_itemFrameRatio(0),
+	m_selectSceneNum(selectSceneNum)
 {
 	m_cursorSe = DataManager.SearchSound("cursorSe");
 	m_cancelSe = DataManager.SearchSound("cancelSe");
@@ -226,7 +227,7 @@ void SceneShop::Update(Pad& pad)
 				PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
 				StopSoundMem(m_bgm);
 				//シーン移行する
-				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
+				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager,m_selectSceneNum));
 				m_isKeyDown = false;
 				m_isFade = true;
 			}

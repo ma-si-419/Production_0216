@@ -13,13 +13,14 @@ namespace
 	//Á‚µ‚Ä‚¢‚éŠÔ
 	constexpr int kEraseTime = 8;
 }
-SceneTitle::SceneTitle(SceneManager& sceneManager, DataManager& DataManager) :
+SceneTitle::SceneTitle(SceneManager& sceneManager, DataManager& DataManager,int selectSceneNum) :
 	Scene(sceneManager, DataManager),
 	m_isKeyDown(true),
 	m_handle(-1),
 	m_bgGraph(0),
 	m_isString(true),
-	m_count(0)
+	m_count(0),
+	m_selectSceneNum(selectSceneNum)
 {
 	m_appSe = DataManager.SearchSound("approveSe");
 	m_bgm = DataManager.SearchSound("titleBgm");
@@ -49,7 +50,7 @@ void SceneTitle::Update(Pad& pad)
 	{
 		StopSoundMem(m_bgm);
 		PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
-		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
+		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager,m_selectSceneNum));
 		m_isKeyDown = false;
 	}
 	m_count++;

@@ -5,7 +5,7 @@ class SceneTitle : public Scene
 {
 public:
 	//コンストラクタ
-	SceneTitle(SceneManager& sceneManager,DataManager& DataManager);
+	SceneTitle(SceneManager& sceneManager,DataManager& DataManager,int selectSceneNum);
 	//デストラクタ
 	virtual ~SceneTitle();
 	//初期化処理
@@ -31,5 +31,7 @@ private:
 	int m_count;
 	//文字を出すかどうか
 	bool m_isString;
+	//セレクトシーンで選んでいたシーンを保存する
+	int m_selectSceneNum;
 };
 

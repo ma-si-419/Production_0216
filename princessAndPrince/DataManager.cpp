@@ -100,5 +100,9 @@ void DataManager::Init()
 	graphMap["titleGraph"] = LoadGraph("data/image/title.png");
 	//ボタンのUI
 	graphMap["buttonsGraph"] = LoadGraph("data/image/buttons.png");
+	//セレクト画面のボタン説明
+	graphMap["selectSceneButtonUiGraph"] = LoadGraph("data/image/buttonsUi.png");
+	//シーンメインのUiを表示する背景
+	graphMap["mainUiBgGraph"] = LoadGraph("data/image/mainUi.png");
 
 }

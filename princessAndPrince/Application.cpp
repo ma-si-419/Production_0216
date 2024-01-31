@@ -60,7 +60,7 @@ void Application::Run()
 		SceneManager sceneManager;
 		DataManager DataManager;
 		DataManager.Init();
-		sceneManager.SetStartScene(std::make_shared<SceneTitle>(sceneManager, DataManager));
+		sceneManager.SetStartScene(std::make_shared<SceneTitle>(sceneManager, DataManager,0));
 
 		Pad pad;
 

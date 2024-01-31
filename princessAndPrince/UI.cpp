@@ -26,6 +26,7 @@ UI::UI(Player* pPlayer, Princess* pPrincess, SceneMain* pMain) :
 	m_isLeaveButton(false),
 	m_isClearUIEnd(false)
 {
+	m_buttonsGraph = m_pMain->GetButtonsGraph();
 }
 
 UI::~UI()
@@ -43,14 +44,14 @@ void UI::Update()
 void UI::Draw()
 {
 	//UIの背景(右側)表示
-	DrawBox(960, 0, Game::kScreenWidth, Game::kPlayScreenHeight, GetColor(100, 100, 100), true);
+	DrawGraph(960, 0, m_pMain->GetUiBg(), true);
 	//入手した経験値の量をプレイヤーから取得して表示する	
 	DrawFormatString(Game::kScreenWidth - 400, 100,//座標
-		GetColor(0, 0, 0), "取得経験値%d", m_pPlayer->GetExp());
+		GetColor(0, 0, 0), "%d", m_pPlayer->GetExp());
 
 	//入手したゴールドの量をプレイヤーから取得して表示する
 	DrawFormatString(Game::kScreenWidth - 400, 200,//座標
-		GetColor(0, 0, 0), "取得ゴールド%d", m_pPlayer->GetGold());
+		GetColor(0, 0, 0), "%d", m_pPlayer->GetGold());
 
 	//攻撃力のレベルを表示する
 	DrawFormatString(Game::kScreenWidth - 400, 300,//座標
@@ -131,8 +132,8 @@ void UI::SceneClearUI()
 	}
 	if (m_isLeaveButton)
 	{
-		DrawCircle(400, 900, 20, GetColor(255, 255, 255), true);
-		DrawString(500, 900, "で戻る", GetColor(255, 255, 255));
+		DrawRectRotaGraph(440, 900, 0,0,32,32,2.4,0.0,m_buttonsGraph,true,0,0);
+		DrawString(480, 880, "で戻る", GetColor(255, 255, 255));
 	}
 }
 

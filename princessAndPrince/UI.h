@@ -42,5 +42,7 @@ private:
 	bool m_isShowGold;
 	//ボタンを押したらクリアを出すタイミング
 	bool m_isLeaveButton;
+	//ボタンのグラフィック
+	int m_buttonsGraph;
 };
 

@@ -126,6 +126,10 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_itemHandle = m_dataManager.SearchGraph("itemGraph");
 	//ポーズを開いたときに出る画像のロード
 	m_pauseGraph = m_dataManager.SearchGraph("PAUSEGraph");
+	//ボタングラフィック
+	m_buttonsGraph = m_dataManager.SearchGraph("buttonsGraph");
+	//Uiを表示する背景
+	m_uiBgGraph = m_dataManager.SearchGraph("mainUiBgGraph");
 	//ぶつかったときの音のロード
 	m_attackSe = m_dataManager.SearchSound("attackSe");
 	//ダンスの音のロード
@@ -521,7 +525,7 @@ void SceneMain::Update(Pad& pad)
 				PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 				StopSoundMem(m_fieldBgm);
 				StopSoundMem(m_bossBgm);
-				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
+				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager,m_selectScene));
 				return;
 				break;
 			}
@@ -691,7 +695,7 @@ void SceneMain::Update(Pad& pad)
 		}
 		if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A] || m_isEnd && CheckHitKey(KEY_INPUT_RETURN))
 		{
-			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
+			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager,m_selectScene));
 			return;
 		}
 	}

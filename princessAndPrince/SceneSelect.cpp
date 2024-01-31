@@ -51,19 +51,20 @@ namespace
 	//タイトルの座標Y
 	constexpr int kTitlePosY = 115;
 }
-SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager) :
+SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager,int selectSceneNum) :
 	Scene(sceneManager, DataManager),
 	m_isKeyDown(false),
-	m_stageSelectNum(0),
+	m_stageSelectNum(selectSceneNum),
 	m_isSelectKeyDown(false),
 	m_isSelectScene(false),
 	m_animFrame(kAnimFrameNum),
 	m_dir(Game::kDirDown),
-	m_cutBgPosY(kBgGraphSize* kMaxSceneNum),
+	m_cutBgPosY(kBgGraphSize* kMaxSceneNum - selectSceneNum * kBgGraphSize),
 	m_isStaging(false),
 	m_shopAnimFrame(0),
 	m_shopSrcX(0),
-	m_isChangeStage(false)
+	m_isChangeStage(false),
+	m_isSceneUp(true)
 {
 	m_appSe = DataManager.SearchSound("approveSe");
 	m_cursorSe = DataManager.SearchSound("cursorSe");
@@ -76,7 +77,7 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager) :
 	m_shopGraph = DataManager.SearchGraph("shopGraph");
 	m_selectSceneFrame = DataManager.SearchGraph("selectSceneFrameGraph");
 	m_backBoxGraph = DataManager.SearchGraph("backBoxGraph");
-	m_buttonsUiGraph = DataManager.SearchGraph("buttonsGraph");
+	m_buttonsUiGraph = DataManager.SearchGraph("selectSceneButtonUiGraph");
 }
 
 SceneSelect::~SceneSelect()
@@ -109,7 +110,7 @@ void SceneSelect::Update(Pad& pad)
 		}
 		//上キーと下キーが離されたら
 		if (!m_input.Buttons[XINPUT_BUTTON_DPAD_UP] && !m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] &&//パッド
-			!CheckHitKey(KEY_INPUT_W) && !CheckHitKey(KEY_INPUT_S) && !m_isStaging)
+			!CheckHitKey(KEY_INPUT_W) && !CheckHitKey(KEY_INPUT_S) && !CheckHitKey(KEY_INPUT_UP)&&!CheckHitKey(KEY_INPUT_DOWN) && !m_isStaging)
 		{
 			m_isSelectKeyDown = false;
 		}
@@ -136,7 +137,7 @@ void SceneSelect::Update(Pad& pad)
 				{
 					StopSoundMem(m_bgm);
 					PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
-					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager));
+					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager,m_stageSelectNum));
 					m_isKeyDown = false;
 					m_isSelectScene = true;
 				}
@@ -146,7 +147,7 @@ void SceneSelect::Update(Pad& pad)
 					PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 					StopSoundMem(m_bgm);
 					//ショップシーンに移行する
-					m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager));
+					m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager,m_stageSelectNum));
 					m_isSelectScene = true;
 				}
 			}
@@ -156,7 +157,7 @@ void SceneSelect::Update(Pad& pad)
 		{
 
 			//上キーが押されたら
-			if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W))
+			if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W) || CheckHitKey(KEY_INPUT_UP))
 			{
 				if (m_stageSelectNum >= kMaxSceneNum)
 				{
@@ -172,7 +173,7 @@ void SceneSelect::Update(Pad& pad)
 				m_isSelectKeyDown = true;
 			}
 			//下キーが入力されたら
-			else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S))
+			else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S) || CheckHitKey(KEY_INPUT_DOWN))
 			{
 				if (m_stageSelectNum <= 0)
 				{
@@ -323,7 +324,7 @@ void SceneSelect::Draw()
 	//ショップの表示
 	DrawRectExtendGraph(1050, 350, 1550, 850, m_shopSrcX, 0, 64, 64, m_shopGraph, true);
 	//左下に操作方法表示
-	DrawRectRotaGraph(100, 800, 0, 0, 32, 32, 2.0f, 0, m_buttonsUiGraph, true, 0, 0);
+	DrawGraph(100, 650,m_buttonsUiGraph, true);
 }
 
 void SceneSelect::MoveScene(bool up)

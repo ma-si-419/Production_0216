@@ -81,11 +81,15 @@ public:
 	//血を拾った時の効果音を返す
 	int GetBloodSe() { return m_bloodSe; }
 	//血を渡したときの効果音を返す
-	int  GetPassBloodSe() { return m_passBloodSe; }
+	int GetPassBloodSe() { return m_passBloodSe; }
+	//ボタンのグラフィックを返す
+	int GetButtonsGraph() { return m_buttonsGraph; }
 	//選ばれたシーンに合わせてエネミーの情報を入れる
 	void SetEnemyInfo(int stageNum);
 	//選ばれたシーン数を保存する
 	int GetSceneNum() { return m_selectScene; }
+	//Uiを表示する背景を取得する
+	int GetUiBg() { return m_uiBgGraph; }
 
 private:
 	// グラフィックのハンドル
@@ -219,5 +223,8 @@ private:
 	int m_passBloodSe;
 	//ポーズを開いたときに出る文字
 	int m_pauseGraph;
-
+	//ボタンのグラフィック
+	int m_buttonsGraph;
+	//Uiを表示する背景
+	int m_uiBgGraph;
 };
