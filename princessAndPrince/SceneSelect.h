@@ -19,16 +19,10 @@ public:
 private:
 	//今選択しているシーンを保存する
 	int m_stageSelectNum;
-	//今選択している項目を保存する
-	int m_pauseSelectNum;
 	//連続でキーが押されてないように
 	bool m_isKeyDown;
 	//カーソルが連続で移動しないように
 	bool m_isSelectKeyDown;
-	//ポーズを開いているかどうか
-	bool m_isPause;
-	//ステータス画面を開いているかどうか
-	bool m_isStatus;
 	//ステージを決定した後に連打しないように
 	bool m_isSelectScene;
 	//決定ボタンを押したときの効果音
@@ -69,4 +63,6 @@ private:
 	int m_backBoxGraph;
 	//ステージ変更をしたかどうか
 	bool m_isChangeStage;
+	//ボタンのUI
+	int m_buttonsUiGraph;
 };

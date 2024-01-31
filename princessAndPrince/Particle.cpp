@@ -8,7 +8,8 @@ Particle::Particle(Vec2 pos, float lange,float speed,int scale, int color) :
 	m_dirVec(static_cast<float>(GetRand(1000)) - 500, static_cast<float>(GetRand(1000)) - 500),
 	m_scale(GetRand(scale) + 2),
 	m_appearLange(GetRand(lange) + lange / 5),
-	m_spd(speed)
+	m_spd(speed),
+	m_color(0)
 {
 	//”š‚É‰‚¶‚ÄF‚ğ•Ï‚¦‚é
 	switch (color)

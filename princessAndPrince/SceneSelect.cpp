@@ -55,10 +55,7 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager) :
 	Scene(sceneManager, DataManager),
 	m_isKeyDown(false),
 	m_stageSelectNum(0),
-	m_pauseSelectNum(0),
 	m_isSelectKeyDown(false),
-	m_isPause(false),
-	m_isStatus(false),
 	m_isSelectScene(false),
 	m_animFrame(kAnimFrameNum),
 	m_dir(Game::kDirDown),
@@ -79,6 +76,7 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager) :
 	m_shopGraph = DataManager.SearchGraph("shopGraph");
 	m_selectSceneFrame = DataManager.SearchGraph("selectSceneFrameGraph");
 	m_backBoxGraph = DataManager.SearchGraph("backBoxGraph");
+	m_buttonsUiGraph = DataManager.SearchGraph("buttonsGraph");
 }
 
 SceneSelect::~SceneSelect()
@@ -117,7 +115,7 @@ void SceneSelect::Update(Pad& pad)
 		}
 	}
 	//ポーズが開かれていなく、演出中でない場合
-	if (!m_isPause && !m_isStaging)
+	if (!m_isStaging)
 	{
 		//連続で押されないための処理
 		if (m_isKeyDown)
@@ -143,10 +141,13 @@ void SceneSelect::Update(Pad& pad)
 					m_isSelectScene = true;
 				}
 				//Yボタンが押されたら
-				else if (m_input.Buttons[XINPUT_BUTTON_Y] && !m_isPause || CheckHitKey(KEY_INPUT_P))
+				else if (m_input.Buttons[XINPUT_BUTTON_Y]  ||CheckHitKey(KEY_INPUT_P))
 				{
 					PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
-					m_isPause = true;
+					StopSoundMem(m_bgm);
+					//ショップシーンに移行する
+					m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager));
+					m_isSelectScene = true;
 				}
 			}
 		}
@@ -189,81 +190,11 @@ void SceneSelect::Update(Pad& pad)
 			}
 		}
 	}
-	//ポーズが開かれているとき
-	if (m_isPause && !m_isStatus)
-	{
-		if (!m_isSelectKeyDown)
-		{
-			//上キーが押されたら
-			if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W))
-			{
-				m_pauseSelectNum--;
-				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
-				if (m_pauseSelectNum < 0)
-				{
-					m_pauseSelectNum = kMaxPauseNum;
-				}
-				m_isSelectKeyDown = true;
-			}
-			//下キーが入力されたら
-			else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S))
-			{
-				m_pauseSelectNum++;
-				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
-				if (m_pauseSelectNum > kMaxPauseNum)
-				{
-					m_pauseSelectNum = 0;
-				}
-				m_isSelectKeyDown = true;
-			}
-		}
-		if (m_isKeyDown)
-		{
 
-			//Bボタンを押したらポーズが解ける
-			if (m_input.Buttons[XINPUT_BUTTON_B] && !m_isStatus ||
-				CheckHitKey(KEY_INPUT_ESCAPE) && !m_isStatus)
-			{
-				PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
-				m_isPause = false;
-				m_isKeyDown = false;
-			}
-			//Aボタンが押されたらm_pauseSelectNumに応じて処理を行う
-			else if (m_input.Buttons[XINPUT_BUTTON_A] || CheckHitKey(KEY_INPUT_RETURN))
-			{
-				if (!m_isSelectScene)
-				{
 
-					PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
-					switch (m_pauseSelectNum)
-					{
-					case 0://つよさ
-						//ステータスをひらく
-						m_isStatus = true;
-						m_isKeyDown = false;
-						break;
-					case 1://おみせ
-					{
-						StopSoundMem(m_bgm);
-						//ショップシーンに移行する
-						m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager));
-						m_isSelectScene = true;
-					}
-					break;
-					case 2://タイトル
-					{
-						StopSoundMem(m_bgm);
-						//タイトルシーンに移行する
-						m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager));
-						m_isSelectScene = true;
-					}
-					break;
-					}
-					m_isKeyDown = false;
-				}
-			}
-		}
-	}
+
+
+
 	if (m_isStaging)
 	{
 		MoveScene(m_isSceneUp);
@@ -285,21 +216,6 @@ void SceneSelect::Update(Pad& pad)
 			}
 			m_isChangeStage = false;
 
-		}
-	}
-	//つよさ画面が開かれているとき
-	if (m_isStatus)
-	{
-		if (m_isKeyDown)
-		{
-
-			//Bボタンが押されたらポーズ画面に戻る
-			if (m_input.Buttons[XINPUT_BUTTON_B] || CheckHitKey(KEY_INPUT_ESCAPE))
-			{
-				PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
-				m_isStatus = false;
-				m_isKeyDown = false;
-			}
 		}
 	}
 	//ショップのアニメーションを回し続ける
@@ -404,44 +320,10 @@ void SceneSelect::Draw()
 			break;
 		}
 	}
-	//ポーズ中の処理
-	if (m_isPause)
-	{
-		DrawBox(400, 400, 800, 800, GetColor(255, 200, 0), true);
-		DrawString(600, 500, "つよさ", GetColor(0, 0, 0));
-		DrawString(600, 600, "おみせ", GetColor(0, 0, 0));
-		DrawString(600, 700, "タイトル", GetColor(0, 0, 0));
-
-		switch (m_pauseSelectNum)
-		{
-		case 0:
-			DrawString(600, 500, "つよさ", GetColor(255, 0, 0));
-			break;
-		case 1:
-			DrawString(600, 600, "おみせ", GetColor(255, 0, 0));
-			break;
-		case 2:
-			DrawString(600, 700, "タイトル", GetColor(255, 0, 0));
-			break;
-
-		}
-	}
 	//ショップの表示
 	DrawRectExtendGraph(1050, 350, 1550, 850, m_shopSrcX, 0, 64, 64, m_shopGraph, true);
-	//ポーズ画面から強さを押したときの処理
-	if (m_isStatus)
-	{
-		DrawBox(400, 400, 800, 800, GetColor(255, 255, 255), true);
-		DrawFormatString(500, 450, GetColor(0, 0, 0), "ゴールド   %d", UserData::userGold);
-		DrawFormatString(500, 500, GetColor(0, 0, 0), "けいけん   %d", UserData::userExp);
-		DrawFormatString(500, 550, GetColor(0, 0, 0), "こうげきLv %d", UserData::userAtkLevel + 1);
-		DrawFormatString(500, 600, GetColor(0, 0, 0), "ぼうぎょLv %d", UserData::userDefLevel + 1);
-		DrawFormatString(500, 650, GetColor(0, 0, 0), "い ど うLv %d", UserData::userSpdLevel + 1);
-		DrawFormatString(500, 700, GetColor(0, 0, 0), "ファイアLv %d", UserData::userFireLevel + 1);
-		DrawFormatString(500, 750, GetColor(0, 0, 0), "ウィンドLv %d", UserData::userWindLevel + 1);
-
-	}
-
+	//左下に操作方法表示
+	DrawRectRotaGraph(100, 800, 0, 0, 32, 32, 2.0f, 0, m_buttonsUiGraph, true, 0, 0);
 }
 
 void SceneSelect::MoveScene(bool up)

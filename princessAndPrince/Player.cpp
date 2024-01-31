@@ -120,7 +120,7 @@ void Player::Update()
 		//レバガチャすると早く回復するようにする
 		//おしっぱではだめなので、if文を追加する
 		//倒れている状態でないとレバガチャできないようにする(死亡演出を入れるために)
-		if (m_isDeathFlag)
+		if (m_isDeathFlag && m_nowHp < m_hp)
 		{
 
 			if (pad & PAD_INPUT_UP || CheckHitKey(KEY_INPUT_W))

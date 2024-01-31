@@ -96,5 +96,9 @@ void DataManager::Init()
 	graphMap["READYGraph"] = LoadGraph("data/image/READY.png");
 	//ポーズ時に出るPAUSE
 	graphMap["PAUSEGraph"] = LoadGraph("data/image/PAUSE.png");
+	//タイトルのロゴ
+	graphMap["titleGraph"] = LoadGraph("data/image/title.png");
+	//ボタンのUI
+	graphMap["buttonsGraph"] = LoadGraph("data/image/buttons.png");
 
 }

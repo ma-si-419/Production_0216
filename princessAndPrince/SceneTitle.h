@@ -25,5 +25,11 @@ private:
 	int m_bgm;
 	//背景のグラフィック
 	int m_bgGraph;
+	//タイトルのグラフィック
+	int m_titleGraph;
+	//点滅させるときにカウントする
+	int m_count;
+	//文字を出すかどうか
+	bool m_isString;
 };
 

@@ -84,6 +84,8 @@ public:
 	int  GetPassBloodSe() { return m_passBloodSe; }
 	//選ばれたシーンに合わせてエネミーの情報を入れる
 	void SetEnemyInfo(int stageNum);
+	//選ばれたシーン数を保存する
+	int GetSceneNum() { return m_selectScene; }
 
 private:
 	// グラフィックのハンドル

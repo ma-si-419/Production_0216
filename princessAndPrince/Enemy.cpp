@@ -37,7 +37,7 @@ namespace
 	constexpr float kEnemySize = 1.0f;
 	//弱点の当たり判定をずらすベクトル
 	constexpr int kShiftPosX = 20;
-	constexpr int kShiftPosY = 10;
+	constexpr int kShiftPosY = 0;
 	//エフェクトを出す時間(後で消す)
 	constexpr int kEffectTime = 10;
 	//エフェクトの大きさ(仮実装)

@@ -486,7 +486,7 @@ void SceneMain::Update(Pad& pad)
 			if (m_particleCount > kParticleInterval)
 			{
 				m_particleCount = 0;
-				m_pParticle = new Particle(m_pPrincess->GetPos(), 2000, 10, 2, 2);
+				m_pParticle = new Particle(m_pPrincess->GetPos(), 2000, 10, 3, 2);
 				AddParticle(m_pParticle);
 			}
 			//ÉQÅ[ÉWÇ™0Ç…Ç»Ç¡ÇΩÇÁ
