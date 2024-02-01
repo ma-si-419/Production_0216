@@ -12,8 +12,6 @@ namespace
 {
 	//ステージの数
 	constexpr int kMaxSceneNum = 7;
-	//ポーズを開いた時の項目の数
-	constexpr int kMaxPauseNum = 2;
 	//選んでいるステージを表示する座標(始点と終点まで)
 	constexpr int kSelectSceneStartPosX = 480;
 	constexpr int kSelectSceneStartPosY = 180;
@@ -50,8 +48,29 @@ namespace
 	constexpr int kTitlePosX = 390;
 	//タイトルの座標Y
 	constexpr int kTitlePosY = 115;
-}
-SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager,int selectSceneNum) :
+	//上の三角形のY座標
+	constexpr int kHighTrianglePosY = 125;
+	//下の三角形のY座標
+	constexpr int kLowTrianglePosY = 850;
+	//三角形の大きさ
+	constexpr int kTriangleScale = 60;
+	//三角形のフレームの大きさ
+	constexpr int kTriangleFrameScale = 80;
+	//三角形のフレームのY座標
+	constexpr int kTriangleFrameShiftPosY = 12;
+	//ショップの基本的な座標
+	constexpr int kshopStartPosX = 1050;
+	constexpr int kshopStartPosY = 350;
+	constexpr int kshopEndPosX = 1550;
+	constexpr int kshopEndPosY = 850;
+	//ショップが大きくなっていくスピード
+	constexpr int kShopStartPosXSpeed = 28;
+	constexpr int kShopStartPosYSpeed = 50;
+	constexpr int kShopEndPosXSpeed = 20;
+	constexpr int kShopEndPosYSpeed = 5;
+	//ショップが最終的に大きくなる座標
+	constexpr int kShopMaxSizePosX = 500;}
+SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
 	Scene(sceneManager, DataManager),
 	m_isKeyDown(false),
 	m_stageSelectNum(selectSceneNum),
@@ -63,10 +82,18 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager,in
 	m_isStaging(false),
 	m_shopAnimFrame(0),
 	m_shopSrcX(0),
+	m_shopSrcY(0),
 	m_isChangeStage(false),
-	m_isSceneUp(true)
+	m_isSceneUp(true),
+	m_isShopButton(false),
+	m_shopStartPosX(kshopStartPosX),
+	m_shopStartPosY(kshopStartPosY),
+	m_shopEndPosX(kshopEndPosX),
+	m_shopEndPosY(kshopEndPosY),
+	m_isMoveMainScene(false)
 {
 	m_appSe = DataManager.SearchSound("approveSe");
+	m_moveMainSceneSe = DataManager.SearchSound("moveMainSceneSe");
 	m_cursorSe = DataManager.SearchSound("cursorSe");
 	m_cancelSe = DataManager.SearchSound("cancelSe");
 	m_bgm = DataManager.SearchSound("selectBgm");
@@ -110,13 +137,13 @@ void SceneSelect::Update(Pad& pad)
 		}
 		//上キーと下キーが離されたら
 		if (!m_input.Buttons[XINPUT_BUTTON_DPAD_UP] && !m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] &&//パッド
-			!CheckHitKey(KEY_INPUT_W) && !CheckHitKey(KEY_INPUT_S) && !CheckHitKey(KEY_INPUT_UP)&&!CheckHitKey(KEY_INPUT_DOWN) && !m_isStaging)
+			!CheckHitKey(KEY_INPUT_W) && !CheckHitKey(KEY_INPUT_S) && !CheckHitKey(KEY_INPUT_UP) && !CheckHitKey(KEY_INPUT_DOWN) && !m_isStaging)
 		{
 			m_isSelectKeyDown = false;
 		}
 	}
 	//ポーズが開かれていなく、演出中でない場合
-	if (!m_isStaging)
+	if (!m_isStaging && !m_isShopButton && !m_isMoveMainScene)
 	{
 		//連続で押されないための処理
 		if (m_isKeyDown)
@@ -127,8 +154,11 @@ void SceneSelect::Update(Pad& pad)
 				if (m_input.Buttons[XINPUT_BUTTON_A] || CheckHitKey(KEY_INPUT_RETURN))
 				{
 					StopSoundMem(m_bgm);
-					PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
-					m_sceneManager.ChangeScene(std::make_shared<SceneMain>(m_sceneManager, m_dataManager, m_stageSelectNum));
+					//別の音に変える
+					PlaySoundMem(m_moveMainSceneSe, DX_PLAYTYPE_BACK);
+					m_animFrame = 24;
+					m_dir = Game::kDirDeath;
+					m_isMoveMainScene = true;
 					m_isKeyDown = false;
 					m_isSelectScene = true;
 				}
@@ -137,18 +167,19 @@ void SceneSelect::Update(Pad& pad)
 				{
 					StopSoundMem(m_bgm);
 					PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
-					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager,m_stageSelectNum));
+					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager, m_stageSelectNum));
 					m_isKeyDown = false;
 					m_isSelectScene = true;
 				}
 				//Yボタンが押されたら
-				else if (m_input.Buttons[XINPUT_BUTTON_Y]  ||CheckHitKey(KEY_INPUT_P))
+				else if (m_input.Buttons[XINPUT_BUTTON_Y] || CheckHitKey(KEY_INPUT_P))
 				{
 					PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
-					StopSoundMem(m_bgm);
-					//ショップシーンに移行する
-					m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager,m_stageSelectNum));
+					//ショップに入る演出を入れる
+					m_shopSrcY = 64;
+					m_isShopButton = true;
 					m_isSelectScene = true;
+
 				}
 			}
 		}
@@ -192,15 +223,11 @@ void SceneSelect::Update(Pad& pad)
 		}
 	}
 
-
-
-
-
 	if (m_isStaging)
 	{
 		MoveScene(m_isSceneUp);
 	}
-	if (m_cutBgPosY % kBgGraphSize == 0)
+	if (m_cutBgPosY % kBgGraphSize == 0 && !m_isMoveMainScene)
 	{
 		m_isStaging = false;
 		m_dir = Game::kDirDown;
@@ -216,7 +243,6 @@ void SceneSelect::Update(Pad& pad)
 				m_stageSelectNum--;
 			}
 			m_isChangeStage = false;
-
 		}
 	}
 	//ショップのアニメーションを回し続ける
@@ -230,6 +256,28 @@ void SceneSelect::Update(Pad& pad)
 		m_shopAnimFrame = 0;
 		m_shopSrcX = 0;
 	}
+	if (m_isShopButton)
+	{
+		m_shopStartPosX -= kShopStartPosXSpeed;
+		m_shopStartPosY -= kShopStartPosYSpeed;
+		m_shopEndPosX += kShopEndPosXSpeed;
+		m_shopEndPosY += kShopEndPosYSpeed;
+
+		if (m_shopStartPosX < kShopMaxSizePosX)
+		{
+			StopSoundMem(m_bgm);
+			//ショップシーンに移行する
+			m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager, m_stageSelectNum));
+		}
+	}
+	if (m_isMoveMainScene)
+	{
+		//音が鳴りやんだらフェードしていく
+		if (!CheckSoundMem(m_moveMainSceneSe))
+		{
+			m_sceneManager.ChangeScene(std::make_shared<SceneMain>(m_sceneManager, m_dataManager, m_stageSelectNum));
+		}
+	}
 }
 
 void SceneSelect::Draw()
@@ -242,6 +290,8 @@ void SceneSelect::Draw()
 	//選んでいるシーンのフレーム
 	DrawExtendGraph(kSelectSceneStartPosX, kSelectSceneStartPosY, kSelectSceneEndPosX, kSelectSceneEndPosY - 50,
 		m_selectSceneFrame, true);
+	//三角形の表示
+	DrawSceneSrideTriangle();
 	//ステージ名の表示
 	DrawExtendGraph(70, 90, 730, 180, m_backBoxGraph, true);
 	//プレイヤーと魔女を表示する
@@ -252,6 +302,7 @@ void SceneSelect::Draw()
 	DrawFormatString(500, 500, GetColor(0, 0, 0), "%d", m_animFrame);
 	if (m_isStaging && m_isSceneUp)
 	{
+
 		DrawRectRotaGraph(kPlayerPosX, kPlayerPosY,
 			srcX, srcY,
 			kGraphWidth, kGraphHeight,
@@ -322,9 +373,10 @@ void SceneSelect::Draw()
 		}
 	}
 	//ショップの表示
-	DrawRectExtendGraph(1050, 350, 1550, 850, m_shopSrcX, 0, 64, 64, m_shopGraph, true);
+	DrawRectExtendGraph(static_cast<int>(m_shopStartPosX), static_cast<int>(m_shopStartPosY),
+		m_shopEndPosX, m_shopEndPosY, m_shopSrcX, m_shopSrcY, 64, 64, m_shopGraph, true);
 	//左下に操作方法表示
-	DrawGraph(100, 650,m_buttonsUiGraph, true);
+	DrawGraph(100, 650, m_buttonsUiGraph, true);
 }
 
 void SceneSelect::MoveScene(bool up)
@@ -352,3 +404,34 @@ void SceneSelect::MoveScene(bool up)
 		m_dir = Game::kDirDown;
 	}
 }
+
+void SceneSelect::DrawSceneSrideTriangle()
+{
+	if (m_stageSelectNum != kMaxSceneNum)
+	{
+		//上の三角形表示
+		DrawTriangle(Game::kScreenWidth / 2 + kTriangleFrameScale, kHighTrianglePosY + kTriangleFrameScale,
+			Game::kScreenWidth / 2, kHighTrianglePosY,
+			Game::kScreenWidth / 2 - kTriangleFrameScale, kHighTrianglePosY + kTriangleFrameScale,
+			GetColor(0, 0, 0), true);
+		DrawTriangle(Game::kScreenWidth / 2 + kTriangleScale, kHighTrianglePosY + kTriangleScale + kTriangleFrameShiftPosY,
+			Game::kScreenWidth / 2, kHighTrianglePosY + kTriangleFrameShiftPosY,
+			Game::kScreenWidth / 2 - kTriangleScale, kHighTrianglePosY + kTriangleScale + kTriangleFrameShiftPosY,
+			GetColor(255, 255, 255), true);
+	}
+
+	if (m_stageSelectNum != 0)
+	{
+		//下の三角形表示
+		DrawTriangle(Game::kScreenWidth / 2 + kTriangleFrameScale, kLowTrianglePosY - kTriangleFrameScale,
+			Game::kScreenWidth / 2, kLowTrianglePosY,
+			Game::kScreenWidth / 2 - kTriangleFrameScale, kLowTrianglePosY - kTriangleFrameScale,
+			GetColor(0, 0, 0), true);
+		DrawTriangle(Game::kScreenWidth / 2 + kTriangleScale, kLowTrianglePosY - kTriangleScale - kTriangleFrameShiftPosY,
+			Game::kScreenWidth / 2, kLowTrianglePosY - kTriangleFrameShiftPosY,
+			Game::kScreenWidth / 2 - kTriangleScale, kLowTrianglePosY - kTriangleScale - kTriangleFrameShiftPosY,
+			GetColor(255, 255, 255), true);
+	}
+
+}
+

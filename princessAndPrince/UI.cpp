@@ -8,8 +8,8 @@
 #include "DataManager.h"
 namespace
 {
-	constexpr float kMaxBarWidth = 200.0f;
-	constexpr float kBarHeight = 50.0f;
+	constexpr float kMaxBarWidth = 189.0f;
+	constexpr float kBarHeight = 100.0f;
 	//表示する間隔
 	constexpr int kShowTime = 60;
 	//Exp表示するタイミング
@@ -24,6 +24,10 @@ namespace
 	constexpr int kGetItemPos = 1350;
 	//フォントの後ろに表示する影のずらす大きさ
 	constexpr int kShiftShadowLange = 3;
+	//アイテムグラフの大きさ
+	constexpr int kItemGraphScale = 32;
+	//Uiを揺らす幅
+	constexpr int kShakeLange = 1;
 }
 UI::UI(Player* pPlayer, Princess* pPrincess, SceneMain* pMain) :
 	m_pPlayer(pPlayer),
@@ -32,7 +36,8 @@ UI::UI(Player* pPlayer, Princess* pPrincess, SceneMain* pMain) :
 	m_timeCount(0),
 	m_isShowGold(false),
 	m_isLeaveButton(false),
-	m_isClearUIEnd(false)
+	m_isClearUIEnd(false),
+	m_angryGaugeUiShiftPosX(0)
 {
 	m_buttonsGraph = m_pMain->GetButtonsGraph();
 }
@@ -47,12 +52,31 @@ void UI::Init()
 
 void UI::Update()
 {
+	if (m_pMain->GetSpecialGaugeRate() == 1)
+	{
+		if (m_isAngryGaugeUiShake)
+		{
+			m_angryGaugeUiShiftPosX++;
+		}
+		else if (!m_isAngryGaugeUiShake)
+		{
+			m_angryGaugeUiShiftPosX--;
+		}
+	}
+	if (m_angryGaugeUiShiftPosX > kShakeLange)
+	{
+		m_isAngryGaugeUiShake = false;
+	}
+	else if (m_angryGaugeUiShiftPosX < kShakeLange)
+	{
+		m_isAngryGaugeUiShake = true;
+	}
 }
 
 void UI::Draw()
 {
 	//UIの背景(右側)表示
-	DrawGraph(960, 0, m_pMain->GetUiBg(), true);
+	DrawGraph(Game::kPlayScreenWidth, 0, m_pMain->GetUiBg(), true);
 
 
 	DrawGetItem();
@@ -61,22 +85,41 @@ void UI::Draw()
 	//今どちらの魔法を打っているかを表示する
 	if (m_pPrincess->GetMagicKind())
 	{
-		DrawBox(960, Game::kPlayScreenHeight - 100, Game::kScreenWidth, Game::kPlayScreenHeight, GetColor(255, 0, 0), true);
+		DrawRectRotaGraph(1340, 855, 106, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+		DrawRectRotaGraph(1495, 855, 0, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+
 	}
 	else
 	{
-		DrawBox(960, Game::kPlayScreenHeight - 100, Game::kScreenWidth, Game::kPlayScreenHeight, GetColor(0, 255, 0), true);
+		DrawRectRotaGraph(1340, 855, 0, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+		DrawRectRotaGraph(1495, 855, 106, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+
+	}
+	//炎魔法のUi表示
+	DrawRectRotaGraph(1338, 855, 0, Game::kFire * kItemGraphScale, kItemGraphScale, kItemGraphScale,
+		2.7, 4.72, m_magicGraph, true, false, false);
+	//風魔法のUi表示
+	DrawRectRotaGraph(1495, 855, 0, Game::kTyphoon * kItemGraphScale, kItemGraphScale, kItemGraphScale,
+		2.7, 0.0, m_magicGraph, true, false, false);
+	if (m_pPrincess->GetMagicKind())
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+		DrawCircle(1495, 855, 50, GetColor(0, 0, 0));
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
+	else
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+		DrawCircle(1340, 855, 50, GetColor(0, 0, 0));
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 	//聖剣モードのゲージを表示する
-	//後ろに黒いBoxを出す
-	DrawBox(Game::kPlayScreenWidth, 700,//始点
-		Game::kPlayScreenWidth + (int)kMaxBarWidth,//始点の位置にバーの長さを足す
-		700 + (int)kBarHeight,//終点
-		GetColor(0, 0, 0), true);
-	DrawBox(Game::kPlayScreenWidth, 700,//始点
-		Game::kPlayScreenWidth + (int)(kMaxBarWidth / m_pMain->GetSpecialGaugeRate()),//始点の位置にバーの長さを足す
-		700 + (int)kBarHeight,//終点
-		GetColor(255, 255, 255), true);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+	DrawBox(1060, 805,//始点
+		1060 + (int)(kMaxBarWidth / m_pMain->GetSpecialGaugeRate()),//始点の位置にバーの長さを足す
+		805 + (int)kBarHeight, GetColor(255, 0, 0), true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	DrawGraph(1050 + m_angryGaugeUiShiftPosX, 800, m_angryGaugeUiGraph, true);
 
 }
 
@@ -85,7 +128,7 @@ void UI::SceneClearUI()
 	m_timeCount++;
 	//黒い少し透明なボックスを表示する
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-	DrawBox(0, 0, Game::kPlayScreenWidth, Game::kPlayScreenHeight,
+	DrawBox(0, 0, Game::kPlayScreenWidth + 5, Game::kPlayScreenHeight,
 		GetColor(0, 0, 0), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	if (m_timeCount > kShowTime)
@@ -132,7 +175,7 @@ void UI::GameOverUI()
 	m_timeCount++;
 	//黒い少し透明なボックスを表示する
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-	DrawBox(0, 0, Game::kPlayScreenWidth, Game::kPlayScreenHeight,
+	DrawBox(0, 0, Game::kPlayScreenWidth + 3, Game::kPlayScreenHeight,
 		GetColor(0, 0, 0), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	if (m_timeCount > kShowTime)
@@ -260,7 +303,7 @@ void UI::DrawGetItem()
 	}
 
 	//入手したゴールドの量をプレイヤーから取得して表示する
-	DrawFormatString(kGetItemPos - AlignmentRight(m_pPlayer->GetExp()), 105,//座標
+	DrawFormatString(kGetItemPos - AlignmentRight(m_pPlayer->GetGold()), 105,//座標
 		GetColor(255, 255, 255), "%d", m_pPlayer->GetGold());
 
 	//入手した経験値の量をプレイヤーから取得して表示する	

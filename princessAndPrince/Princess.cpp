@@ -106,6 +106,8 @@ void Princess::Init()
 	m_bloodBarPos.y = m_hpBarPos.y + kBarHeight * 2;
 	//•—–‚–@‚ÌŒø‰Ê‰¹‚ð“ü‚ê‚é
 	m_windMagicSe = m_pMain->GetWindMagicSe();
+	//‰Š–‚–@‚ÌŒø‰Ê‰¹‚ð“ü‚ê‚é
+	m_fireMagicSe = m_pMain->GetFireMagicSe();
 	m_passBloodSe = m_pMain->GetPassBloodSe();
 }
 
@@ -174,6 +176,7 @@ void Princess::Update()
 					m_pMagic->Init(0);
 					m_pMagic->SetHandle(m_magicHandle);
 					m_pMain->AddMagic(m_pMagic);
+					PlaySoundMem(m_fireMagicSe, DX_PLAYTYPE_BACK);
 
 				}
 			}

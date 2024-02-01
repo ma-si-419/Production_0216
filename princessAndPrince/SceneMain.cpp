@@ -76,7 +76,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_clearTime(0),
 	m_nextEnemyKind(0),
 	m_nextEnemyPopTime(0),
-	m_specialGauge(0),
+	m_specialGauge(100),
 	m_isSpecialMode(false),
 	m_isPause(false),
 	m_isStop(false),
@@ -155,6 +155,10 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_expSe = m_dataManager.SearchSound("expSe");
 	//風魔法を出したときの効果音
 	m_windMagicSe = m_dataManager.SearchSound("windMagicSe");
+	//炎魔法を出したときの効果音
+	m_fireMagicSe = m_dataManager.SearchSound("fireMagicSe");
+	//敵とプリンセスがぶつかった時の効果音
+	m_hitPrincessSe = m_dataManager.SearchSound("hitPrincessSe");
 	//聖剣モードを始めるときにならす効果音
 	m_specialModeSe = m_dataManager.SearchSound("specialModeSe");
 	//ポーションをとった時の効果音
@@ -163,6 +167,8 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_bloodSe = m_dataManager.SearchSound("bloodSe");
 	//血を渡した時の効果音
 	m_passBloodSe = m_dataManager.SearchSound("passBloodSe");
+	//怒りモード時に表示する画像
+	m_angryMarkGraph = m_dataManager.SearchGraph("angryMarkGraph");
 	//敵の最大数を設定
 	m_pEnemy.resize(kMaxEnemy);
 	//アイテムの最大数を設定
@@ -175,6 +181,12 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_pParticleArray.resize(kMaxParticle);
 	//UIのコンストラクタ
 	m_pUi = new UI(m_pPlayer, m_pPrincess, this);
+	//魔法のグラフィックを設定
+	m_pUi->SetMagicGraph(m_itemHandle);
+	//魔法のUiの背景を設定する
+	m_pUi->SetMagicBgGraph(m_dataManager.SearchGraph("magicUiBgGraph"));
+	//怒りゲージのUiを設定する
+	m_pUi->SetAngryGaugeGraph(m_dataManager.SearchGraph("angryGaugeUiGraph"));
 }
 
 SceneMain::~SceneMain()
@@ -299,6 +311,7 @@ void SceneMain::Update(Pad& pad)
 		{
 			m_pPlayer->Update();
 			m_pPrincess->Update();
+			m_pUi->Update();
 			//エネミーのアップデート
 			for (auto& enemy : m_pEnemy)
 			{
@@ -333,6 +346,7 @@ void SceneMain::Update(Pad& pad)
 						{
 							//魔女のダメージ処理を行う,エネミーのノックバックを行う
 							m_pPrincess->HitEnemy(*enemy);
+							PlaySoundMem(m_hitPrincessSe, DX_PLAYTYPE_BACK);
 							if (!m_isSpecialMode)
 							{
 								AddSpecialGauge(enemy->GetAtk());
@@ -479,7 +493,7 @@ void SceneMain::Update(Pad& pad)
 				m_lastSpace = true;
 			}
 		}
-		//聖剣モード発動中だったら
+		//怒りモード発動中だったら
 		if (m_isSpecialMode && !m_isStop)
 		{
 			//少しずつゲージを減らしていく
@@ -719,8 +733,9 @@ void SceneMain::Draw()
 	DrawGraph(0, 0, m_bgHandle, true);
 	if (m_isSpecialMode)
 	{
-		//聖剣モードに入ったら背景を暗くする
-		DrawBox(0, 0, Game::kPlayScreenWidth, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
+		//怒りモードに入ったら背景を暗くする
+		DrawBox(0, 0, Game::kPlayScreenWidth + 5, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
+		DrawGraph(GetRand(15), GetRand(15), m_angryMarkGraph, true);
 	}
 
 	for (auto& magic : m_pMagic)
@@ -810,7 +825,7 @@ void SceneMain::Draw()
 	if (m_isPause)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 170);
-		DrawBox(0, 0, Game::kPlayScreenWidth, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
+		DrawBox(0, 0, Game::kPlayScreenWidth + 5, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		int stringWidth = GetStringLength("つづける") * kFontHalfSize;
 		DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2 - 50, 700,

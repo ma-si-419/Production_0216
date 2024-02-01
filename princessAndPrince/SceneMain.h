@@ -76,6 +76,8 @@ public:
 	int GetExpSe() { return m_expSe; };
 	//風魔法の効果音を返す
 	int GetWindMagicSe() { return m_windMagicSe; }
+	//炎魔法の効果音を返す
+	int GetFireMagicSe() { return m_fireMagicSe; }
 	//ポーションの効果音を返す
 	int GetPortionSe() { return m_portionSe; }
 	//血を拾った時の効果音を返す
@@ -213,6 +215,8 @@ private:
 	bool m_lastSpace;
 	//風魔法の効果音
 	int m_windMagicSe;
+	//炎魔法の効果音
+	int m_fireMagicSe;
 	//聖剣モードを始めるときに鳴らす効果音
 	int m_specialModeSe;
 	//ポーションをとった際の効果音
@@ -227,4 +231,9 @@ private:
 	int m_buttonsGraph;
 	//Uiを表示する背景
 	int m_uiBgGraph;
+	//Princessと敵がぶつかった時の効果音
+	int m_hitPrincessSe;
+	//怒りモード時に表示する画像
+	int m_angryMarkGraph;
+
 };

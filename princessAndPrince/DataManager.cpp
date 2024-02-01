@@ -64,6 +64,12 @@ void DataManager::Init()
 	soundMap["selectBgm"] = LoadSoundMem("data/sound/selectBgm.wav");
 	//タイトルシーンのBgm
 	soundMap["titleBgm"] = LoadSoundMem("data/sound/titleBgm.wav");
+	//炎魔法のSe
+	soundMap["fireMagicSe"] = LoadSoundMem("data/sound/fireSe1.mp3");
+	//Princessにぶつかった時のSe
+	soundMap["hitPrincessSe"] = LoadSoundMem("data/sound/hitPrincessSe.mp3");
+	//メインシーンに移行するときにならす音
+	soundMap["moveMainSceneSe"] = LoadSoundMem("data/sound/moveMainSceneSe.mp3");
 	//プレイヤーのグラフィック
 	graphMap["playerGraph"] = LoadGraph("data/image/Monkey.png");
 	//プリンセスのグラフィック
@@ -104,5 +110,12 @@ void DataManager::Init()
 	graphMap["selectSceneButtonUiGraph"] = LoadGraph("data/image/buttonsUi.png");
 	//シーンメインのUiを表示する背景
 	graphMap["mainUiBgGraph"] = LoadGraph("data/image/mainUi.png");
+	//魔法のUiを表示する背景のグラフィック
+	graphMap["magicUiBgGraph"] = LoadGraph("data/image/witchMagicUi.png");
+	//怒りゲージのUi
+	graphMap["angryGaugeUiGraph"] = LoadGraph("data/image/angryGauge.png");
+	//怒りモード時に表示する背景
+	graphMap["angryMarkGraph"] = LoadGraph("data/image/angryMark.png");
+	
 
 }

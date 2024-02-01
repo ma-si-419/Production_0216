@@ -97,5 +97,7 @@ private:
 	int m_windMagicSe;
 	//プレイヤーから血を受け取った時にならす効果音
 	int m_passBloodSe;
+	//炎魔法の効果音
+	int m_fireMagicSe;
 };
 

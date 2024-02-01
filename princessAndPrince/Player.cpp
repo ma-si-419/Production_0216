@@ -336,7 +336,7 @@ void Player::Update()
 	{
 		m_nowBlood = 0;
 	}
-	//聖剣モード状態のステータス変化
+	//怒りモード状態のステータス変化
 	if (m_pMain->GetSpecialMode())
 	{
 		m_nowHp = m_hp;
@@ -604,6 +604,9 @@ void Player::ClearDance()
 	{
 		m_dir = Game::kDirDeath;
 		m_animFrame = kAnimFrameNum * 2;
+	}
+	if (m_turnCount > kTurnCount + 6)
+	{
 		m_pMain->ShowResult();
 	}
 }

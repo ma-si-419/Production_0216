@@ -16,6 +16,8 @@ public:
 
 	//シーン選択時の演出
 	void MoveScene(bool up);
+	//シーンを選んでいる時に出てくる三角形
+	void DrawSceneSrideTriangle();
 private:
 	//今選択しているシーンを保存する
 	int m_stageSelectNum;
@@ -27,6 +29,8 @@ private:
 	bool m_isSelectScene;
 	//決定ボタンを押したときの効果音
 	int m_appSe;
+	//メインシーンに移動するときの音
+	int m_moveMainSceneSe;
 	//カーソルを動かしたときの効果音
 	int m_cursorSe;
 	//キャンセルボタンを押したときの効果音
@@ -47,6 +51,7 @@ private:
 	int m_shopAnimFrame;
 	//ショップのアニメーションを切り取る座標
 	int m_shopSrcX;
+	int m_shopSrcY;
 	//bgm
 	int m_bgm;
 	//背景画像を切り取る座標
@@ -65,4 +70,13 @@ private:
 	bool m_isChangeStage;
 	//ボタンのUI
 	int m_buttonsUiGraph;
+	//ショップボタンを押したかどうか
+	bool m_isShopButton;
+	//ショップの表示座標(始点と終点)
+	float m_shopStartPosX;
+	float m_shopStartPosY;
+	int m_shopEndPosX;
+	int m_shopEndPosY;
+	//メインシーンに移動するかどうか
+	bool m_isMoveMainScene;
 };

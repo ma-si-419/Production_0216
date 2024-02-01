@@ -216,23 +216,23 @@ void Enemy::Init(int kinds)
 	{
 		//左方向から出てくる
 	case 0:
-		m_pos.x = -kGraphWidth;
+		m_pos.x = -kGraphWidth * 2;
 		m_pos.y = GetRand(Game::kPlayScreenHeight);
 		break;
 		//上方向から出てくる
 	case 1:
 		m_pos.x = GetRand(Game::kPlayScreenWidth);
-		m_pos.y = -kGraphHeight;
+		m_pos.y = -kGraphHeight * 2;
 		break;
 		//右方向から出てくる
 	case 2:
-		m_pos.x = Game::kPlayScreenWidth + kGraphWidth;
+		m_pos.x = Game::kPlayScreenWidth + kGraphWidth * 2;
 		m_pos.y = GetRand(Game::kPlayScreenHeight);
 		break;
 		//下方向から出てくる
 	case 3:
 		m_pos.x = GetRand(Game::kPlayScreenWidth);
-		m_pos.y = Game::kPlayScreenHeight + kGraphHeight;
+		m_pos.y = Game::kPlayScreenHeight + kGraphHeight * 2;
 	default:
 		break;
 	}

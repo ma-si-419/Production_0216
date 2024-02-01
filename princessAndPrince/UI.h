@@ -31,6 +31,12 @@ public:
 	void DrawStatus();
 	//獲得したゴールドと経験値を表示する
 	void DrawGetItem();
+	//魔法のグラフィックを設定する
+	void SetMagicGraph(int graph) { m_magicGraph = graph; }
+	//魔法のUiを表示する背景を設定する
+	void SetMagicBgGraph(int graph) { m_magicUiBgGraph = graph; }
+	//怒りゲージを表示するUiのグラフィック
+	void SetAngryGaugeGraph(int graph) { m_angryGaugeUiGraph = graph; }
 private:
 	//プレイヤーのポインタを保存する
 	Player* m_pPlayer;
@@ -48,5 +54,14 @@ private:
 	bool m_isLeaveButton;
 	//ボタンのグラフィック
 	int m_buttonsGraph;
+	//魔法のグラフィック
+	int m_magicGraph;
+	//魔法のUiを表示する背景のグラフィック
+	int m_magicUiBgGraph;
+	//怒りゲージを表示するUIのグラフィック
+	int m_angryGaugeUiGraph;
+	//怒りゲージを揺らす時に使う
+	int m_angryGaugeUiShiftPosX;
+	bool m_isAngryGaugeUiShake;
 };
 
