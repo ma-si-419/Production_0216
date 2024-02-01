@@ -26,6 +26,9 @@ SceneTitle::SceneTitle(SceneManager& sceneManager, DataManager& DataManager,int 
 	m_bgm = DataManager.SearchSound("titleBgm");
 	m_bgGraph = DataManager.SearchGraph("titleSceneBgGraph");
 	m_titleGraph = DataManager.SearchGraph("titleGraph");
+	m_playerGraph = DataManager.SearchGraph("playerGraph");
+	m_enemyGraph = DataManager.SearchGraph("enemyGraph");
+	m_princessGraph = DataManager.SearchGraph("princessGraph");
 }
 
 SceneTitle::~SceneTitle()
@@ -79,4 +82,8 @@ void SceneTitle::Draw()
 		DrawString((Game::kScreenWidth - stringWidth) / 2, 800,
 			"PRESS START BUTTON", GetColor(255, 255, 255), true);
 	}
+}
+
+void SceneTitle::ShowTitleMovie()
+{
 }

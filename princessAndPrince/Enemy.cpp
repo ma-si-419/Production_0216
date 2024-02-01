@@ -462,6 +462,7 @@ void Enemy::HitMagic(MagicBase* magic)
 			m_pTreasureBox = new TreasureBox(m_pMain);
 			m_pTreasureBox->Init(m_pos);
 			m_pTreasureBox->SetHandle(m_itemHandle);
+			m_pTreasureBox->SerGoldAndExp(m_haveGold, m_haveExp);
 			//ƒƒCƒ“‚É•ó” ‚ð¶¬‚·‚éŠÖ”‚ðì¬‚·‚é
 			m_pMain->AddTreasure(m_pTreasureBox);
 		}

@@ -35,7 +35,7 @@ public:
 	//グラフィックハンドルを設定する
 	void SetHandle(int handle) { m_handle = handle; }
 	//経験値とお金の量を設定する
-	void SerGoldAndExp(int gold,int exp){}
+	void SerGoldAndExp(int gold, int exp) { m_gold = gold; m_exp = exp; }
 	//状態を管理する
 	Game::State m_nowState;
 

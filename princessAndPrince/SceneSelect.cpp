@@ -37,7 +37,7 @@ namespace
 	// アニメーションの１サイクルのフレーム数
 	constexpr int kAnimFrameCycle = _countof(kUseFrame) * kAnimFrameNum;
 	//シーンの背景移動のスピード(小さいほうが早い)
-	constexpr int kBgMoveSpeed = 128;
+	constexpr int kBgMoveSpeed = 64;
 	//ショップのグラフィックの大きさ
 	constexpr int kShopGraphSize = 64;
 	//ショップのアニメーションの長さ
@@ -59,10 +59,10 @@ namespace
 	//三角形のフレームのY座標
 	constexpr int kTriangleFrameShiftPosY = 12;
 	//ショップの基本的な座標
-	constexpr int kshopStartPosX = 1050;
-	constexpr int kshopStartPosY = 350;
-	constexpr int kshopEndPosX = 1550;
-	constexpr int kshopEndPosY = 850;
+	constexpr int kshopStartPosX = 1100;
+	constexpr int kshopStartPosY = 300;
+	constexpr int kshopEndPosX = 1620;
+	constexpr int kshopEndPosY = 870;
 	//ショップが大きくなっていくスピード
 	constexpr int kShopStartPosXSpeed = 28;
 	constexpr int kShopStartPosYSpeed = 50;
@@ -331,6 +331,8 @@ void SceneSelect::Draw()
 			0.0,
 			m_playerGraph, true, false);
 	}
+	//左下に操作方法表示
+	DrawGraph(100, 650, m_buttonsUiGraph, true);
 	//選んでいるステージを表示する
 	{
 		int stringWidth;
@@ -375,8 +377,6 @@ void SceneSelect::Draw()
 	//ショップの表示
 	DrawRectExtendGraph(static_cast<int>(m_shopStartPosX), static_cast<int>(m_shopStartPosY),
 		m_shopEndPosX, m_shopEndPosY, m_shopSrcX, m_shopSrcY, 64, 64, m_shopGraph, true);
-	//左下に操作方法表示
-	DrawGraph(100, 650, m_buttonsUiGraph, true);
 }
 
 void SceneSelect::MoveScene(bool up)

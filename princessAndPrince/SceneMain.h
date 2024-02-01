@@ -235,5 +235,11 @@ private:
 	int m_hitPrincessSe;
 	//怒りモード時に表示する画像
 	int m_angryMarkGraph;
+	//ゲームスタート時に表示するREADY
+	int m_readyGraph;
+	//readyを表示しているかどうか
+	bool m_isShowReady;
+	//readyを表示している時間をカウントする
+	int m_readyCount;
 
 };

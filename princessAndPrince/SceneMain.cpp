@@ -65,6 +65,11 @@ namespace
 	constexpr int kSpecialModeStartTime = 30;
 	//フォントの半分の大きさ
 	constexpr int kFontHalfSize = 24;
+	//READYを表示する時間
+	constexpr int kReadyTime = 120;
+	//ステージのサイズ
+	constexpr int kStageGraphSize = 640;
+	constexpr int kAllStageSize = kStageGraphSize * 7;
 }
 SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int stageNum) :
 	Scene(sceneManager, DataManager),
@@ -102,7 +107,9 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_isHalfGold(true),
 	m_lastSpace(true),
 	m_selectScene(stageNum),
-	m_pauseGraph(0)
+	m_pauseGraph(0),
+	m_isShowReady(true),
+	m_readyCount(0)
 
 {
 	//プレイヤーのグラフィックのロード
@@ -121,7 +128,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	//敵のグラフィックのロード
 	m_enemyHandle = m_dataManager.SearchGraph("enemyGraph");
 	//背景のグラフィックのロード
-	m_bgHandle = m_dataManager.SearchGraph("bgGraph");
+	m_bgHandle = m_dataManager.SearchGraph("allFieldBgGraph");
 	//アイテムのグラフィックのロード
 	m_itemHandle = m_dataManager.SearchGraph("itemGraph");
 	//ポーズを開いたときに出る画像のロード
@@ -169,6 +176,10 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_passBloodSe = m_dataManager.SearchSound("passBloodSe");
 	//怒りモード時に表示する画像
 	m_angryMarkGraph = m_dataManager.SearchGraph("angryMarkGraph");
+	//ゲーム開始時に表示する画像
+	m_readyGraph = m_dataManager.SearchGraph("READYGraph");
+
+
 	//敵の最大数を設定
 	m_pEnemy.resize(kMaxEnemy);
 	//アイテムの最大数を設定
@@ -246,8 +257,16 @@ void SceneMain::Update(Pad& pad)
 	}
 #endif 
 
-
-	if (!m_isPause)
+	//READYが表示されている間
+	if (m_isShowReady)
+	{
+		m_readyCount++;
+		if (m_readyCount > kReadyTime)
+		{
+			m_isShowReady = false;
+		}
+	}
+	if (!m_isPause && !m_isShowReady)
 	{
 		//ポーズボタンが押されたら
 		if (!m_pPrincess->IsDeath())
@@ -539,7 +558,7 @@ void SceneMain::Update(Pad& pad)
 				PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 				StopSoundMem(m_fieldBgm);
 				StopSoundMem(m_bossBgm);
-				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager,m_selectScene));
+				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectScene));
 				return;
 				break;
 			}
@@ -730,13 +749,16 @@ void SceneMain::Draw()
 {
 
 	//プレイ画面の背景
-	DrawGraph(0, 0, m_bgHandle, true);
+	DrawRectExtendGraph(0, 0, 965, 965, 0, kAllStageSize-(kStageGraphSize * m_selectScene) , kStageGraphSize, kStageGraphSize, m_bgHandle, true);
 	if (m_isSpecialMode)
 	{
 		//怒りモードに入ったら背景を暗くする
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
 		DrawBox(0, 0, Game::kPlayScreenWidth + 5, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
-		DrawGraph(GetRand(15), GetRand(15), m_angryMarkGraph, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	//	DrawGraph(GetRand(15), GetRand(15), m_angryMarkGraph, true);
 	}
+
 
 	for (auto& magic : m_pMagic)
 	{
@@ -849,6 +871,11 @@ void SceneMain::Draw()
 			break;
 
 		}
+	}
+	//ステージ開始時にREADYを表示する
+	if (m_isShowReady)
+	{
+		DrawGraph(0, 0, m_readyGraph,true);
 	}
 
 }

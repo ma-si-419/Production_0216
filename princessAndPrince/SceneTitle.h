@@ -14,6 +14,8 @@ public:
 	void Update(Pad& pad);
 	//描画処理
 	void Draw();
+	//タイトルの後ろでキャラクターを動かす
+	void ShowTitleMovie();
 private:
 	//タイトル画像
 	int m_handle;
@@ -33,5 +35,11 @@ private:
 	bool m_isString;
 	//セレクトシーンで選んでいたシーンを保存する
 	int m_selectSceneNum;
+	//プレイヤーのグラフィック
+	int m_playerGraph;
+	//エネミーのグラフィック
+	int m_enemyGraph;
+	//プリンセスのグラフィック
+	int m_princessGraph;
 };
 
