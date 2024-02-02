@@ -116,6 +116,17 @@ void DataManager::Init()
 	graphMap["angryGaugeUiGraph"] = LoadGraph("data/image/angryGauge.png");
 	//怒りモード時に表示する背景
 	graphMap["angryMarkGraph"] = LoadGraph("data/image/angryMark.png");
+	//怒りモード時の王子
+	graphMap["angryMonkeyGraph"] = LoadGraph("data/image/angryMonkey.png");
+	//怒りモード時のエフェクト
+	graphMap["angryFireGraph"] = LoadGraph("data/image/angryFire.png");
+	//チュートリアル画像
+	graphMap["tutorialGraph1"] = LoadGraph("data/image/tutorial1.png");
+	graphMap["tutorialGraph2"] = LoadGraph("data/image/tutorial2.png");
+	graphMap["tutorialGraph3"] = LoadGraph("data/image/tutorial3.png");
+	graphMap["tutorialGraph4"] = LoadGraph("data/image/tutorial4.png");
+	graphMap["tutorialGraph5"] = LoadGraph("data/image/tutorial5.png");
+	graphMap["tutorialGraph6"] = LoadGraph("data/image/tutorial6.png");
 	
 
 }

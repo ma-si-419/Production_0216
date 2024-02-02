@@ -146,6 +146,32 @@ void Enemy::Init(int kinds)
 		m_isBoss = false;
 		m_knockBackPow = 1;
 	}
+	else if (kinds == static_cast<int>(redGoblin))
+	{
+		m_hp = 15;
+		m_atk = 4.0f;
+		m_spd = 0.25f;
+		m_scale = kEnemySize;
+		m_srcY = 5;
+		m_haveGold = GetRand(16) + 10;
+		m_haveExp = GetRand(6) + 2;
+		m_kind = redGoblin;
+		m_isBoss = false;
+		m_knockBackPow = 2;
+	}
+	else if (kinds == static_cast<int>(blackSkeleton))
+	{
+		m_hp = 45;
+		m_atk = 8.0f;
+		m_spd = 0.5f;
+		m_scale = kEnemySize;
+		m_srcY = 6;
+		m_kind = blackSkeleton;
+		m_haveGold = GetRand(80) + 60;
+		m_haveExp = GetRand(40) + 20;
+		m_isBoss = false;
+		m_knockBackPow = 2;
+	}
 	else if (kinds == static_cast<int>(bossGoblin))
 	{
 		m_hp = 48;
@@ -161,7 +187,7 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(bossBoar))
 	{
-		m_hp = 21;
+		m_hp = 30;
 		m_atk = 3.0f;
 		m_spd = 0.4f;
 		m_scale = kBossSize;
@@ -175,7 +201,7 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(bossDoragon))
 	{
-		m_hp = 60;
+		m_hp = 150;
 		m_atk = 30.0f;
 		m_spd = 0.08f;
 		m_scale = kBossSize;
@@ -188,7 +214,7 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(bossSkeleton))
 	{
-		m_hp = 50;
+		m_hp = 200;
 		m_atk = 7.0f;
 		m_spd = 0.3f;
 		m_scale = kBossSize;
@@ -201,16 +227,55 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(bossSnowman))
 	{
-		m_hp = 150;
+		m_hp = 300;
 		m_atk = 12.0f;
 		m_spd = 0.1f;
 		m_scale = kBossSize;
 		m_srcY = 4;
 		m_kind = bossSnowman;
-		m_haveGold = GetRand(1000) + 1000;
+		m_haveGold = GetRand(2000) + 2000;
 		m_haveExp = GetRand(500) + 500;
 		m_isBoss = true;
 		m_knockBackPow = 1;
+	}
+	else if (kinds == static_cast<int>(bossRedGoblin))
+	{
+		m_hp = 60;
+		m_atk = 7.0f;
+		m_spd = 0.25f;
+		m_scale = kBossSize;
+		m_srcY = 5;
+		m_kind = bossRedGoblin;
+		m_haveGold = GetRand(300) + 200;
+		m_haveExp = GetRand(80) + 60;
+		m_isBoss = true;
+		m_knockBackPow = 2;
+	}
+	else if (kinds == static_cast<int>(bossBlackSkeleton))
+	{
+		m_hp = 100;
+		m_atk = 9.0f;
+		m_spd = 0.35f;
+		m_scale = kBossSize;
+		m_srcY = 6;
+		m_kind = bossBlackSkeleton;
+		m_haveGold = GetRand(800) + 800;
+		m_haveExp = GetRand(200) + 160;
+		m_isBoss = true;
+		m_knockBackPow = 2;
+	}
+	else if (kinds == static_cast<int>(bossDemonKing))
+	{
+		m_hp = 500;
+		m_atk = 12.0f;
+		m_spd = 0.3f;
+		m_scale = kBossSize;
+		m_srcY = 7;
+		m_kind = bossDemonKing;
+		m_haveGold = GetRand(8000) + 8000;
+		m_haveExp = GetRand(1000) + 1000;
+		m_isBoss = true;
+		m_knockBackPow = 2;
 	}
 	switch (bornPos)
 	{

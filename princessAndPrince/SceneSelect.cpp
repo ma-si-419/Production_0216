@@ -343,16 +343,16 @@ void SceneSelect::Draw()
 			DrawString(kTitlePosX - stringWidth, kTitlePosY, "冒険の始まり", GetColor(255, 255, 255));
 			break;
 		case 1:
+			stringWidth = GetStringLength("賢者を訪ねて") * kFontHalfSize;
+			DrawString(kTitlePosX - stringWidth, kTitlePosY, "賢者を訪ねて", GetColor(255, 255, 255));
+			break;
+		case 2:
 			stringWidth = GetStringLength("よみがえれ姫") * kFontHalfSize;
 			DrawString(kTitlePosX - stringWidth, kTitlePosY, "よみがえれ姫", GetColor(255, 255, 255));
 			break;
-		case 2:
+		case 3:
 			stringWidth = GetStringLength("怒りのパワー") * kFontHalfSize;
 			DrawString(kTitlePosX - stringWidth, kTitlePosY, "怒りのパワー", GetColor(255, 255, 255));
-			break;
-		case 3:
-			stringWidth = GetStringLength("イノシシ注意報") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, kTitlePosY, "イノシシ注意報", GetColor(255, 255, 255));
 			break;
 		case 4:
 			stringWidth = GetStringLength("アブナイ肝試し") * kFontHalfSize;

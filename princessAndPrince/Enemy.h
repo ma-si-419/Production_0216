@@ -18,11 +18,16 @@ public:
 		doragon,
 		skeleton,
 		snowman,
+		redGoblin,
+		blackSkeleton,
 		bossGoblin,
 		bossBoar,
 		bossDoragon,
 		bossSkeleton,
-		bossSnowman
+		bossSnowman,
+		bossRedGoblin,
+		bossBlackSkeleton,
+		bossDemonKing
 	};
 
 public:

@@ -129,6 +129,8 @@ private:
 	stack<popEnemy> m_popEnemyList;
 	//経験値の情報が入っている配列
 	int m_expList[50];
+	//チュートリアル画像が入っている配列
+	int m_tutorialGraph[6];
 	//ボスの数を入れる変数
 	int m_bossCount;
 	//倒したボスの数を入れる変数
@@ -241,5 +243,16 @@ private:
 	bool m_isShowReady;
 	//readyを表示している時間をカウントする
 	int m_readyCount;
+	//チュートリアルを表示しているかどうか
+	bool m_isShowTutorial;
+	//エンターキーが押しっぱなしにならないように
+	bool m_isLastKey;
+	//表示するチュートリアルの枚数
+	int m_tutorialNum;
+	//チュートリアルを何枚目から表示するか
+	int m_startTutorialNum;
+	//今表示しているチュートリアルが何枚目か
+	int m_nowShowTutorialNum;
+
 
 };

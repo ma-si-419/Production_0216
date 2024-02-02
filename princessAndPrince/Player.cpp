@@ -64,7 +64,10 @@ Player::Player(SceneMain* pMain) :
 	m_isDeathFlag(false),
 	m_pMain(pMain),
 	m_turnCount(0),
-	m_danceCount(0)
+	m_danceCount(0),
+	m_playerAngryGraph(0),
+	m_angryFireGraph(0),
+	m_isAngryFireReverseFlag(0)
 {
 	//初期座標を魔女の隣に設定
 	m_pos.x = Game::kPlayScreenWidth / 2 + 100;
@@ -90,7 +93,7 @@ void Player::Init()
 	m_atk = 2.0f + (UserData::userAtkLevel * 0.5f) + (UserData::userMainLevel * 0.1f);
 	m_hp = 30 + (UserData::userMainLevel * 2.0f);
 	m_spd = 1.5f + (UserData::userSpdLevel * 0.1f) + (UserData::userMainLevel * 0.02f);
-	m_def = 1.0f + (UserData::userDefLevel * 0.3f) + (UserData::userMainLevel * 0.05f);
+	m_def = 1.0f + (UserData::userDefLevel * 0.5f) + (UserData::userMainLevel * 0.05f);
 	m_nowHp = m_hp;
 	//座標を参考にHpバーの位置を設定
 	m_hpBarPos.x = m_pos.x - kMaxBarWidth / 2;
@@ -348,6 +351,11 @@ void Player::Update()
 		m_atk = 2.0f + (UserData::userAtkLevel * 0.5f);
 		m_spd = 1.5f + (UserData::userSpdLevel * 0.1f);
 	}
+	//炎を揺らす演出
+	if (m_animFrame % 24 == 0)
+	{
+		m_isAngryFireReverseFlag = !m_isAngryFireReverseFlag;
+	}
 }
 
 void Player::Draw() const
@@ -358,12 +366,30 @@ void Player::Draw() const
 	int srcX = kGraphWidth * kUseFrame[animEle];
 	int srcY = kGraphHeight * m_dir;
 	//描画処理
-	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
-		srcX, srcY,
-		kGraphWidth, kGraphHeight,
-		kCharcterScale,
-		0.0,
-		m_handle, true, false);
+	//怒りモードかどうかでグラフィックを変える
+	if (!m_pMain->GetSpecialMode())
+	{
+		//プレイヤーを表示
+		DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
+			srcX, srcY,
+			kGraphWidth, kGraphHeight,
+			kCharcterScale,
+			0.0,
+			m_handle, true, false);
+	}
+	else
+	{
+		//炎を表示
+		DrawRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y) - 10,
+			4.0, 0.0, m_angryFireGraph, true, m_isAngryFireReverseFlag, false);
+		//プレイヤーを表示
+		DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
+			srcX, srcY,
+			kGraphWidth, kGraphHeight,
+			kCharcterScale,
+			0.0,
+			m_playerAngryGraph, true, false);
+	}
 	////////////////////
 	/* HPバー表示演出 */
 	////////////////////

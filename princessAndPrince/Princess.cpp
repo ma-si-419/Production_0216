@@ -113,17 +113,17 @@ void Princess::Init()
 
 void Princess::Update()
 {
+	//当たり判定の中心座標を設定
+	m_circleCol.SetCenter(m_pos, m_radius);
+	//HPバーの処理//
+	//座標を参考にHpバーの位置を設定
+	m_hpBarPos.x = m_pos.x - kMaxBarWidth / 2;
+	//	あとでマジックナンバーどうにかする
+	m_hpBarPos.y = m_pos.y - kHpBarPosY;
+	m_hpBarWidth = kMaxBarWidth * GetHpRate();
 	if (m_nowState != Game::kDelete)
 	{
 
-		//当たり判定の中心座標を設定
-		m_circleCol.SetCenter(m_pos, m_radius);
-		//HPバーの処理//
-		//座標を参考にHpバーの位置を設定
-		m_hpBarPos.x = m_pos.x - kMaxBarWidth / 2;
-		//	あとでマジックナンバーどうにかする
-		m_hpBarPos.y = m_pos.y - kHpBarPosY;
-		m_hpBarWidth = kMaxBarWidth * GetHpRate();
 		//血の量が上限値を超えていたら
 		if (m_nowBlood >= kMaxBlood)
 		{
@@ -369,6 +369,8 @@ bool Princess::IsDeath()
 	{
 		m_nowHp = 0;
 		m_nowState = Game::kDelete;
+		m_drawState = Game::kBreak;
+		m_animFrame = 24;
 		return true;
 	}
 	return false;

@@ -63,9 +63,12 @@ public:
 	void TurnFront() { m_dir = Game::kDirDown; }
 	//今動いているベクトルを取得する
 	Vec2 GetMoveVec() { return m_moveVec; }
-	//聖剣モードを始めるときによぶ
+	//怒りモードを始めるときによぶ
 	void SetSpecialMode() { m_dir = Game::kDirDeath; m_animFrame = 24; }
 	void StartSpecialMode() { m_dir = Game::kDirDown; m_animFrame = 0; }
+	//怒りモード時のグラフィック
+	void SetPlayerAngryGraph(int graph) { m_playerAngryGraph = graph; }
+	void SetAngryFireGraph(int graph) { m_angryFireGraph = graph; }
 private:
 	//シーンメインのポインタを入れる
 	SceneMain* m_pMain;
@@ -111,4 +114,10 @@ private:
 	int m_portionSe;
 	//血を拾った時の効果音
 	int m_bloodSe;
+	//怒りモード時のグラフィック
+	int m_playerAngryGraph;
+	//怒りモード時に後ろに出すグラフィック
+	int m_angryFireGraph;
+	//炎を反転させるかどうか
+	bool m_isAngryFireReverseFlag;
 };

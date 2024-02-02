@@ -108,8 +108,10 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_lastSpace(true),
 	m_selectScene(stageNum),
 	m_pauseGraph(0),
-	m_isShowReady(true),
-	m_readyCount(0)
+	m_isShowReady(false),
+	m_readyCount(0),
+	m_isShowTutorial(true),
+	m_isLastKey(false)
 
 {
 	//プレイヤーのグラフィックのロード
@@ -118,6 +120,8 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_pPlayer = new Player(this);
 	//プレイヤーのメンバ変数にアクセス
 	m_pPlayer->SetHandle(m_playerHandle);
+	m_pPlayer->SetPlayerAngryGraph(m_dataManager.SearchGraph("angryMonkeyGraph"));
+	m_pPlayer->SetAngryFireGraph(m_dataManager.SearchGraph("angryFireGraph"));
 	//プリンセスのグラフィックのロード
 	m_princessHandle = m_dataManager.SearchGraph("princessGraph");
 	//Princessのコンストラクタ
@@ -178,7 +182,13 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_angryMarkGraph = m_dataManager.SearchGraph("angryMarkGraph");
 	//ゲーム開始時に表示する画像
 	m_readyGraph = m_dataManager.SearchGraph("READYGraph");
-
+	//チュートリアル画像
+	m_tutorialGraph[0] = m_dataManager.SearchGraph("tutorialGraph1");
+	m_tutorialGraph[1] = m_dataManager.SearchGraph("tutorialGraph2");
+	m_tutorialGraph[2] = m_dataManager.SearchGraph("tutorialGraph3");
+	m_tutorialGraph[3] = m_dataManager.SearchGraph("tutorialGraph4");
+	m_tutorialGraph[4] = m_dataManager.SearchGraph("tutorialGraph5");
+	m_tutorialGraph[5] = m_dataManager.SearchGraph("tutorialGraph6");
 
 	//敵の最大数を設定
 	m_pEnemy.resize(kMaxEnemy);
@@ -198,6 +208,31 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_pUi->SetMagicBgGraph(m_dataManager.SearchGraph("magicUiBgGraph"));
 	//怒りゲージのUiを設定する
 	m_pUi->SetAngryGaugeGraph(m_dataManager.SearchGraph("angryGaugeUiGraph"));
+	//選ばれたシーンによって表示するチュートリアルを設定する
+	switch (m_selectScene)
+	{
+	case 0:
+		m_tutorialNum = 2;
+		m_startTutorialNum = 0;
+		m_nowShowTutorialNum = m_startTutorialNum;
+		break;
+	case 1:
+		m_tutorialNum = 1;
+		m_startTutorialNum = 2;
+		m_nowShowTutorialNum = m_startTutorialNum;
+		break;
+	case 2:
+		m_tutorialNum = 2;
+		m_startTutorialNum = 3;
+		m_nowShowTutorialNum = m_startTutorialNum;
+		break;
+	case 3:
+		m_tutorialNum = 1;
+		m_startTutorialNum = 5;
+		m_nowShowTutorialNum = m_startTutorialNum;
+	default:
+		break;
+	}
 }
 
 SceneMain::~SceneMain()
@@ -233,18 +268,6 @@ void SceneMain::Init()
 
 void SceneMain::Update(Pad& pad)
 {
-	//音楽再生
-	if (m_isMusicFlag && !m_isBossFlag)
-	{
-		PlaySoundMem(m_fieldBgm, DX_PLAYTYPE_LOOP);
-		m_isMusicFlag = false;
-	}
-	else if (m_isMusicFlag && m_isBossFlag)
-	{
-		StopSoundMem(m_fieldBgm);
-		PlaySoundMem(m_bossBgm, DX_PLAYTYPE_LOOP);
-		m_isMusicFlag = false;
-	}
 	//ポーズや演出時など以外の場合動かす
 
 	XINPUT_STATE m_input;
@@ -256,7 +279,26 @@ void SceneMain::Update(Pad& pad)
 		CountKillBoss();
 	}
 #endif 
-
+	//エンターキーを押したら次のチュートリアルに移行する
+	if (CheckHitKey(KEY_INPUT_RETURN) && !m_isLastKey)
+	{
+		m_nowShowTutorialNum++;
+		m_isLastKey = true;
+		PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
+		//すべてのチュートリアルを表示したら
+		if (m_startTutorialNum + m_tutorialNum <= m_nowShowTutorialNum)
+		{
+			//チュートリアルを終了する
+			m_isShowTutorial = false;
+			//READYを表示する
+			m_isShowReady = true;
+		}
+	}
+	//エンターキーが連続で入力されないように
+	else if (!CheckHitKey(KEY_INPUT_RETURN))
+	{
+		m_isLastKey = false;
+	}
 	//READYが表示されている間
 	if (m_isShowReady)
 	{
@@ -266,8 +308,20 @@ void SceneMain::Update(Pad& pad)
 			m_isShowReady = false;
 		}
 	}
-	if (!m_isPause && !m_isShowReady)
+	if (!m_isPause && !m_isShowReady && !m_isShowTutorial)
 	{
+		//音楽再生
+		if (m_isMusicFlag && !m_isBossFlag)
+		{
+			PlaySoundMem(m_fieldBgm, DX_PLAYTYPE_LOOP);
+			m_isMusicFlag = false;
+		}
+		else if (m_isMusicFlag && m_isBossFlag)
+		{
+			StopSoundMem(m_fieldBgm);
+			PlaySoundMem(m_bossBgm, DX_PLAYTYPE_LOOP);
+			m_isMusicFlag = false;
+		}
 		//ポーズボタンが押されたら
 		if (!m_pPrincess->IsDeath())
 		{
@@ -285,9 +339,9 @@ void SceneMain::Update(Pad& pad)
 			{
 				if (enemy)
 				{
-					if(enemy->m_nowState != Game::kDelete)
-					//エネミーの移動を止める
-					enemy->m_nowState = Game::kStop;
+					if (enemy->m_nowState != Game::kDelete)
+						//エネミーの移動を止める
+						enemy->m_nowState = Game::kStop;
 				}
 			}
 			StopSoundMem(m_fieldBgm);
@@ -318,7 +372,7 @@ void SceneMain::Update(Pad& pad)
 				m_enemyPopTimeCount = temp.popTime;
 				m_nextEnemyKind = temp.enemyKind;
 				m_popEnemyList.pop();
-				if (m_nextEnemyKind > 4 && !m_isBossFlag)
+				if (m_nextEnemyKind > 6 && !m_isBossFlag)
 				{
 					m_isBossFlag = true;
 					m_isMusicFlag = true;
@@ -353,7 +407,7 @@ void SceneMain::Update(Pad& pad)
 							if (!m_isSpecialMode)
 							{
 								//敵の攻撃力に応じてゲージを上昇させる
-								AddSpecialGauge(enemy->GetAtk());
+								AddSpecialGauge(enemy->GetAtk() / 2);
 							}
 							//エネミーの状態を推移させる
 							enemy->m_nowState = Game::kHitPlayer;
@@ -516,7 +570,7 @@ void SceneMain::Update(Pad& pad)
 		if (m_isSpecialMode && !m_isStop)
 		{
 			//少しずつゲージを減らしていく
-			m_specialGauge -= 0.2f;
+			m_specialGauge -= 0.3f;
 			//カウントを進める
 			m_particleCount++;
 			//背景に表示するパーティクルを生成する
@@ -728,7 +782,7 @@ void SceneMain::Update(Pad& pad)
 		}
 		if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A] || m_isEnd && CheckHitKey(KEY_INPUT_RETURN))
 		{
-			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager,m_selectScene));
+			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectScene));
 			return;
 		}
 	}
@@ -749,14 +803,14 @@ void SceneMain::Draw()
 {
 
 	//プレイ画面の背景
-	DrawRectExtendGraph(0, 0, 965, 965, 0, kAllStageSize-(kStageGraphSize * m_selectScene) , kStageGraphSize, kStageGraphSize, m_bgHandle, true);
+	DrawRectExtendGraph(0, 0, 965, 965, 0, kAllStageSize - (kStageGraphSize * m_selectScene), kStageGraphSize, kStageGraphSize, m_bgHandle, true);
 	if (m_isSpecialMode)
 	{
 		//怒りモードに入ったら背景を暗くする
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
 		DrawBox(0, 0, Game::kPlayScreenWidth + 5, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	//	DrawGraph(GetRand(15), GetRand(15), m_angryMarkGraph, true);
+		//	DrawGraph(GetRand(15), GetRand(15), m_angryMarkGraph, true);
 	}
 
 
@@ -855,8 +909,8 @@ void SceneMain::Draw()
 		stringWidth = GetStringLength("やめる") * kFontHalfSize;
 		DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2 - 50, 800,
 			"やめる", GetColor(255, 255, 255));
-		DrawGraph(0,0, m_pauseGraph, true);
-		
+		DrawGraph(0, 0, m_pauseGraph, true);
+
 		switch (m_pauseSelectNum)
 		{
 		case 0:
@@ -875,7 +929,12 @@ void SceneMain::Draw()
 	//ステージ開始時にREADYを表示する
 	if (m_isShowReady)
 	{
-		DrawGraph(0, 0, m_readyGraph,true);
+		DrawGraph(0, 0, m_readyGraph, true);
+	}
+	//ステージの最初にチュートリアルが表示する
+	if (m_isShowTutorial)
+	{
+		DrawGraph(100, 300, m_tutorialGraph[m_nowShowTutorialNum], true);
 	}
 
 }
