@@ -22,10 +22,10 @@ namespace
 	constexpr int kGraphHeight = 16;
 	//プレイヤーを表示する座標
 	constexpr int kPlayerPosX = Game::kScreenWidth / 2;
-	constexpr int kPlayerPosY = Game::kPlayScreenHeight * 0.5f;
+	constexpr int kPlayerPosY = 590;
 	//魔女を表示する座標
 	constexpr int kPrincessPosX = Game::kScreenWidth / 2;
-	constexpr int kPrincessPosY = Game::kPlayScreenHeight * 0.5f - 30;
+	constexpr int kPrincessPosY = 700;
 	//背景画像の大きさ
 	constexpr int kBgGraphSize = 640;
 	//キャラクターの大きさ
@@ -105,6 +105,15 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, i
 	m_selectSceneFrame = DataManager.SearchGraph("selectSceneFrameGraph");
 	m_backBoxGraph = DataManager.SearchGraph("backBoxGraph");
 	m_buttonsUiGraph = DataManager.SearchGraph("selectSceneButtonUiGraph");
+	m_storyGraph[0] = DataManager.SearchGraph("storyGraph1");
+	m_storyGraph[1] = DataManager.SearchGraph("storyGraph2");
+	m_storyGraph[2] = DataManager.SearchGraph("storyGraph3");
+	m_storyGraph[3] = DataManager.SearchGraph("storyGraph4");
+	m_storyGraph[4] = DataManager.SearchGraph("storyGraph5");
+	m_storyGraph[5] = DataManager.SearchGraph("storyGraph6");
+	m_storyGraph[6] = DataManager.SearchGraph("storyGraph7");
+	m_storyGraph[7] = DataManager.SearchGraph("storyGraph8");
+
 }
 
 SceneSelect::~SceneSelect()
@@ -300,39 +309,24 @@ void SceneSelect::Draw()
 	int srcX = kGraphWidth * kUseFrame[animEle];
 	int srcY = kGraphHeight * m_dir;
 	DrawFormatString(500, 500, GetColor(0, 0, 0), "%d", m_animFrame);
-	if (m_isStaging && m_isSceneUp)
-	{
 
+	//サルと姫の描画
 		DrawRectRotaGraph(kPlayerPosX, kPlayerPosY,
 			srcX, srcY,
 			kGraphWidth, kGraphHeight,
 			kCharcterScale,
 			0.0,
 			m_playerGraph, true, false);
-		DrawRectRotaGraph(kPrincessPosX, kPrincessPosY,
-			0, 48,
-			24, 24,
-			5.0,
-			0.0,
-			m_princessGraph, true, false);
-	}
-	else
-	{
 		DrawRectRotaGraph(kPrincessPosX, kPrincessPosY,
 			0, 24,
 			24, 24,
 			5.0,
 			0.0,
 			m_princessGraph, true, false);
-		DrawRectRotaGraph(kPlayerPosX, kPlayerPosY,
-			srcX, srcY,
-			kGraphWidth, kGraphHeight,
-			kCharcterScale,
-			0.0,
-			m_playerGraph, true, false);
-	}
+	//左上にストーリー表示
+	DrawGraph(130, 200, m_storyGraph[m_stageSelectNum], true);
 	//左下に操作方法表示
-	DrawGraph(100, 650, m_buttonsUiGraph, true);
+	DrawGraph(130, 650, m_buttonsUiGraph, true);
 	//選んでいるステージを表示する
 	{
 		int stringWidth;

@@ -79,4 +79,6 @@ private:
 	int m_shopEndPosY;
 	//メインシーンに移動するかどうか
 	bool m_isMoveMainScene;
+	//ストーリーの画像が入っている配列
+	int m_storyGraph[8];
 };

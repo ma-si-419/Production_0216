@@ -934,7 +934,7 @@ void SceneMain::Draw()
 	//ステージの最初にチュートリアルが表示する
 	if (m_isShowTutorial)
 	{
-		DrawGraph(100, 300, m_tutorialGraph[m_nowShowTutorialNum], true);
+		DrawGraph(120, 300, m_tutorialGraph[m_nowShowTutorialNum], true);
 	}
 
 }
