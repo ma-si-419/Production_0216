@@ -42,6 +42,8 @@ namespace
 	constexpr int kShopGraphSize = 64;
 	//ショップのアニメーションの長さ
 	constexpr int kShopAnimFrameNum = 48;
+	//ボスのアニメーションの長さ
+	constexpr int kBossAnimFrameNum = 32;
 	//フォントの半分の大きさ
 	constexpr int kFontHalfSize = 24;
 	//タイトルの座標X
@@ -69,7 +71,18 @@ namespace
 	constexpr int kShopEndPosXSpeed = 20;
 	constexpr int kShopEndPosYSpeed = 5;
 	//ショップが最終的に大きくなる座標
-	constexpr int kShopMaxSizePosX = 500;}
+	constexpr int kShopMaxSizePosX = 500;
+	//キャラの動くスピード
+	constexpr int kCharMoveSpeed = 10;
+	//背景の上辺の高さ
+	constexpr int kBgTopEndPos = 125;
+	//ボスのグラフィックの大きさ
+	constexpr int kBossGraphSize = 32;
+	//ボスを表示する座標
+	constexpr int kBossPosY = 300;
+	//ボスのフェードの速さ
+	constexpr int kBossFadeSpeed = 10;
+}
 SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
 	Scene(sceneManager, DataManager),
 	m_isKeyDown(false),
@@ -90,7 +103,16 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, i
 	m_shopStartPosY(kshopStartPosY),
 	m_shopEndPosX(kshopEndPosX),
 	m_shopEndPosY(kshopEndPosY),
-	m_isMoveMainScene(false)
+	m_isMoveMainScene(false),
+	m_clearStageNum(0),
+	m_charPosY(0),
+	m_isCharArrTopEnd(false),
+	m_isCharArrBottomEnd(false),
+	m_isCharMoveDown(false),
+	m_bossSrcY(selectSceneNum),
+	m_bossSrcX(0),
+	m_bossAnimFrame(0),
+	m_bossAlpha(0)
 {
 	m_appSe = DataManager.SearchSound("approveSe");
 	m_moveMainSceneSe = DataManager.SearchSound("moveMainSceneSe");
@@ -113,6 +135,7 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, i
 	m_storyGraph[5] = DataManager.SearchGraph("storyGraph6");
 	m_storyGraph[6] = DataManager.SearchGraph("storyGraph7");
 	m_storyGraph[7] = DataManager.SearchGraph("storyGraph8");
+	m_enemyGraph = DataManager.SearchGraph("enemyGraph");
 
 }
 
@@ -199,32 +222,40 @@ void SceneSelect::Update(Pad& pad)
 			//上キーが押されたら
 			if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W) || CheckHitKey(KEY_INPUT_UP))
 			{
+				//移動不可だったら
 				if (m_stageSelectNum >= kMaxSceneNum)
 				{
 					m_stageSelectNum = kMaxSceneNum;
 				}
+				//移動可能だったら
 				else
 				{
 					m_isChangeStage = true;
 					PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
 					m_isStaging = true;
 					m_isSceneUp = true;
+					m_bossSrcY++;
 				}
 				m_isSelectKeyDown = true;
 			}
 			//下キーが入力されたら
 			else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S) || CheckHitKey(KEY_INPUT_DOWN))
 			{
+				//移動不可だったら
 				if (m_stageSelectNum <= 0)
 				{
 					m_stageSelectNum = 0;
 				}
+				//移動可能だったら
 				else
 				{
 					m_isChangeStage = true;
 					PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
 					m_isStaging = true;
 					m_isSceneUp = false;
+					m_isCharArrBottomEnd = true;
+					m_isCharMoveDown = true;
+					m_bossSrcY--;
 				}
 				m_isSelectKeyDown = true;
 
@@ -232,27 +263,117 @@ void SceneSelect::Update(Pad& pad)
 		}
 	}
 
+	//移動の演出中
 	if (m_isStaging)
 	{
-		MoveScene(m_isSceneUp);
-	}
-	if (m_cutBgPosY % kBgGraphSize == 0 && !m_isMoveMainScene)
-	{
-		m_isStaging = false;
-		m_dir = Game::kDirDown;
-		m_animFrame = kAnimFrameNum;
-		if (m_isChangeStage)
+		//ボスを消す
+		m_bossAlpha = 0;
+		//アニメーションを動かす
+		m_animFrame++;
+		if (m_animFrame > kAnimFrameCycle)
 		{
+			m_animFrame = 0;
+		}
+
+		//キャラが上の端までついていなかったら
+		if (!m_isCharArrTopEnd)
+		{
+			//上入力がされていたら
 			if (m_isSceneUp)
 			{
-				m_stageSelectNum++;
+				//キャラを上に移動させる
+				m_charPosY -= kCharMoveSpeed;
+				m_dir = Game::kDirUp;
 			}
-			else
-			{
-				m_stageSelectNum--;
-			}
-			m_isChangeStage = false;
 		}
+		//キャラが上の端についたら
+		else
+		{
+			//キャラのポジションを下げる
+			m_charPosY += kBgMoveSpeed;
+			//キャラのポジションが下がりすぎないように
+			if (m_charPosY > 0)
+			{
+				m_charPosY = 0;
+			}
+			m_cutBgPosY -= kBgMoveSpeed;
+			//背景を切り取る制御
+			if (m_cutBgPosY % kBgGraphSize == 0 && !m_isMoveMainScene)
+			{
+				m_isStaging = false;
+				m_isCharArrTopEnd = false;
+				m_dir = Game::kDirDown;
+				m_animFrame = kAnimFrameNum;
+				if (m_isChangeStage)
+				{
+					m_stageSelectNum++;
+					m_isChangeStage = false;
+				}
+			}
+		}
+		//キャラが下の端までついていなかったら
+
+			//下入力がされていたら
+		if (!m_isSceneUp)
+		{
+			if (m_isCharMoveDown)
+			{
+				//キャラを下に移動させる
+				m_charPosY += kCharMoveSpeed;
+				m_dir = Game::kDirDown;
+				if (m_charPosY > 0)
+				{
+					m_isCharMoveDown = false;
+					m_animFrame = kAnimFrameNum;
+				}
+			}
+		}
+
+		//キャラが下の端についたら
+		if (m_isCharArrBottomEnd)
+		{
+			//キャラのポジションをあげる
+			m_charPosY -= kBgMoveSpeed;
+			//キャラのポジションがあがりすぎないように
+			if (m_charPosY + kPlayerPosY < kBgTopEndPos)
+			{
+				m_charPosY = kBgTopEndPos - kPlayerPosY;
+			}
+			m_cutBgPosY += kBgMoveSpeed;
+			//背景を切り取る制御
+			if (m_cutBgPosY % kBgGraphSize == 0 && !m_isMoveMainScene)
+			{
+				m_isCharMoveDown = true;
+				m_isCharArrBottomEnd = false;
+				m_dir = Game::kDirDown;
+
+				if (m_isChangeStage)
+				{
+					m_stageSelectNum--;
+					m_isChangeStage = false;
+				}
+			}
+		}
+	}
+	else
+	{
+		//移動が終わったらボスを表示する
+		m_bossAlpha += kBossFadeSpeed;
+		if (m_bossAlpha > 255)
+		{
+			m_bossAlpha = 255;
+		}
+	}
+
+	//キャラが上の端に到達したら
+	if (m_charPosY + kPlayerPosY < kBgTopEndPos && m_isSceneUp)
+	{
+		m_isCharArrTopEnd = true;
+	}
+	//キャラが下の端に到達したら
+	if (m_charPosY > 0 && !m_isCharMoveDown)
+	{
+		m_isStaging = false;
 	}
 	//ショップのアニメーションを回し続ける
 	m_shopAnimFrame++;
@@ -275,10 +396,21 @@ void SceneSelect::Update(Pad& pad)
 		if (m_shopStartPosX < kShopMaxSizePosX)
 		{
 			StopSoundMem(m_bgm);
-			//ショップシーンに移行する
 			m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager, m_stageSelectNum));
 		}
 	}
+	//ボスのアニメーションを回し続ける
+	m_bossAnimFrame++;
+	if (m_bossAnimFrame > kBossAnimFrameNum)
+	{
+		m_bossSrcX = kBossGraphSize;
+	}
+	if (m_bossAnimFrame > kBossAnimFrameNum * 2)
+	{
+		m_bossAnimFrame = 0;
+		m_bossSrcX = 0;
+	}
+
 	if (m_isMoveMainScene)
 	{
 		//音が鳴りやんだらフェードしていく
@@ -294,6 +426,36 @@ void SceneSelect::Draw()
 	//背景の下に今選んでいるステージを表示する
 	DrawRectExtendGraph(kSelectSceneStartPosX, kSelectSceneStartPosY, kSelectSceneEndPosX, kSelectSceneEndPosY,
 		0, m_cutBgPosY, kBgGraphSize, kBgGraphSize, m_selectSceneBgGraph, true);
+	//プレイヤーと魔女を表示する
+	int animEle = m_animFrame / kAnimFrameNum;
+	//画像のどこを切り取るか計算
+	int srcX = kGraphWidth * kUseFrame[animEle];
+	int srcY = kGraphHeight * m_dir;
+
+	//サルと姫の描画
+	DrawRectRotaGraph(kPlayerPosX, kPlayerPosY + m_charPosY,
+		srcX, srcY,
+		kGraphWidth, kGraphHeight,
+		kCharcterScale,
+		0.0,
+		m_playerGraph, true, false);
+	DrawRectRotaGraph(kPrincessPosX, kPrincessPosY + m_charPosY,
+		0, 24,
+		24, 24,
+		5.0,
+		0.0,
+		m_princessGraph, true, false);
+	//ステージを移動中じゃなかったら
+	if (!m_isStaging)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_bossAlpha);
+		//各ステージのボス表示
+		DrawRectRotaGraph(Game::kScreenWidth / 2, kBossPosY,
+			m_bossSrcX, GetShowBossKind(m_bossSrcY) * kBossGraphSize,
+			kBossGraphSize, kBossGraphSize,
+			8.0, 0.0, m_enemyGraph, true, 0, 0);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
 	//背景の表示
 	DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kPlayScreenHeight, m_bgGraph, true);
 	//選んでいるシーンのフレーム
@@ -303,26 +465,6 @@ void SceneSelect::Draw()
 	DrawSceneSrideTriangle();
 	//ステージ名の表示
 	DrawExtendGraph(70, 90, 730, 180, m_backBoxGraph, true);
-	//プレイヤーと魔女を表示する
-	int animEle = m_animFrame / kAnimFrameNum;
-	//画像のどこを切り取るか計算
-	int srcX = kGraphWidth * kUseFrame[animEle];
-	int srcY = kGraphHeight * m_dir;
-	DrawFormatString(500, 500, GetColor(0, 0, 0), "%d", m_animFrame);
-
-	//サルと姫の描画
-		DrawRectRotaGraph(kPlayerPosX, kPlayerPosY,
-			srcX, srcY,
-			kGraphWidth, kGraphHeight,
-			kCharcterScale,
-			0.0,
-			m_playerGraph, true, false);
-		DrawRectRotaGraph(kPrincessPosX, kPrincessPosY,
-			0, 24,
-			24, 24,
-			5.0,
-			0.0,
-			m_princessGraph, true, false);
 	//左上にストーリー表示
 	DrawGraph(130, 200, m_storyGraph[m_stageSelectNum], true);
 	//左下に操作方法表示
@@ -427,5 +569,45 @@ void SceneSelect::DrawSceneSrideTriangle()
 			GetColor(255, 255, 255), true);
 	}
 
+}
+
+int SceneSelect::GetShowBossKind(int num)
+{
+	if (num == 0)
+	{
+		return 0;
+	}
+	else if (num == 1)
+	{
+		return 5;
+	}
+	else if (num == 2)
+	{
+		return 1;
+	}
+	else if (num == 3)
+	{
+		return 3;
+	}
+	else if (num == 4)
+	{
+		return 6;
+	}
+	else if (num == 5)
+	{
+		return 2;
+	}
+	else if (num == 6)
+	{
+		return 4;
+	}
+	else if (num == 7)
+	{
+		return 7;
+	}
+	else
+	{
+		return 0;
+	}
 }
 

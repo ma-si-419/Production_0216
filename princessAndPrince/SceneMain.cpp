@@ -111,7 +111,8 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_isShowReady(false),
 	m_readyCount(0),
 	m_isShowTutorial(true),
-	m_isLastKey(false)
+	m_isLastKey(false),
+	m_isLastSe(true)
 
 {
 	//プレイヤーのグラフィックのロード
@@ -242,6 +243,8 @@ SceneMain::~SceneMain()
 void SceneMain::Init()
 {
 	{
+		//出てくる敵の情報を設定する
+		SetBossVol(m_selectScene);
 		SetEnemyInfo(m_selectScene);
 		//ファイルを開く
 		std::ifstream ifs("./data/expLevel.txt");
@@ -280,7 +283,8 @@ void SceneMain::Update(Pad& pad)
 	}
 #endif 
 	//エンターキーを押したら次のチュートリアルに移行する
-	if (CheckHitKey(KEY_INPUT_RETURN) && !m_isLastKey)
+	if (CheckHitKey(KEY_INPUT_RETURN) && !m_isLastKey && m_isShowTutorial ||
+		m_input.Buttons[XINPUT_BUTTON_A] && !m_isLastKey && m_isShowTutorial)
 	{
 		m_nowShowTutorialNum++;
 		m_isLastKey = true;
@@ -295,7 +299,7 @@ void SceneMain::Update(Pad& pad)
 		}
 	}
 	//エンターキーが連続で入力されないように
-	else if (!CheckHitKey(KEY_INPUT_RETURN))
+	else if (!CheckHitKey(KEY_INPUT_RETURN) && !m_input.Buttons[XINPUT_BUTTON_A])
 	{
 		m_isLastKey = false;
 	}
@@ -540,9 +544,9 @@ void SceneMain::Update(Pad& pad)
 				}
 			}
 		}
-		if (m_specialGauge >= kMaxSpecialGauge)
+		if (m_specialGauge >= kMaxSpecialGauge && m_pPrincess->m_nowState != Game::kDelete)
 		{
-			if (m_lastSpace)
+			if (m_lastSpace && !m_isStop)
 			{
 				if (m_input.Buttons[XINPUT_BUTTON_Y] || CheckHitKey(KEY_INPUT_SPACE))
 				{
@@ -782,6 +786,11 @@ void SceneMain::Update(Pad& pad)
 		}
 		if (m_isEnd && m_input.Buttons[XINPUT_BUTTON_A] || m_isEnd && CheckHitKey(KEY_INPUT_RETURN))
 		{
+			if (m_isLastSe)
+			{
+				PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
+				m_isLastSe = false;
+			}
 			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectScene));
 			return;
 		}
@@ -1095,6 +1104,42 @@ void SceneMain::SetEnemyInfo(int stageNum)
 	//ファイルを閉じる
 	ifs.close();
 
+}
+
+void SceneMain::SetBossVol(int stageNum)
+{
+	if (stageNum == 0)
+	{
+		m_bossCount = 1;
+	}
+	else if (stageNum == 1)
+	{
+		m_bossCount = 1;
+	}
+	else if (stageNum == 2)
+	{
+		m_bossCount = 2;
+	}
+	else if (stageNum == 3)
+	{
+		m_bossCount = 3;
+	}
+	else if (stageNum == 4)
+	{
+		m_bossCount = 1;
+	}
+	else if (stageNum == 5)
+	{
+		m_bossCount = 1;
+	}
+	else if (stageNum == 6)
+	{
+		m_bossCount = 1;
+	}
+	else if (stageNum == 7)
+	{
+		m_bossCount = 1;
+	}
 }
 
 bool SceneMain::AddMagic(MagicBase* pMagic)

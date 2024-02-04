@@ -122,8 +122,8 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(skeleton))
 	{
-		m_hp = 30;
-		m_atk = 6.0f;
+		m_hp = 18;
+		m_atk = 4.5f;
 		m_spd = 0.4f;
 		m_scale = kEnemySize;
 		m_srcY = 3;
@@ -161,8 +161,8 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(blackSkeleton))
 	{
-		m_hp = 45;
-		m_atk = 8.0f;
+		m_hp = 30;
+		m_atk = 7.0f;
 		m_spd = 0.5f;
 		m_scale = kEnemySize;
 		m_srcY = 6;
@@ -214,7 +214,7 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(bossSkeleton))
 	{
-		m_hp = 200;
+		m_hp = 120;
 		m_atk = 7.0f;
 		m_spd = 0.3f;
 		m_scale = kBossSize;

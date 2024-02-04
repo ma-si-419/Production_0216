@@ -26,7 +26,7 @@ public:
 	//Œ»İ‚ÌHp‚ÌŠ„‡ŒvZ‚·‚éŠÖ”
 	float GetHpRate() { return m_nowHp / m_hp; }
 	//‰ñ•œ—Ê‚ğŒvZ‚·‚é
-	float GetHealRate() { return m_hp / 300; }
+	float GetHealRate() { return m_hp / 350; }
 	//Œ»İ‚Á‚Ä‚¢‚éŒŒ‚Ì—Ê‚ÌŠ„‡‚ğŒvZ‚·‚é
 	float GetBloodRate() { return m_nowBlood / m_maxBlood; }
 	//“|‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğæ“¾‚·‚é

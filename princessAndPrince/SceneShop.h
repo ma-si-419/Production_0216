@@ -22,6 +22,8 @@ public:
 	/// <param name="num">右揃えにしたい数値</param>
 	/// <returns>右揃えにしたい数値*フォントの大きさ</returns>
 	int ArrRight(int num);
+	//桁数を取得する
+	int GetDigits(int num);
 
 private:
 	//今選択している項目を保存する
@@ -74,5 +76,13 @@ private:
 	int m_bgm;
 	//セレクトシーンで選んでいたシーンを保存する
 	int m_selectSceneNum;
+	//選んだ商品のレベルがMAXだったら
+	bool m_isMax;
+	//引くゴールドの量
+	int m_subGold;
+	//表示するゴールドの量
+	int m_showGold;
+	//減らしている間所持金を揺らす
+	int m_shakeGoldPosY;
 };
 

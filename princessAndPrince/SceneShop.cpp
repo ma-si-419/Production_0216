@@ -75,7 +75,7 @@ namespace
 	//商品の後ろに表示するボックスの大きさ
 	constexpr int kItemBackBox = 180;
 }
-SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager,int selectSceneNum) :
+SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
 	Scene(sceneManager, DataManager),
 	m_isKeyDown(false),
 	m_itemSelectNum(0),
@@ -86,7 +86,11 @@ SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager,int se
 	m_isBuy(false),
 	m_isFrameRatio(true),
 	m_itemFrameRatio(0),
-	m_selectSceneNum(selectSceneNum)
+	m_selectSceneNum(selectSceneNum),
+	m_isMax(false),
+	m_showGold(UserData::userGold),
+	m_subGold(0),
+	m_shakeGoldPosY(0)
 {
 	m_cursorSe = DataManager.SearchSound("cursorSe");
 	m_cancelSe = DataManager.SearchSound("cancelSe");
@@ -156,6 +160,7 @@ void SceneShop::Update(Pad& pad)
 			m_isSelectKeyDown = true;
 			m_isMoveCursor = true;
 			m_isShowString = false;
+			m_isMax = false;
 		}
 		//左キーが入力されたら
 		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_LEFT] || CheckHitKey(KEY_INPUT_A))
@@ -173,6 +178,8 @@ void SceneShop::Update(Pad& pad)
 			m_isSelectKeyDown = true;
 			m_isMoveCursor = true;
 			m_isShowString = false;
+			m_isMax = false;
+
 		}
 		//下キーが入力されたら
 		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S))
@@ -190,6 +197,8 @@ void SceneShop::Update(Pad& pad)
 			m_isSelectKeyDown = true;
 			m_isMoveCursor = true;
 			m_isShowString = false;
+			m_isMax = false;
+
 		}
 		//上キーが入力されたら
 		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W))
@@ -207,6 +216,8 @@ void SceneShop::Update(Pad& pad)
 			m_isSelectKeyDown = true;
 			m_isMoveCursor = true;
 			m_isShowString = false;
+			m_isMax = false;
+
 		}
 	}
 	//上下左右キーが離されたら
@@ -227,7 +238,7 @@ void SceneShop::Update(Pad& pad)
 				PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
 				StopSoundMem(m_bgm);
 				//シーン移行する
-				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager,m_selectSceneNum));
+				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectSceneNum));
 				m_isKeyDown = false;
 				m_isFade = true;
 			}
@@ -249,6 +260,7 @@ void SceneShop::Update(Pad& pad)
 					m_isBuy = true;
 					PlaySoundMem(m_buySe, DX_PLAYTYPE_BACK);
 					UserData::userGold -= m_playerItemPriceList[UserData::userAtkLevel];
+					m_subGold += m_playerItemPriceList[UserData::userAtkLevel];
 					UserData::userAtkLevel++;
 				}
 				else
@@ -256,6 +268,12 @@ void SceneShop::Update(Pad& pad)
 					m_isBuy = false;
 					PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
 				}
+			}
+			if (UserData::userAtkLevel == kMaxLevel)
+			{
+				m_isMax = true;
+				PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
+
 			}
 			m_isKeyDown = false;
 			break;
@@ -269,6 +287,7 @@ void SceneShop::Update(Pad& pad)
 					m_isBuy = true;
 					PlaySoundMem(m_buySe, DX_PLAYTYPE_BACK);
 					UserData::userGold -= m_playerItemPriceList[UserData::userDefLevel];
+					m_subGold += m_playerItemPriceList[UserData::userDefLevel];
 					UserData::userDefLevel++;
 				}
 				else
@@ -276,6 +295,12 @@ void SceneShop::Update(Pad& pad)
 					m_isBuy = false;
 					PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
 				}
+			}
+			if (UserData::userDefLevel == kMaxLevel)
+			{
+				m_isMax = true;
+				PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
+
 			}
 			m_isKeyDown = false;
 			break;
@@ -289,6 +314,7 @@ void SceneShop::Update(Pad& pad)
 					m_isBuy = true;
 					PlaySoundMem(m_buySe, DX_PLAYTYPE_BACK);
 					UserData::userGold -= m_playerItemPriceList[UserData::userSpdLevel];
+					m_subGold += m_playerItemPriceList[UserData::userSpdLevel];
 					UserData::userSpdLevel++;
 				}
 				else
@@ -296,6 +322,12 @@ void SceneShop::Update(Pad& pad)
 					m_isBuy = false;
 					PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
 				}
+			}
+			if (UserData::userSpdLevel == kMaxLevel)
+			{
+				m_isMax = true;
+				PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
+
 			}
 			m_isKeyDown = false;
 			break;
@@ -309,6 +341,7 @@ void SceneShop::Update(Pad& pad)
 					m_isBuy = true;
 					PlaySoundMem(m_buySe, DX_PLAYTYPE_BACK);
 					UserData::userGold -= m_princessItemPriceList[UserData::userFireLevel];
+					m_subGold += m_princessItemPriceList[UserData::userFireLevel];
 					UserData::userFireLevel++;
 				}
 				else
@@ -316,6 +349,12 @@ void SceneShop::Update(Pad& pad)
 					m_isBuy = false;
 					PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
 				}
+			}
+			if (UserData::userFireLevel == kMaxLevel)
+			{
+				m_isMax = true;
+				PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
+
 			}
 			m_isKeyDown = false;
 			break;
@@ -329,6 +368,7 @@ void SceneShop::Update(Pad& pad)
 					m_isBuy = true;
 					PlaySoundMem(m_buySe, DX_PLAYTYPE_BACK);
 					UserData::userGold -= m_princessItemPriceList[UserData::userWindLevel];
+					m_subGold += m_princessItemPriceList[UserData::userWindLevel];
 					UserData::userWindLevel++;
 				}
 				else
@@ -336,6 +376,13 @@ void SceneShop::Update(Pad& pad)
 					m_isBuy = false;
 					PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
 				}
+			}
+			if (UserData::userWindLevel == kMaxLevel)
+			{
+				m_isMax = true;
+				PlaySoundMem(m_missBuySe, DX_PLAYTYPE_BACK);
+
+
 			}
 			m_isKeyDown = false;
 			break;
@@ -362,6 +409,19 @@ void SceneShop::Update(Pad& pad)
 	else
 	{
 		m_itemFrameRatio -= 0.4f;
+	}
+	//表示しているゴールドを減らしていく
+	if (m_subGold > 0)
+	{
+		//減らす総量の桁数を取得して減らす量を決める
+		int temp = GetDigits(m_subGold);
+		m_showGold -= temp;
+		m_subGold -= temp;
+		m_shakeGoldPosY = GetRand(6) - 4;
+	}
+	else
+	{
+		m_shakeGoldPosY = 0;
 	}
 }
 
@@ -402,16 +462,29 @@ void SceneShop::Draw()
 		stringWidth = GetStringLength("いらっしゃい") * kHalfFontSize;
 		DrawString(250 - stringWidth / 2, 250, "いらっしゃい", GetColor(0, 0, 0), true);
 	}
-	if (m_isBuy && !m_isShowString && !m_isMoveCursor)
+	//レベルマックスだったら
+	if (m_isMax)
 	{
-		stringWidth = GetStringLength("まいどあり") * kHalfFontSize;
-		DrawString(250 - stringWidth / 2, 250, "まいどあり", GetColor(0, 0, 0), true);
+		stringWidth = GetStringLength("もうげんかいだよ") * kHalfFontSize;
+		DrawString(250 - stringWidth / 2, 250, "もうげんかいだよ", GetColor(0, 0, 0), true);
 	}
-	else if (!m_isBuy && !m_isShowString && !m_isMoveCursor)
+	//レベルマックスじゃなかった場合
+	else
 	{
-		stringWidth = GetStringLength("おかねないね") * kHalfFontSize;
-		DrawString(250 - stringWidth / 2, 250, "おかねないね", GetColor(0, 0, 0), true);
+		//アイテムを買ったとき
+		if (m_isBuy && !m_isShowString && !m_isMoveCursor && !m_isMax)
+		{
+			stringWidth = GetStringLength("まいどあり") * kHalfFontSize;
+			DrawString(250 - stringWidth / 2, 250, "まいどあり", GetColor(0, 0, 0), true);
+		}
+		//アイテムが買えなかったとき
+		else if (!m_isBuy && !m_isShowString && !m_isMoveCursor && !m_isMax)
+		{
+			stringWidth = GetStringLength("おかねないね") * kHalfFontSize;
+			DrawString(250 - stringWidth / 2, 250, "おかねないね", GetColor(0, 0, 0), true);
+		}
 	}
+
 	if (m_isMoveCursor && !m_isShowString)
 	{
 		switch (m_itemSelectNum)
@@ -442,7 +515,7 @@ void SceneShop::Draw()
 	}
 	//所持金を表示する
 	DrawExtendGraph(kBoxPosX, kBoxPosY, kBoxPosX + kBoxWidth, kBoxPosY + kBoxHeight, m_backBoxGraph, true);
-	DrawFormatString(kGoldPosX - ArrRight(UserData::userGold), kGoldPosY, GetColor(255, 255, 255), "%d", UserData::userGold);
+	DrawFormatString(kGoldPosX - ArrRight(m_showGold), kGoldPosY + m_shakeGoldPosY, GetColor(255, 255, 255), "%d", m_showGold);
 	DrawString(kGPosX, kGoldPosY, "G", GetColor(255, 255, 255));
 	//アイテムの表示
 	DrawRectRotaGraph(800, kItemPosY,
@@ -642,6 +715,30 @@ int SceneShop::ArrRight(int num)
 	else if (num >= 10)
 	{
 		return 1 * kHalfFontSize;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+int SceneShop::GetDigits(int num)
+{
+	if (num > 1000)
+	{
+		return GetRand(1000);
+	}
+	else if (num > 100)
+	{
+		return GetRand(100);
+	}
+	else if (num > 10)
+	{
+		return GetRand(10);
+	}
+	else if (num > 0)
+	{
+		return 1;
 	}
 	else
 	{

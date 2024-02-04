@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 #include "Scene.h"
 #include "Game.h"
 class Player;
@@ -18,6 +19,8 @@ public:
 	void MoveScene(bool up);
 	//シーンを選んでいる時に出てくる三角形
 	void DrawSceneSrideTriangle();
+	//表示するボスを決める
+	int GetShowBossKind(int num);
 private:
 	//今選択しているシーンを保存する
 	int m_stageSelectNum;
@@ -81,4 +84,23 @@ private:
 	bool m_isMoveMainScene;
 	//ストーリーの画像が入っている配列
 	int m_storyGraph[8];
+	//どのステージまでクリアしたか
+	int m_clearStageNum;
+	//プレイヤーとプリンセスの座標
+	int m_charPosY;
+	//プレイヤーとプリンセスがステージの上まで行ったかどうか
+	bool m_isCharArrTopEnd;
+	//プレイヤーとプリンセスがステージの下まで行ったかどうか
+	bool m_isCharArrBottomEnd;
+	//プレイヤーとプリンセスが下に動いているかどうか
+	bool m_isCharMoveDown;
+	//各ステージのボスのグラフィック
+	int m_enemyGraph;
+	//表示するボス
+	int m_bossSrcX;
+	int m_bossSrcY;
+	//ボスのアニメーション
+	int m_bossAnimFrame;
+	//ボスを出現させるときフェードインで出現させる
+	int m_bossAlpha;
 };

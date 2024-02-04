@@ -92,6 +92,8 @@ public:
 	int GetSceneNum() { return m_selectScene; }
 	//Uiを表示する背景を取得する
 	int GetUiBg() { return m_uiBgGraph; }
+	//出てくるボスの数を設定する
+	void SetBossVol(int stageNum);
 
 private:
 	// グラフィックのハンドル
@@ -253,6 +255,8 @@ private:
 	int m_startTutorialNum;
 	//今表示しているチュートリアルが何枚目か
 	int m_nowShowTutorialNum;
+	//効果音が鳴ったかどうか
+	bool m_isLastSe;
 
 
 };

@@ -1,6 +1,6 @@
 #include "UserData.h"
 
-int UserData::userGold = 56320;
+int UserData::userGold = 800;
 int UserData::userExp = 0;
 int UserData::userMainLevel = 0;
 int UserData::userAtkLevel = 0;
