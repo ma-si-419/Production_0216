@@ -34,7 +34,7 @@ MagicBase::MagicBase(Princess* pPrincess,float scale) :
 	//炎魔法の攻撃力の初期化
 	m_fireAtk(UserData::userFireLevel * 1.0f),
 	//風魔法の攻撃力の初期化
-	m_windAtk(UserData::userWindLevel * 0.5f),
+	m_windAtk(UserData::userWindLevel * 0.15f),
 	//魔法の大きさの初期化
 	m_scale(scale),
 	//最初に撃っている魔法を炎にする

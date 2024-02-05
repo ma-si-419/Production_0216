@@ -50,7 +50,7 @@ namespace
 	//ƒLƒƒƒ‰‚ÌŠg‘å—¦
 	constexpr float kCharcterScale = 5.0f;
 	//ƒx[ƒX‚ÌUŒ‚—Í
-	constexpr float kBaseAtk = 1.0f;
+	constexpr float kBaseAtk = 0.5f;
 	//—h‚ê‚é‘å‚«‚³
 	constexpr int kShakeWidth = 2;
 	//—h‚ê‚éŠÔ

@@ -70,6 +70,11 @@ void DataManager::Init()
 	soundMap["hitPrincessSe"] = LoadSoundMem("data/sound/hitPrincessSe.mp3");
 	//メインシーンに移行するときにならす音
 	soundMap["moveMainSceneSe"] = LoadSoundMem("data/sound/moveMainSceneSe.mp3");
+	//プレイヤーが倒れた時に鳴らす音(二つ)
+	soundMap["playerTurnSe"] = LoadSoundMem("data/sound/playerTurnSe.mp3");
+	soundMap["playerDeathSe"] = LoadSoundMem("data/sound/playerDeathSe.mp3");
+	//プレイヤーが立ち上がるときにならす音
+	soundMap["playerStandUpSe"] = LoadSoundMem("data/sound/playerStandUpSe.mp3");
 	//プレイヤーのグラフィック
 	graphMap["playerGraph"] = LoadGraph("data/image/Monkey.png");
 	//プリンセスのグラフィック

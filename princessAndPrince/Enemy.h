@@ -16,17 +16,17 @@ public:
 		goblin,
 		boar,
 		doragon,
-		skeleton,
+		blackSkeleton,
 		snowman,
 		redGoblin,
-		blackSkeleton,
+		skeleton,
 		bossGoblin,
 		bossBoar,
 		bossDoragon,
-		bossSkeleton,
+		bossBlackSkeleton,
 		bossSnowman,
 		bossRedGoblin,
-		bossBlackSkeleton,
+		bossSkeleton,
 		bossDemonKing
 	};
 
@@ -74,6 +74,8 @@ private:
 	bool m_isBoss;
 	//キャラの大きさ
 	float m_scale;
+	//当たり判定の大きさ
+	float m_colScale;
 	//使う画像のY座標を入れる
 	int m_srcY;
 	//弱点の当たり判定をとる

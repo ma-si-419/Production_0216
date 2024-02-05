@@ -185,7 +185,7 @@ void TreasureBox::Draw()
 
 void TreasureBox::HitPlayer(Player* player)
 {
-	m_hp -= GetRand(5) + 1;
+	m_hp -= GetRand(5) + 2;
 	//ノックバック処理を入れる
 	m_knockBackVec = player->GetMoveVec() * -1;
 	m_knockBackVec.Normalize();

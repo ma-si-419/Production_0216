@@ -185,6 +185,10 @@ void Player::Update()
 			/////////////////////////////////////////////////////////////////////////
 			//現在の体力が最大値よりも大きくならないように
 			m_nowHp = m_hp;
+			if (!CheckSoundMem(m_standUpSe))
+			{
+				PlaySoundMem(m_standUpSe, DX_PLAYTYPE_BACK);
+			}
 			//アニメーションを動かすかどうか
 			bool isAnimEnd = false;
 			if (m_animFrame / kAnimFrameNum == 2)
@@ -343,7 +347,7 @@ void Player::Update()
 	if (m_pMain->GetSpecialMode())
 	{
 		m_nowHp = m_hp;
-		m_atk = (2.0f + (UserData::userAtkLevel * 0.5f)) * 1.5f;
+		m_atk = (2.0f + (UserData::userAtkLevel * 0.5f)) * 0.7f;
 		m_spd = 4.0f;
 	}
 	else
@@ -355,6 +359,10 @@ void Player::Update()
 	if (m_animFrame % 24 == 0)
 	{
 		m_isAngryFireReverseFlag = !m_isAngryFireReverseFlag;
+	}
+	if (m_nowHp <= 0)
+	{
+		m_nowState = Game::kDelete;
 	}
 }
 
@@ -550,6 +558,10 @@ void Player::DeathMove()
 		//死亡演出
 		if (m_knockBackTime < 20)
 		{
+			if (!CheckSoundMem(m_playerTurnSe))
+			{
+				PlaySoundMem(m_playerTurnSe, DX_PLAYTYPE_BACK);
+			}
 			m_dir = Game::kDirDown;
 			m_animFrame = 0;
 		}
@@ -564,17 +576,23 @@ void Player::DeathMove()
 		else if (m_knockBackTime < 80)
 		{
 			m_dir = Game::kDirRight;
+
 		}
 		else
 		{
 			if (!m_pMain->GetSpecialMode())
 			{
+				if (!CheckSoundMem(m_playerDeathSe))
+				{
+					PlaySoundMem(m_playerDeathSe, DX_PLAYTYPE_BACK);
+				}
 				m_dir = Game::kDirDeath;
 			}
 		}
 		//一定時間ノックバックしたら
 		if (m_knockBackTime > 100)
 		{
+
 			m_knockBack *= 0;
 			m_knockBackTime = 0;
 			//倒れたフラッグを立てる

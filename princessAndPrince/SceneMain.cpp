@@ -81,7 +81,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_clearTime(0),
 	m_nextEnemyKind(0),
 	m_nextEnemyPopTime(0),
-	m_specialGauge(100),
+	m_specialGauge(0),
 	m_isSpecialMode(false),
 	m_isPause(false),
 	m_isStop(false),
@@ -123,6 +123,9 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_pPlayer->SetHandle(m_playerHandle);
 	m_pPlayer->SetPlayerAngryGraph(m_dataManager.SearchGraph("angryMonkeyGraph"));
 	m_pPlayer->SetAngryFireGraph(m_dataManager.SearchGraph("angryFireGraph"));
+	m_pPlayer->SetTurnSe(m_dataManager.SearchSound("playerTurnSe"));
+	m_pPlayer->SetDeathSe(m_dataManager.SearchSound("playerDeathSe"));
+	m_pPlayer->SetStandUpSe(m_dataManager.SearchSound("playerStandUpSe"));
 	//プリンセスのグラフィックのロード
 	m_princessHandle = m_dataManager.SearchGraph("princessGraph");
 	//Princessのコンストラクタ
@@ -232,6 +235,8 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 		m_startTutorialNum = 5;
 		m_nowShowTutorialNum = m_startTutorialNum;
 	default:
+		m_tutorialNum = 0;
+		m_nowShowTutorialNum = 0;
 		break;
 	}
 }
@@ -282,6 +287,11 @@ void SceneMain::Update(Pad& pad)
 		CountKillBoss();
 	}
 #endif 
+	if (m_tutorialNum == 0)
+	{
+		m_isShowTutorial = false;
+		m_isShowReady = true;
+	}
 	//エンターキーを押したら次のチュートリアルに移行する
 	if (CheckHitKey(KEY_INPUT_RETURN) && !m_isLastKey && m_isShowTutorial ||
 		m_input.Buttons[XINPUT_BUTTON_A] && !m_isLastKey && m_isShowTutorial)
@@ -355,7 +365,6 @@ void SceneMain::Update(Pad& pad)
 			//リザルト画面に移行する
 			m_isResult = true;
 		}
-		//Enemyの数だけ回す後で仕様変更
 		//エネミーのスタックがなくなるまで回す
 		if (!m_popEnemyList.empty())
 		{
@@ -373,7 +382,7 @@ void SceneMain::Update(Pad& pad)
 				CreateEnemy(m_nextEnemyKind);
 				//次に出てくるエネミーの情報を入れる
 				popEnemy temp = m_popEnemyList.top();
-				m_enemyPopTimeCount = temp.popTime;
+				m_nextEnemyPopTime = temp.popTime;
 				m_nextEnemyKind = temp.enemyKind;
 				m_popEnemyList.pop();
 				if (m_nextEnemyKind > 6 && !m_isBossFlag)
@@ -411,7 +420,7 @@ void SceneMain::Update(Pad& pad)
 							if (!m_isSpecialMode)
 							{
 								//敵の攻撃力に応じてゲージを上昇させる
-								AddSpecialGauge(enemy->GetAtk() / 2);
+								AddSpecialGauge(enemy->GetAtk() * 0.75);
 							}
 							//エネミーの状態を推移させる
 							enemy->m_nowState = Game::kHitPlayer;
@@ -1122,11 +1131,11 @@ void SceneMain::SetBossVol(int stageNum)
 	}
 	else if (stageNum == 3)
 	{
-		m_bossCount = 3;
+		m_bossCount = 2;
 	}
 	else if (stageNum == 4)
 	{
-		m_bossCount = 1;
+		m_bossCount = 3;
 	}
 	else if (stageNum == 5)
 	{
@@ -1138,7 +1147,7 @@ void SceneMain::SetBossVol(int stageNum)
 	}
 	else if (stageNum == 7)
 	{
-		m_bossCount = 1;
+		m_bossCount = 7;
 	}
 }
 

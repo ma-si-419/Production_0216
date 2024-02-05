@@ -62,7 +62,8 @@ Enemy::Enemy(SceneMain* pMain) :
 	m_scale(0.0f),
 	m_srcY(0),
 	m_knockBackPow(0),
-	m_itemHandle(0)
+	m_itemHandle(0),
+	m_colScale(0)
 {
 	m_animFrame = 0;
 	m_nowState = Game::kNormal;
@@ -85,9 +86,10 @@ void Enemy::Init(int kinds)
 		m_atk = 3.0f;
 		m_spd = 0.2f;
 		m_scale = kEnemySize;
+		m_colScale = kEnemySize;
 		m_srcY = 0;
-		m_haveGold = GetRand(8) + 5;
-		m_haveExp = GetRand(3) + 1;
+		m_haveGold = GetRand(20) + 20;
+		m_haveExp = GetRand(5) + 4;
 		m_kind = goblin;
 		m_isBoss = false;
 		m_knockBackPow = 2;
@@ -98,8 +100,9 @@ void Enemy::Init(int kinds)
 		m_atk = 2.0f;
 		m_spd = 0.75f;
 		m_scale = kEnemySize;
+		m_colScale = kEnemySize;
 		m_srcY = 1;
-		m_haveGold = GetRand(15) + 10;
+		m_haveGold = GetRand(25) + 15;
 		m_haveExp = GetRand(5) + 2;
 		m_kind = boar;
 		m_isBoss = false;
@@ -108,10 +111,11 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(doragon))
 	{
-		m_hp = 15;
+		m_hp = 20;
 		m_atk = 20.0f;
-		m_spd = 0.08f;
+		m_spd = 0.09f;
 		m_scale = kEnemySize;
+		m_colScale = kEnemySize;
 		m_srcY = 2;
 		m_haveGold = GetRand(150) + 100;
 		m_haveExp = GetRand(30) + 30;
@@ -120,25 +124,27 @@ void Enemy::Init(int kinds)
 		m_knockBackPow = 4;
 
 	}
-	else if (kinds == static_cast<int>(skeleton))
+	else if (kinds == static_cast<int>(blackSkeleton))
 	{
-		m_hp = 18;
+		m_hp = 20;
 		m_atk = 4.5f;
 		m_spd = 0.4f;
 		m_scale = kEnemySize;
+		m_colScale = kEnemySize;
 		m_srcY = 3;
-		m_kind = skeleton;
-		m_haveGold = GetRand(40) + 30;
-		m_haveExp = GetRand(20) + 10;
+		m_kind = blackSkeleton;
+		m_haveGold = GetRand(80) + 60;
+		m_haveExp = GetRand(40) + 20;
 		m_isBoss = false;
 		m_knockBackPow = 2;
 	}
 	else if (kinds == static_cast<int>(snowman))
 	{
-		m_hp = 80;
+		m_hp = 100;
 		m_atk = 5.0f;
 		m_spd = 0.1f;
 		m_scale = kEnemySize;
+		m_colScale = kEnemySize;
 		m_srcY = 4;
 		m_kind = snowman;
 		m_haveGold = GetRand(100) + 50;
@@ -149,26 +155,28 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(redGoblin))
 	{
 		m_hp = 15;
-		m_atk = 4.0f;
+		m_atk = 3.5f;
 		m_spd = 0.25f;
 		m_scale = kEnemySize;
+		m_colScale = kEnemySize;
 		m_srcY = 5;
-		m_haveGold = GetRand(16) + 10;
-		m_haveExp = GetRand(6) + 2;
+		m_haveGold = GetRand(30) + 30;
+		m_haveExp = GetRand(15) + 15;
 		m_kind = redGoblin;
 		m_isBoss = false;
 		m_knockBackPow = 2;
 	}
-	else if (kinds == static_cast<int>(blackSkeleton))
+	else if (kinds == static_cast<int>(skeleton))
 	{
-		m_hp = 30;
-		m_atk = 7.0f;
+		m_hp = 11;
+		m_atk = 3.5f;
 		m_spd = 0.5f;
 		m_scale = kEnemySize;
+		m_colScale = kEnemySize;
 		m_srcY = 6;
-		m_kind = blackSkeleton;
-		m_haveGold = GetRand(80) + 60;
-		m_haveExp = GetRand(40) + 20;
+		m_kind = skeleton;
+		m_haveGold = GetRand(20) + 20;
+		m_haveExp = GetRand(10) + 10;
 		m_isBoss = false;
 		m_knockBackPow = 2;
 	}
@@ -178,6 +186,7 @@ void Enemy::Init(int kinds)
 		m_atk = 6.0f;
 		m_spd = 0.2f;
 		m_scale = kBossSize;
+		m_colScale = kBossSize;
 		m_srcY = 0;
 		m_kind = bossGoblin;
 		m_haveGold = GetRand(150) + 100;
@@ -191,6 +200,7 @@ void Enemy::Init(int kinds)
 		m_atk = 3.0f;
 		m_spd = 0.4f;
 		m_scale = kBossSize;
+		m_colScale = kBossSize;
 		m_srcY = 1;
 		m_kind = bossBoar;
 		m_haveGold = GetRand(300) + 200;
@@ -201,10 +211,11 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(bossDoragon))
 	{
-		m_hp = 150;
+		m_hp = 200;
 		m_atk = 30.0f;
-		m_spd = 0.08f;
+		m_spd = 0.09f;
 		m_scale = kBossSize;
+		m_colScale = kBossSize;
 		m_srcY = 2;
 		m_kind = bossDoragon;
 		m_haveGold = GetRand(500) + 800;
@@ -212,14 +223,15 @@ void Enemy::Init(int kinds)
 		m_isBoss = true;
 		m_knockBackPow = 3;
 	}
-	else if (kinds == static_cast<int>(bossSkeleton))
+	else if (kinds == static_cast<int>(bossBlackSkeleton))
 	{
-		m_hp = 120;
+		m_hp = 60;
 		m_atk = 7.0f;
 		m_spd = 0.3f;
 		m_scale = kBossSize;
+		m_colScale = 1.5f;
 		m_srcY = 3;
-		m_kind = bossSkeleton;
+		m_kind = bossBlackSkeleton;
 		m_haveGold = GetRand(400) + 400;
 		m_haveExp = GetRand(100) + 80;
 		m_isBoss = true;
@@ -227,10 +239,11 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(bossSnowman))
 	{
-		m_hp = 300;
-		m_atk = 12.0f;
+		m_hp = 400;
+		m_atk = 7.0f;
 		m_spd = 0.1f;
 		m_scale = kBossSize;
+		m_colScale = kBossSize;
 		m_srcY = 4;
 		m_kind = bossSnowman;
 		m_haveGold = GetRand(2000) + 2000;
@@ -241,9 +254,10 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(bossRedGoblin))
 	{
 		m_hp = 60;
-		m_atk = 7.0f;
+		m_atk = 5.5f;
 		m_spd = 0.25f;
 		m_scale = kBossSize;
+		m_colScale = kBossSize;
 		m_srcY = 5;
 		m_kind = bossRedGoblin;
 		m_haveGold = GetRand(300) + 200;
@@ -251,16 +265,17 @@ void Enemy::Init(int kinds)
 		m_isBoss = true;
 		m_knockBackPow = 2;
 	}
-	else if (kinds == static_cast<int>(bossBlackSkeleton))
+	else if (kinds == static_cast<int>(bossSkeleton))
 	{
-		m_hp = 100;
-		m_atk = 9.0f;
-		m_spd = 0.35f;
+		m_hp = 50;
+		m_atk = 4.5f;
+		m_spd = 0.5f;
 		m_scale = kBossSize;
+		m_colScale = 1.5f;
 		m_srcY = 6;
-		m_kind = bossBlackSkeleton;
-		m_haveGold = GetRand(800) + 800;
-		m_haveExp = GetRand(200) + 160;
+		m_kind = bossSkeleton;
+		m_haveGold = GetRand(300) + 200;
+		m_haveExp = GetRand(100) + 100;
 		m_isBoss = true;
 		m_knockBackPow = 2;
 	}
@@ -270,6 +285,7 @@ void Enemy::Init(int kinds)
 		m_atk = 12.0f;
 		m_spd = 0.3f;
 		m_scale = kBossSize;
+		m_colScale = kBossSize;
 		m_srcY = 7;
 		m_kind = bossDemonKing;
 		m_haveGold = GetRand(8000) + 8000;
@@ -352,7 +368,7 @@ void Enemy::Update()
 					pGold->SetPrice(m_haveGold);
 					pGold->SetHandle(m_itemHandle);
 					m_pMain->AddItem(pGold);
-					if (GetRand(100) < kDropProb)
+					if (GetRand(100) < kDropProb && !m_isBoss)
 					{
 						m_pTreasureBox = new TreasureBox(m_pMain);
 						m_pTreasureBox->Init(m_pos);
@@ -399,7 +415,7 @@ void Enemy::Update()
 			m_pos += m_moveVec;
 			m_pos -= m_knockBack;
 			//当たり判定の更新
-			m_circleCol.SetCenter(m_pos, m_radius * m_scale);
+			m_circleCol.SetCenter(m_pos, m_radius * m_colScale);
 			//弱点のY座標の更新
 			m_weakPos.y = m_pos.y + kShiftPosY;
 		}
@@ -417,7 +433,7 @@ void Enemy::Update()
 
 		}
 		//弱点当たり判定の更新
-		m_weakCircle.SetCenter(m_weakPos, m_radius * m_scale);
+		m_weakCircle.SetCenter(m_weakPos, m_radius * m_colScale);
 	}
 }
 void Enemy::Draw()
@@ -522,7 +538,7 @@ void Enemy::HitMagic(MagicBase* magic)
 		pGold->Init(m_pos);
 		pGold->SetHandle(m_itemHandle);
 		m_pMain->AddItem(pGold);
-		if (GetRand(100) < kDropProb)
+		if (GetRand(100) < kDropProb && !m_isBoss)
 		{
 			m_pTreasureBox = new TreasureBox(m_pMain);
 			m_pTreasureBox->Init(m_pos);

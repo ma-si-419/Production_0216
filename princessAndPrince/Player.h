@@ -69,6 +69,10 @@ public:
 	//怒りモード時のグラフィック
 	void SetPlayerAngryGraph(int graph) { m_playerAngryGraph = graph; }
 	void SetAngryFireGraph(int graph) { m_angryFireGraph = graph; }
+	//死んだときの効果音
+	void SetTurnSe(int sound) { m_playerTurnSe = sound; }
+	void SetDeathSe(int sound) { m_playerDeathSe = sound; }
+	void SetStandUpSe(int sound) { m_standUpSe = sound; }
 private:
 	//シーンメインのポインタを入れる
 	SceneMain* m_pMain;
@@ -120,4 +124,10 @@ private:
 	int m_angryFireGraph;
 	//炎を反転させるかどうか
 	bool m_isAngryFireReverseFlag;
+	//プレイヤーが倒されて回っているときの効果音
+	int m_playerTurnSe;
+	//プレイヤーが倒れるときの効果音
+	int m_playerDeathSe;
+	//プレイヤーが立ち上がるときの効果音
+	int m_standUpSe;
 };
