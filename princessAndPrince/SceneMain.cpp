@@ -248,6 +248,12 @@ SceneMain::~SceneMain()
 void SceneMain::Init()
 {
 	{
+		//表示するチュートリアルがなかったら
+		if (m_tutorialNum == 0)
+		{
+			m_isShowTutorial = false;
+			m_isShowReady = true;
+		}
 		//出てくる敵の情報を設定する
 		SetBossVol(m_selectScene);
 		SetEnemyInfo(m_selectScene);
@@ -287,11 +293,6 @@ void SceneMain::Update(Pad& pad)
 		CountKillBoss();
 	}
 #endif 
-	if (m_tutorialNum == 0)
-	{
-		m_isShowTutorial = false;
-		m_isShowReady = true;
-	}
 	//エンターキーを押したら次のチュートリアルに移行する
 	if (CheckHitKey(KEY_INPUT_RETURN) && !m_isLastKey && m_isShowTutorial ||
 		m_input.Buttons[XINPUT_BUTTON_A] && !m_isLastKey && m_isShowTutorial)
