@@ -221,6 +221,8 @@ private:
 	int m_windMagicSe;
 	//炎魔法の効果音
 	int m_fireMagicSe;
+	//姫が死んだときの効果音
+	int m_princessDeathSe;
 	//聖剣モードを始めるときに鳴らす効果音
 	int m_specialModeSe;
 	//ポーションをとった際の効果音
@@ -257,5 +259,13 @@ private:
 	int m_nowShowTutorialNum;
 	//効果音が鳴ったかどうか
 	bool m_isLastSe;
+	//黒いボックス
+	int m_boxGraph;
+	//黒いボックスの拡大率
+	float m_boxRatio;
+	//黒いボックスの角度
+	float m_boxAngle;
+	//ボックスが動いているか
+	bool m_isMoveBox;
 
 };

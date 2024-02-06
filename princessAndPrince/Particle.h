@@ -36,9 +36,11 @@ private:
 	float m_appearLange;
 	//存在しているかどうかフラグ
 	bool m_isExist;
-	//色の種類
+	//色
 	int m_color;
 	//移動速度
 	float m_spd;
+	//白いパーティクルかどうか
+	bool m_isWhite;
 };
 

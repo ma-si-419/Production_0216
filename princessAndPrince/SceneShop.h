@@ -35,9 +35,9 @@ private:
 	//今回った数を保存する
 	int m_loopCount;
 	//プレイヤーのアイテムの値段の配列
-	int m_playerItemPriceList[20];
+	int m_playerItemPriceList[21];
 	//魔女のアイテムの値段の配列
-	int m_princessItemPriceList[20];
+	int m_princessItemPriceList[21];
 	//カーソルを動かしたときの効果音
 	int m_cursorSe;
 	//フェード中に連打できないように

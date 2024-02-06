@@ -612,6 +612,8 @@ void SceneShop::Draw()
 	}
 	//風魔法のレベルがマックスだったらMAXと表示する
 	if (UserData::userWindLevel == kMaxLevel)
+
+
 	{
 		//MAXと表示する
 		DrawString(kWindItemPosX, kPrincessItemLevelPosY, "M A X", GetColor(0, 0, 0), false);

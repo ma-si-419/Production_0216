@@ -112,7 +112,10 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_readyCount(0),
 	m_isShowTutorial(true),
 	m_isLastKey(false),
-	m_isLastSe(true)
+	m_isLastSe(true),
+	m_boxAngle(0),
+	m_boxRatio(25),
+	m_isMoveBox(true)
 
 {
 	//プレイヤーのグラフィックのロード
@@ -186,6 +189,10 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_angryMarkGraph = m_dataManager.SearchGraph("angryMarkGraph");
 	//ゲーム開始時に表示する画像
 	m_readyGraph = m_dataManager.SearchGraph("READYGraph");
+	//ゲームオーバー時の効果音
+	m_princessDeathSe = m_dataManager.SearchSound("princessDeathSe");
+	//黒いボックスの画像
+	m_boxGraph = m_dataManager.SearchGraph("boxGraph");
 	//チュートリアル画像
 	m_tutorialGraph[0] = m_dataManager.SearchGraph("tutorialGraph1");
 	m_tutorialGraph[1] = m_dataManager.SearchGraph("tutorialGraph2");
@@ -293,26 +300,40 @@ void SceneMain::Update(Pad& pad)
 		CountKillBoss();
 	}
 #endif 
-	//エンターキーを押したら次のチュートリアルに移行する
-	if (CheckHitKey(KEY_INPUT_RETURN) && !m_isLastKey && m_isShowTutorial ||
-		m_input.Buttons[XINPUT_BUTTON_A] && !m_isLastKey && m_isShowTutorial)
+	if (m_boxRatio > 0)
 	{
-		m_nowShowTutorialNum++;
-		m_isLastKey = true;
-		PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
-		//すべてのチュートリアルを表示したら
-		if (m_startTutorialNum + m_tutorialNum <= m_nowShowTutorialNum)
-		{
-			//チュートリアルを終了する
-			m_isShowTutorial = false;
-			//READYを表示する
-			m_isShowReady = true;
-		}
+		m_boxAngle -= 0.15f;
+		m_boxRatio -= 0.4f;
 	}
-	//エンターキーが連続で入力されないように
-	else if (!CheckHitKey(KEY_INPUT_RETURN) && !m_input.Buttons[XINPUT_BUTTON_A])
+	else if (m_isMoveBox)
 	{
-		m_isLastKey = false;
+		m_boxRatio = 0;
+		m_isMoveBox = false;
+	}
+	if (!m_isMoveBox)
+	{
+
+		//エンターキーを押したら次のチュートリアルに移行する
+		if (CheckHitKey(KEY_INPUT_RETURN) && !m_isLastKey && m_isShowTutorial ||
+			m_input.Buttons[XINPUT_BUTTON_A] && !m_isLastKey && m_isShowTutorial)
+		{
+			m_nowShowTutorialNum++;
+			m_isLastKey = true;
+			PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
+			//すべてのチュートリアルを表示したら
+			if (m_startTutorialNum + m_tutorialNum <= m_nowShowTutorialNum)
+			{
+				//チュートリアルを終了する
+				m_isShowTutorial = false;
+				//READYを表示する
+				m_isShowReady = true;
+			}
+		}
+		//エンターキーが連続で入力されないように
+		else if (!CheckHitKey(KEY_INPUT_RETURN) && !m_input.Buttons[XINPUT_BUTTON_A])
+		{
+			m_isLastKey = false;
+		}
 	}
 	//READYが表示されている間
 	if (m_isShowReady)
@@ -323,7 +344,7 @@ void SceneMain::Update(Pad& pad)
 			m_isShowReady = false;
 		}
 	}
-	if (!m_isPause && !m_isShowReady && !m_isShowTutorial)
+	if (!m_isPause && !m_isShowReady && !m_isShowTutorial && m_boxRatio == 0)
 	{
 		//音楽再生
 		if (m_isMusicFlag && !m_isBossFlag)
@@ -350,6 +371,10 @@ void SceneMain::Update(Pad& pad)
 		{
 			//音楽の再生を止める
 			StopSoundFile();
+			if (!m_isResult)
+			{
+				PlaySoundMem(m_princessDeathSe, DX_PLAYTYPE_BACK);
+			}
 			for (auto& enemy : m_pEnemy)
 			{
 				if (enemy)
@@ -421,7 +446,7 @@ void SceneMain::Update(Pad& pad)
 							if (!m_isSpecialMode)
 							{
 								//敵の攻撃力に応じてゲージを上昇させる
-								AddSpecialGauge(enemy->GetAtk() * 0.75);
+								AddSpecialGauge(enemy->GetAtk() * 0.85);
 							}
 							//エネミーの状態を推移させる
 							enemy->m_nowState = Game::kHitPlayer;
@@ -750,6 +775,10 @@ void SceneMain::Update(Pad& pad)
 			{
 				//減らす量を決める
 				temp = GetDigits(m_pPlayer->GetExp());
+				if (temp > m_expList[UserData::userMainLevel] - UserData::userExp)
+				{
+					temp = m_expList[UserData::userMainLevel] - UserData::userExp;
+				}
 				m_pPlayer->SubExp(temp);
 				UserData::userExp += temp;
 				if (UserData::userExp >= m_expList[UserData::userMainLevel])
@@ -955,7 +984,9 @@ void SceneMain::Draw()
 	{
 		DrawGraph(120, 300, m_tutorialGraph[m_nowShowTutorialNum], true);
 	}
-
+	//黒いボックスを表示する
+	DrawRotaGraph(Game::kScreenWidth / 2, Game::kPlayScreenHeight / 2,//座標
+		m_boxRatio, m_boxAngle, m_boxGraph, true, 0, 0);
 }
 
 bool SceneMain::AddItem(std::shared_ptr<ItemBase> pItem)

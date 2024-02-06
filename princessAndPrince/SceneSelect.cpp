@@ -8,6 +8,7 @@
 #include "SceneShop.h"
 #include "UserData.h"
 #include "Player.h"
+#include "MyString.h"
 namespace
 {
 	//ステージの数
@@ -82,6 +83,8 @@ namespace
 	constexpr int kBossPosY = 300;
 	//ボスのフェードの速さ
 	constexpr int kBossFadeSpeed = 10;
+	//配列の大きさ
+	constexpr int kArraySize = 81;
 }
 SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
 	Scene(sceneManager, DataManager),
@@ -112,7 +115,10 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, i
 	m_bossSrcY(selectSceneNum),
 	m_bossSrcX(0),
 	m_bossAnimFrame(0),
-	m_bossAlpha(0)
+	m_bossAlpha(0),
+	m_boxRatio(0),
+	m_boxAngle(0),
+	m_isBuy(false)
 {
 	m_appSe = DataManager.SearchSound("approveSe");
 	m_moveMainSceneSe = DataManager.SearchSound("moveMainSceneSe");
@@ -136,7 +142,8 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, i
 	m_storyGraph[6] = DataManager.SearchGraph("storyGraph7");
 	m_storyGraph[7] = DataManager.SearchGraph("storyGraph8");
 	m_enemyGraph = DataManager.SearchGraph("enemyGraph");
-
+	m_exclamationMarkGraph = DataManager.SearchGraph("exclamationMarkGraph");
+	m_boxGraph = DataManager.SearchGraph("boxGraph");
 }
 
 SceneSelect::~SceneSelect()
@@ -145,6 +152,27 @@ SceneSelect::~SceneSelect()
 
 void SceneSelect::Init()
 {
+	int loopCount = 0;
+	//ファイルを開く
+	std::ifstream ifs("./data/ItemPriceTable.txt");
+	//帰ってきた値を返す配列
+	vector<string> tempS;
+	//配列を作成
+	char str[kArraySize];
+	//成功したら一行ずつ読み込む
+	while (ifs.getline(str, kArraySize))
+	{
+		//分割
+		tempS = MyString::split(str, ",");
+		ItemPrice tempItem;
+		tempItem.playerItemPrice = std::stoi(tempS[0]);
+		tempItem.princessItemPrice = std::stof(tempS[1]);
+		m_playerItemPriceList[loopCount] = tempItem.playerItemPrice;
+		m_princessItemPriceList[loopCount] = tempItem.princessItemPrice;
+		loopCount++;
+	}
+	ifs.close();
+	m_isBuy = GetCanBuyItem();
 }
 
 void SceneSelect::End()
@@ -411,8 +439,11 @@ void SceneSelect::Update(Pad& pad)
 		m_bossSrcX = 0;
 	}
 
+	//メインシーンに移動する
 	if (m_isMoveMainScene)
 	{
+		m_boxAngle += 0.15f;
+		m_boxRatio += 0.4f;
 		//音が鳴りやんだらフェードしていく
 		if (!CheckSoundMem(m_moveMainSceneSe))
 		{
@@ -469,6 +500,12 @@ void SceneSelect::Draw()
 	DrawGraph(130, 200, m_storyGraph[m_stageSelectNum], true);
 	//左下に操作方法表示
 	DrawGraph(130, 650, m_buttonsUiGraph, true);
+	//変えるアイテムがあったら
+	if (m_isBuy)
+	{
+		//お店の左上にビックリマーク表示
+		DrawGraph(1050, 370, m_exclamationMarkGraph, true);
+	}
 	//選んでいるステージを表示する
 	{
 		int stringWidth;
@@ -513,6 +550,9 @@ void SceneSelect::Draw()
 	//ショップの表示
 	DrawRectExtendGraph(static_cast<int>(m_shopStartPosX), static_cast<int>(m_shopStartPosY),
 		m_shopEndPosX, m_shopEndPosY, m_shopSrcX, m_shopSrcY, 64, 64, m_shopGraph, true);
+	//メインシーンに移動時に出てくるボックス
+	DrawRotaGraph(Game::kScreenWidth / 2, Game::kPlayScreenHeight / 2,//座標
+		static_cast<double>(m_boxRatio), static_cast<double>(m_boxAngle), m_boxGraph, true, 0, 0);
 }
 
 void SceneSelect::MoveScene(bool up)
@@ -608,6 +648,34 @@ int SceneSelect::GetShowBossKind(int num)
 	else
 	{
 		return 0;
+	}
+}
+
+bool SceneSelect::GetCanBuyItem()
+{
+	if (UserData::userGold >= m_playerItemPriceList[UserData::userAtkLevel])
+	{
+		return true;
+	}
+	else if (UserData::userGold >= m_playerItemPriceList[UserData::userDefLevel])
+	{
+		return true;
+	}
+	else if (UserData::userGold >= m_playerItemPriceList[UserData::userSpdLevel])
+	{
+		return true;
+	}
+	else if (UserData::userGold >= m_playerItemPriceList[UserData::userFireLevel])
+	{
+		return true;
+	}
+	else if (UserData::userGold >= m_playerItemPriceList[UserData::userWindLevel])
+	{
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 

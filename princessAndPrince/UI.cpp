@@ -18,8 +18,12 @@ namespace
 	constexpr int kFontSize = 24;
 	//ステータスを表示する座標
 	constexpr int kStatusPos = 1100;
+	//プレイヤーのレベルをを表示する座標
+	constexpr int kMainStatusPos = 1210;
 	//ステータスのレベルを表示座標
 	constexpr int kStatusLevelPos = 1430;
+	//メインレベルの数を表示する座標
+	constexpr int kMainLevelPos = 1325;
 	//取得したアイテムを表示する座標
 	constexpr int kGetItemPos = 1350;
 	//フォントの後ろに表示する影のずらす大きさ
@@ -28,6 +32,8 @@ namespace
 	constexpr int kItemGraphScale = 32;
 	//Uiを揺らす幅
 	constexpr int kShakeLange = 1;
+	//Uiを表示する座標
+	constexpr int kUiPosYArr[6] = {315,390,465,540,615,690};
 }
 UI::UI(Player* pPlayer, Princess* pPrincess, SceneMain* pMain) :
 	m_pPlayer(pPlayer),
@@ -212,8 +218,8 @@ void UI::GameOverUI()
 	}
 	if (m_isLeaveButton)
 	{
-		DrawCircle(400, 900, 20, GetColor(255, 255, 255), true);
-		DrawString(500, 900, "で戻る", GetColor(255, 255, 255));
+		DrawRectRotaGraph(440, 900, 0, 0, 32, 32, 2.4, 0.0, m_buttonsGraph, true, 0, 0);
+		DrawString(480, 880, "で戻る", GetColor(255, 255, 255));
 	}
 }
 
@@ -251,41 +257,48 @@ void UI::DrawStatus()
 {
 	//影を表示
 	{
-		DrawString(kStatusPos + kShiftShadowLange, 350 + kShiftShadowLange, "こうげきLv", GetColor(0, 0, 0));
-		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(UserData::userAtkLevel + 1), 350 + kShiftShadowLange,//座標
+		DrawString(kMainStatusPos + kShiftShadowLange, kUiPosYArr[0] + kShiftShadowLange, "Lv", GetColor(0, 0, 0));
+		DrawFormatString(kMainLevelPos + kShiftShadowLange - AlignmentRight(UserData::userMainLevel + 1), kUiPosYArr[0] + kShiftShadowLange,//座標
+			GetColor(0, 0, 0), "%d", UserData::userMainLevel + 1);
+		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[1] + kShiftShadowLange, "こうげきLv", GetColor(0, 0, 0));
+		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(UserData::userAtkLevel + 1), kUiPosYArr[1] + kShiftShadowLange,//座標
 			GetColor(0, 0, 0), "%d", UserData::userAtkLevel + 1);
-		DrawString(kStatusPos + kShiftShadowLange, 440 + kShiftShadowLange, "ぼうぎょLv", GetColor(0, 0, 0));
-		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(UserData::userDefLevel + 1), 440 + kShiftShadowLange,//座標
+		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[2] + kShiftShadowLange, "ぼうぎょLv", GetColor(0, 0, 0));
+		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(UserData::userDefLevel + 1), kUiPosYArr[2] + kShiftShadowLange,//座標
 			GetColor(0, 0, 0), "%d", UserData::userDefLevel + 1);
-		DrawString(kStatusPos + kShiftShadowLange, 530 + kShiftShadowLange, "は や さLv", GetColor(0, 0, 0));
-		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(UserData::userSpdLevel + 1), 530 + kShiftShadowLange,//座標
+		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[3] + kShiftShadowLange, "は や さLv", GetColor(0, 0, 0));
+		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(UserData::userSpdLevel + 1), kUiPosYArr[3] + kShiftShadowLange,//座標
 			GetColor(0, 0, 0), "%d", UserData::userSpdLevel + 1);
-		DrawString(kStatusPos + kShiftShadowLange, 620 + kShiftShadowLange, "ファイアLv", GetColor(0, 0, 0));
-		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(UserData::userFireLevel + 1), 620 + kShiftShadowLange,//座標
+		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[4] + kShiftShadowLange, "ファイアLv", GetColor(0, 0, 0));
+		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(UserData::userFireLevel + 1), kUiPosYArr[4] + kShiftShadowLange,//座標
 			GetColor(0, 0, 0), "%d", UserData::userFireLevel + 1);
-		DrawString(kStatusPos + kShiftShadowLange, 710 + kShiftShadowLange, "ウィンドLv", GetColor(0, 0, 0));
-		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(UserData::userWindLevel + 1), 710 + kShiftShadowLange,//座標
+		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[5] + kShiftShadowLange, "ウィンドLv", GetColor(0, 0, 0));
+		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(UserData::userWindLevel + 1), kUiPosYArr[5] + kShiftShadowLange,//座標
 			GetColor(0, 0, 0), "%d", UserData::userWindLevel + 1);
 	}
+	//メインレベルを表示する
+	DrawString(kMainStatusPos, kUiPosYArr[0], "Lv", GetColor(255, 255, 255));
+	DrawFormatString(kMainLevelPos - AlignmentRight(UserData::userMainLevel + 1), kUiPosYArr[0],//座標
+		GetColor(255, 255, 255), "%d", UserData::userMainLevel + 1);
 	//攻撃力のレベルを表示する
-	DrawString(kStatusPos, 350, "こうげきLv", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userAtkLevel + 1), 350,//座標
+	DrawString(kStatusPos, kUiPosYArr[1], "こうげきLv", GetColor(255, 255, 255));
+	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userAtkLevel + 1), kUiPosYArr[1],//座標
 		GetColor(255, 255, 255), "%d", UserData::userAtkLevel + 1);
 	//防御力のレベルを表示する
-	DrawString(kStatusPos, 440, "ぼうぎょLv", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userDefLevel + 1), 440,//座標
+	DrawString(kStatusPos, kUiPosYArr[2], "ぼうぎょLv", GetColor(255, 255, 255));
+	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userDefLevel + 1), kUiPosYArr[2],//座標
 		GetColor(255, 255, 255), "%d", UserData::userDefLevel + 1);
 	//移動力のレベルを表示する
-	DrawString(kStatusPos, 530, "は や さLv", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userSpdLevel + 1), 530,//座標
+	DrawString(kStatusPos, kUiPosYArr[3], "は や さLv", GetColor(255, 255, 255));
+	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userSpdLevel + 1), kUiPosYArr[3],//座標
 		GetColor(255, 255, 255), "%d", UserData::userSpdLevel + 1);
 	//風魔法のレベルを表示する
-	DrawString(kStatusPos, 620, "ファイアLv", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userFireLevel + 1), 620,//座標
+	DrawString(kStatusPos, kUiPosYArr[4], "ファイアLv", GetColor(255, 255, 255));
+	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userFireLevel + 1), kUiPosYArr[4],//座標
 		GetColor(255, 255, 255), "%d", UserData::userFireLevel + 1);
 	//炎魔法のレベルを表示する
-	DrawString(kStatusPos, 710, "ウィンドLv", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userWindLevel + 1), 710,//座標
+	DrawString(kStatusPos, kUiPosYArr[5], "ウィンドLv", GetColor(255, 255, 255));
+	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userWindLevel + 1), kUiPosYArr[5],//座標
 		GetColor(255, 255, 255), "%d", UserData::userWindLevel + 1);
 }
 

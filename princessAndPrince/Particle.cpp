@@ -1,7 +1,7 @@
 #include "Particle.h"
 #include "DxLib.h"
 
-Particle::Particle(Vec2 pos, float lange,float speed,int scale, int color) :
+Particle::Particle(Vec2 pos, float lange, float speed, int scale, int color) :
 	m_isExist(true),
 	m_pos(pos),
 	m_initialPos(pos),
@@ -9,13 +9,15 @@ Particle::Particle(Vec2 pos, float lange,float speed,int scale, int color) :
 	m_scale(GetRand(scale) + 2),
 	m_appearLange(GetRand(lange) + lange / 5),
 	m_spd(speed),
-	m_color(0)
+	m_color(0),
+	m_isWhite(false)
 {
 	//êîéöÇ…âûÇ∂ÇƒêFÇïœÇ¶ÇÈ
 	switch (color)
 	{
 	case 0:
-		m_color = GetColor(GetRand(30) + 225,GetRand(30) + 225,GetRand(30)+225);
+		m_color = GetColor(GetRand(30) + 225, GetRand(30) + 225, GetRand(30) + 225);
+		m_isWhite = true;
 		break;
 	case 1:
 		m_color = GetColor(GetRand(55) + 200, GetRand(100), 0);
@@ -57,5 +59,6 @@ void Particle::Update()
 
 void Particle::Draw()
 {
-		DrawCircle((int)m_pos.x, (int)m_pos.y, m_scale,m_color, true);
+	DrawCircle((int)m_pos.x, (int)m_pos.y, m_scale + 2, GetColor(0, 0, 0), true, 1);
+	DrawCircle((int)m_pos.x, (int)m_pos.y, m_scale, m_color, true, 1);
 }

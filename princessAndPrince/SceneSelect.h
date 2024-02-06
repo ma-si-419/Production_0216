@@ -21,6 +21,8 @@ public:
 	void DrawSceneSrideTriangle();
 	//表示するボスを決める
 	int GetShowBossKind(int num);
+	//変えるアイテムがあるかどうか
+	bool GetCanBuyItem();
 private:
 	//今選択しているシーンを保存する
 	int m_stageSelectNum;
@@ -103,4 +105,18 @@ private:
 	int m_bossAnimFrame;
 	//ボスを出現させるときフェードインで出現させる
 	int m_bossAlpha;
+	//ビックリマーク
+	int m_exclamationMarkGraph;
+	//黒いボックス
+	int m_boxGraph;
+	//黒いボックスの拡大率
+	float m_boxRatio;
+	//黒いボックスの角度
+	float m_boxAngle;
+	//プレイヤーのアイテムの値段
+	int m_playerItemPriceList[21];
+	//プリンセスのアイテムの値段
+	int m_princessItemPriceList[21];
+	//変えるアイテムがあるかどうか
+	bool m_isBuy;
 };

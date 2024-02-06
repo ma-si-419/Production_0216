@@ -75,6 +75,8 @@ void DataManager::Init()
 	soundMap["playerDeathSe"] = LoadSoundMem("data/sound/playerDeathSe.mp3");
 	//プレイヤーが立ち上がるときにならす音
 	soundMap["playerStandUpSe"] = LoadSoundMem("data/sound/playerStandUpSe.mp3");
+	//姫が死んだときの効果音
+	soundMap["princessDeathSe"] = LoadSoundMem("data/sound/princessDeathSe.mp3");
 	//プレイヤーのグラフィック
 	graphMap["playerGraph"] = LoadGraph("data/image/Monkey.png");
 	//プリンセスのグラフィック
@@ -125,6 +127,10 @@ void DataManager::Init()
 	graphMap["angryMonkeyGraph"] = LoadGraph("data/image/angryMonkey.png");
 	//怒りモード時のエフェクト
 	graphMap["angryFireGraph"] = LoadGraph("data/image/angryFire.png");
+	//ビックリマーク
+	graphMap["exclamationMarkGraph"] = LoadGraph("data/image/exclamationMark.png");
+	//黒いボックス
+	graphMap["boxGraph"] = LoadGraph("data/image/box.png");
 	//チュートリアル画像
 	graphMap["tutorialGraph1"] = LoadGraph("data/image/tutorial1.png");
 	graphMap["tutorialGraph2"] = LoadGraph("data/image/tutorial2.png");
@@ -141,9 +147,5 @@ void DataManager::Init()
 	graphMap["storyGraph6"] = LoadGraph("data/image/story6.png");
 	graphMap["storyGraph7"] = LoadGraph("data/image/story7.png");
 	graphMap["storyGraph8"] = LoadGraph("data/image/story8.png");
-
-
-
-	
 
 }

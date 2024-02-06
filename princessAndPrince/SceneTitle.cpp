@@ -13,7 +13,7 @@ namespace
 	//è¡ÇµÇƒÇ¢ÇÈéûä‘
 	constexpr int kEraseTime = 8;
 }
-SceneTitle::SceneTitle(SceneManager& sceneManager, DataManager& DataManager,int selectSceneNum) :
+SceneTitle::SceneTitle(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
 	Scene(sceneManager, DataManager),
 	m_isKeyDown(true),
 	m_handle(-1),
@@ -49,12 +49,15 @@ void SceneTitle::Update(Pad& pad)
 	XINPUT_STATE m_input;
 	GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
 	//AÉ{É^ÉìÇ™âüÇ≥ÇÍÇΩÇÁ
-	if (m_input.Buttons[XINPUT_BUTTON_A] && m_isKeyDown || CheckHitKey(KEY_INPUT_RETURN) && m_isKeyDown)
+	if (m_isKeyDown)
 	{
-		StopSoundMem(m_bgm);
-		PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
-		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager,m_selectSceneNum));
-		m_isKeyDown = false;
+		if (m_input.Buttons[XINPUT_BUTTON_A]|| CheckHitKey(KEY_INPUT_RETURN) || m_input.Buttons[XINPUT_BUTTON_START])
+		{
+			StopSoundMem(m_bgm);
+			PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
+			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectSceneNum));
+			m_isKeyDown = false;
+		}
 	}
 	m_count++;
 	if (m_count > kShowTime)
