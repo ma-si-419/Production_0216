@@ -24,6 +24,8 @@ public:
 	int ArrRight(int num);
 	//桁数を取得する
 	int GetDigits(int num);
+	//帰るアイテムに赤丸を付ける
+	void DrawRedCircle();
 
 private:
 	//今選択している項目を保存する
@@ -84,5 +86,7 @@ private:
 	int m_showGold;
 	//減らしている間所持金を揺らす
 	int m_shakeGoldPosY;
+	//買えるアイテムの右上につけるマーク
+	int m_canBuyItemMark;
 };
 

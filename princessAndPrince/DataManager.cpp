@@ -131,6 +131,8 @@ void DataManager::Init()
 	graphMap["exclamationMarkGraph"] = LoadGraph("data/image/exclamationMark.png");
 	//黒いボックス
 	graphMap["boxGraph"] = LoadGraph("data/image/box.png");
+	//買えるアイテムの右上に出す画像
+	graphMap["canBuyItemMarkGraph"] = LoadGraph("data/image/canBuyItemMark.png");
 	//チュートリアル画像
 	graphMap["tutorialGraph1"] = LoadGraph("data/image/tutorial1.png");
 	graphMap["tutorialGraph2"] = LoadGraph("data/image/tutorial2.png");

@@ -34,7 +34,7 @@ public:
 	/// <summary>
 	/// 現在実行中のシーンを引数で指定されたシーンに切り替える
 	/// </summary>
-	void ChangeScene(std::shared_ptr<Scene> nextScene);
+	void ChangeScene(std::shared_ptr<Scene> nextScene, bool fade);
 
 	/// <summary>
 	/// 現在先頭で実行中のシーンの上にシーンをのっける

@@ -227,7 +227,7 @@ void SceneSelect::Update(Pad& pad)
 				{
 					StopSoundMem(m_bgm);
 					PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
-					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager, m_stageSelectNum));
+					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager, m_stageSelectNum),true);
 					m_isKeyDown = false;
 					m_isSelectScene = true;
 				}
@@ -424,7 +424,7 @@ void SceneSelect::Update(Pad& pad)
 		if (m_shopStartPosX < kShopMaxSizePosX)
 		{
 			StopSoundMem(m_bgm);
-			m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager, m_stageSelectNum));
+			m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager, m_stageSelectNum),true);
 		}
 	}
 	//ボスのアニメーションを回し続ける
@@ -447,7 +447,7 @@ void SceneSelect::Update(Pad& pad)
 		//音が鳴りやんだらフェードしていく
 		if (!CheckSoundMem(m_moveMainSceneSe))
 		{
-			m_sceneManager.ChangeScene(std::make_shared<SceneMain>(m_sceneManager, m_dataManager, m_stageSelectNum));
+			m_sceneManager.ChangeScene(std::make_shared<SceneMain>(m_sceneManager, m_dataManager, m_stageSelectNum),false);
 		}
 	}
 }

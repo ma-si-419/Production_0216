@@ -60,9 +60,16 @@ void SceneManager::SetStartScene(std::shared_ptr<Scene> nextScene)
 	}
 }
 
-void SceneManager::ChangeScene(std::shared_ptr<Scene> nextScene)
+void SceneManager::ChangeScene(std::shared_ptr<Scene> nextScene, bool fade)
 {
-	m_pFade->StartFadeOut();
+	if (fade)
+	{
+		m_pFade->StartFadeOut();
+	}
+	else
+	{
+		m_pFade->StopFade();
+	}
 	m_isChangeScene = true;
 	m_nextScene = nextScene;
 }

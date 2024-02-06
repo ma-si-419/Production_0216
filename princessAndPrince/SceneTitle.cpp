@@ -55,7 +55,7 @@ void SceneTitle::Update(Pad& pad)
 		{
 			StopSoundMem(m_bgm);
 			PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
-			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectSceneNum));
+			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectSceneNum),true);
 			m_isKeyDown = false;
 		}
 	}

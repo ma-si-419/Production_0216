@@ -74,6 +74,11 @@ namespace
 	constexpr int kGPosX = 1450;
 	//商品の後ろに表示するボックスの大きさ
 	constexpr int kItemBackBox = 180;
+	//プレイヤーのアイテムのマークを表示するポジション
+	constexpr int kPlayerItemMarkPosY = 180;
+	constexpr int kPrincessItemMarkPosY = 510;
+	//アイテムのX座標
+	constexpr int kItemPosX[5] = { 800,1075,1350,930,1200 };
 }
 SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
 	Scene(sceneManager, DataManager),
@@ -104,6 +109,7 @@ SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_itemGraph = DataManager.SearchGraph("itemGraph");
 	m_itemFrameGraph = DataManager.SearchGraph("itemFrameGraph");
 	m_backBoxGraph = DataManager.SearchGraph("backBoxGraph");
+	m_canBuyItemMark = DataManager.SearchGraph("canBuyItemMarkGraph");
 }
 
 SceneShop::~SceneShop()
@@ -146,7 +152,7 @@ void SceneShop::Update(Pad& pad)
 	if (!m_isSelectKeyDown)
 	{
 		//右キーが押されたら
-		if (m_input.Buttons[XINPUT_BUTTON_DPAD_RIGHT] || CheckHitKey(KEY_INPUT_D))
+		if (m_input.Buttons[XINPUT_BUTTON_DPAD_RIGHT] || CheckHitKey(KEY_INPUT_D) || CheckHitKey(KEY_INPUT_RIGHT))
 		{
 			if (m_itemSelectNum != 2 && m_itemSelectNum != 4)
 			{
@@ -163,7 +169,7 @@ void SceneShop::Update(Pad& pad)
 			m_isMax = false;
 		}
 		//左キーが入力されたら
-		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_LEFT] || CheckHitKey(KEY_INPUT_A))
+		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_LEFT] || CheckHitKey(KEY_INPUT_A) || CheckHitKey(KEY_INPUT_LEFT))
 		{
 			if (m_itemSelectNum != 0 && m_itemSelectNum != 3)
 			{
@@ -182,7 +188,7 @@ void SceneShop::Update(Pad& pad)
 
 		}
 		//下キーが入力されたら
-		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S))
+		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S) || CheckHitKey(KEY_INPUT_DOWN))
 		{
 			if (m_itemSelectNum < 3)
 			{
@@ -201,7 +207,7 @@ void SceneShop::Update(Pad& pad)
 
 		}
 		//上キーが入力されたら
-		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W))
+		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W) || CheckHitKey(KEY_INPUT_UP))
 		{
 			if (m_itemSelectNum > 2)
 			{
@@ -221,9 +227,7 @@ void SceneShop::Update(Pad& pad)
 		}
 	}
 	//上下左右キーが離されたら
-	if (!m_input.Buttons[XINPUT_BUTTON_DPAD_UP] && !m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] &&
-		!m_input.Buttons[XINPUT_BUTTON_DPAD_RIGHT] && !m_input.Buttons[XINPUT_BUTTON_DPAD_LEFT] &&
-		!CheckHitKey(KEY_INPUT_W) && !CheckHitKey(KEY_INPUT_A) && !CheckHitKey(KEY_INPUT_S) && !CheckHitKey(KEY_INPUT_D))
+	if (!CheckHitKeyAll())
 	{
 		m_isSelectKeyDown = false;
 	}
@@ -238,7 +242,7 @@ void SceneShop::Update(Pad& pad)
 				PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
 				StopSoundMem(m_bgm);
 				//シーン移行する
-				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectSceneNum));
+				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectSceneNum),true);
 				m_isKeyDown = false;
 				m_isFade = true;
 			}
@@ -518,31 +522,31 @@ void SceneShop::Draw()
 	DrawFormatString(kGoldPosX - ArrRight(m_showGold), kGoldPosY + m_shakeGoldPosY, GetColor(255, 255, 255), "%d", m_showGold);
 	DrawString(kGPosX, kGoldPosY, "G", GetColor(255, 255, 255));
 	//アイテムの表示
-	DrawRectRotaGraph(800, kItemPosY,
+	DrawRectRotaGraph(kItemPosX[0], kItemPosY,
 		0, Game::kSword * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
 		4.0,
 		0.0,
 		m_itemGraph, true, false);
-	DrawRectRotaGraph(1075, kItemPosY,
+	DrawRectRotaGraph(kItemPosX[1], kItemPosY,
 		0, Game::kArmor * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
 		4.0,
 		0.0,
 		m_itemGraph, true, false);
-	DrawRectRotaGraph(1350, kItemPosY,
+	DrawRectRotaGraph(kItemPosX[2], kItemPosY,
 		0, Game::kBoots * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
 		4.0,
 		0.0,
 		m_itemGraph, true, false);
-	DrawRectRotaGraph(930, kMagicPosY,
+	DrawRectRotaGraph(kItemPosX[3], kMagicPosY,
 		0, Game::kFire * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
 		4.0,
 		4.72,
 		m_itemGraph, true, false);
-	DrawRectRotaGraph(1200, kMagicPosY,
+	DrawRectRotaGraph(kItemPosX[4], kMagicPosY,
 		0, Game::kTyphoon * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
 		4.0,
@@ -690,6 +694,7 @@ void SceneShop::Draw()
 			1100 + kFrameSize + static_cast<int>(m_itemFrameRatio), kPrincessItemFramePosY + kFrameSize + static_cast<int>(m_itemFrameRatio), m_itemFrameGraph, true);
 		break;
 	}
+	DrawRedCircle();
 }
 
 int SceneShop::ArrRight(int num)
@@ -745,6 +750,30 @@ int SceneShop::GetDigits(int num)
 	else
 	{
 		return 0;
+	}
+}
+
+void SceneShop::DrawRedCircle()
+{
+	if (UserData::userGold >= m_playerItemPriceList[UserData::userAtkLevel])
+	{
+		DrawGraph(kItemPosX[0], kPlayerItemMarkPosY, m_canBuyItemMark, true);
+	}
+	if (UserData::userGold >= m_playerItemPriceList[UserData::userDefLevel])
+	{
+		DrawGraph(kItemPosX[1], kPlayerItemMarkPosY, m_canBuyItemMark, true);
+	}
+	if (UserData::userGold >= m_playerItemPriceList[UserData::userSpdLevel])
+	{
+		DrawGraph(kItemPosX[2], kPlayerItemMarkPosY, m_canBuyItemMark, true);
+	}
+	if (UserData::userGold >= m_princessItemPriceList[UserData::userFireLevel])
+	{
+		DrawGraph(kItemPosX[3], kPrincessItemMarkPosY, m_canBuyItemMark, true);
+	}
+	if (UserData::userGold >= m_princessItemPriceList[UserData::userWindLevel])
+	{
+		DrawGraph(kItemPosX[4], kPrincessItemMarkPosY, m_canBuyItemMark, true);
 	}
 }
 

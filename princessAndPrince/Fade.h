@@ -20,6 +20,8 @@ public:
 	bool GetFadeState() { return m_fadeState; }
 	//フェードを開始する
 	void StartFadeOut() { m_fadeState = fadeState::kFadeOut; }
+	//フェードを開始しない
+	void StopFade() { m_fadeState = fadeState::kFadeIn; }
 private:
 	//透明度
 	int m_alphaNum;

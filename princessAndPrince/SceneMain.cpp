@@ -651,7 +651,7 @@ void SceneMain::Update(Pad& pad)
 				PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 				StopSoundMem(m_fieldBgm);
 				StopSoundMem(m_bossBgm);
-				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectScene));
+				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectScene),true);
 				return;
 				break;
 			}
@@ -830,7 +830,7 @@ void SceneMain::Update(Pad& pad)
 				PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 				m_isLastSe = false;
 			}
-			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectScene));
+			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectScene),true);
 			return;
 		}
 	}
