@@ -64,30 +64,6 @@ void Application::Run()
 		DataManager DataManager;
 		DataManager.Init();
 		sceneManager.SetStartScene(std::make_shared<SceneTitle>(sceneManager, DataManager, 0));
-		int tempArray[8] = { 0,0,0,0,0,0,0,0 };
-		//ファイルを開く
-		std::ifstream ifs("./data/saveData.txt");
-		int loopCount = 0;
-		//帰ってきた値を返す配列
-		vector<string> tempS;
-		//配列を作成
-		char str[kArraySize];
-		//成功したら一行ずつ読み込む
-		while (ifs.getline(str, kArraySize))
-		{
-			int temp;
-			temp = std::stoi(str);
-			tempArray[loopCount] = temp;
-			loopCount++;
-		}
-		UserData::userGold = tempArray[0];
-		UserData::userExp = tempArray[1];
-		UserData::userMainLevel = tempArray[2];
-		UserData::userAtkLevel = tempArray[3];
-		UserData::userDefLevel = tempArray[4];
-		UserData::userSpdLevel = tempArray[5];
-		UserData::userFireLevel = tempArray[6];
-		UserData::userWindLevel = tempArray[7];
 
 		Pad pad;
 
@@ -117,24 +93,8 @@ void Application::Run()
 			ScreenFlip();
 		}
 	}
-	std::string tempS;
-	ofstream outputfile("data/saveData.txt");
-	tempS = to_string(UserData::userGold);
-	outputfile << tempS + "\n";
-	tempS = to_string(UserData::userExp);
-	outputfile << tempS + "\n";
-	tempS = to_string(UserData::userMainLevel);
-	outputfile << tempS + "\n";
-	tempS = to_string(UserData::userAtkLevel);
-	outputfile << tempS + "\n";
-	tempS = to_string(UserData::userDefLevel);
-	outputfile << tempS + "\n";
-	tempS = to_string(UserData::userSpdLevel);
-	outputfile << tempS + "\n";
-	tempS = to_string(UserData::userFireLevel);
-	outputfile << tempS + "\n";
-	tempS = to_string(UserData::userWindLevel);
-	outputfile << tempS;
+
+	SetSaveData(UserData::userSaveDataNum);
 
 	Terminate();
 
@@ -143,4 +103,83 @@ void Application::Run()
 const Size& Application::GetWindowSize() const
 {
 	return m_isWindowSize;
+}
+
+void Application::SetSaveData(int num)
+{
+	if (num == 1)
+	{
+		std::string tempS;
+		ofstream outputfile("data/firstSaveData.txt");
+		tempS = to_string(UserData::userMainLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userAtkLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userDefLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSpdLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userFireLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userWindLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userGold);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userExp);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userClearStageNum);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSaveDataNum);
+		outputfile << tempS;
+	}
+	if (num == 2)
+	{
+		std::string tempS;
+		ofstream outputfile("data/secondSaveData.txt");
+		tempS = to_string(UserData::userMainLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userAtkLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userDefLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSpdLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userFireLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userWindLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userGold);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userExp);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userClearStageNum);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSaveDataNum);
+		outputfile << tempS;
+	}
+	if (num == 3)
+	{
+		std::string tempS;
+		ofstream outputfile("data/thirdSaveData.txt");
+		tempS = to_string(UserData::userMainLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userAtkLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userDefLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSpdLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userFireLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userWindLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userGold);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userExp);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userClearStageNum);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSaveDataNum);
+		outputfile << tempS;
+	}
 }

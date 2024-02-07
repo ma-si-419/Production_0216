@@ -3,7 +3,7 @@
 #include "DataManager.h"
 #include "DxLib.h"
 #include "Game.h"
-#include "SceneSelect.h"
+#include "SceneSave.h"
 namespace
 {
 	//ƒtƒHƒ“ƒg‚Ì”¼•ª‚Ì‘å‚«‚³
@@ -55,7 +55,7 @@ void SceneTitle::Update(Pad& pad)
 		{
 			StopSoundMem(m_bgm);
 			PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
-			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectSceneNum),true);
+			m_sceneManager.ChangeScene(std::make_shared<SceneSave>(m_sceneManager, m_dataManager, m_selectSceneNum),true);
 			m_isKeyDown = false;
 		}
 	}

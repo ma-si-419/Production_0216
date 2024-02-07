@@ -4,7 +4,7 @@
 #include "DxLib.h"
 #include "Game.h"
 #include "SceneMain.h"
-#include "SceneTitle.h"
+#include "SceneSave.h"
 #include "SceneShop.h"
 #include "UserData.h"
 #include "Player.h"
@@ -227,7 +227,8 @@ void SceneSelect::Update(Pad& pad)
 				{
 					StopSoundMem(m_bgm);
 					PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
-					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager, m_stageSelectNum),true);
+					SetSaveData(UserData::userSaveDataNum);
+					m_sceneManager.ChangeScene(std::make_shared<SceneSave>(m_sceneManager, m_dataManager, m_stageSelectNum),true);
 					m_isKeyDown = false;
 					m_isSelectScene = true;
 				}
@@ -678,4 +679,83 @@ bool SceneSelect::GetCanBuyItem()
 		return false;
 	}
 }
+void SceneSelect::SetSaveData(int num)
+{
+	if (num == 1)
+	{
+		std::string tempS;
+		ofstream outputfile("data/firstSaveData.txt");
+		tempS = to_string(UserData::userMainLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userAtkLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userDefLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSpdLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userFireLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userWindLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userGold);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userExp);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userClearStageNum);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSaveDataNum);
+		outputfile << tempS;
+	}
+	if (num == 2)
+	{
+		std::string tempS;
+		ofstream outputfile("data/secondSaveData.txt");
+		tempS = to_string(UserData::userMainLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userAtkLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userDefLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSpdLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userFireLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userWindLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userGold);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userExp);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userClearStageNum);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSaveDataNum);
+		outputfile << tempS;
+	}
+	if (num == 3)
+	{
+		std::string tempS;
+		ofstream outputfile("data/thirdSaveData.txt");
+		tempS = to_string(UserData::userMainLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userAtkLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userDefLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSpdLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userFireLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userWindLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userGold);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userExp);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userClearStageNum);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSaveDataNum);
+		outputfile << tempS;
+	}
+}
+
 

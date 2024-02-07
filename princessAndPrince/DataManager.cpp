@@ -133,6 +133,10 @@ void DataManager::Init()
 	graphMap["boxGraph"] = LoadGraph("data/image/box.png");
 	//買えるアイテムの右上に出す画像
 	graphMap["canBuyItemMarkGraph"] = LoadGraph("data/image/canBuyItemMark.png");
+	//セーブデータを選択する画面の背景
+	graphMap["sceneSaveGraph"] = LoadGraph("data/image/saveDataScene.png");
+	//セーブデータのフレームの画像
+	graphMap["saveDataFrameGraph"] = LoadGraph("data/image/saveDataFrame.png");
 	//チュートリアル画像
 	graphMap["tutorialGraph1"] = LoadGraph("data/image/tutorial1.png");
 	graphMap["tutorialGraph2"] = LoadGraph("data/image/tutorial2.png");

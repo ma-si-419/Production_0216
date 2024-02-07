@@ -15,5 +15,7 @@ public:
 	static int userSpdLevel;
 	static int userFireLevel;
 	static int userWindLevel;
+	static int userClearStageNum;
+	static int userSaveDataNum;
 };
 

@@ -23,6 +23,8 @@ public:
 	int GetShowBossKind(int num);
 	//変えるアイテムがあるかどうか
 	bool GetCanBuyItem();
+	//セーブシーンに戻るときにセーブする
+	void SetSaveData(int num);
 private:
 	//今選択しているシーンを保存する
 	int m_stageSelectNum;

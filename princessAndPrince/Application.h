@@ -50,5 +50,7 @@ public:
 
 	const Size& GetWindowSize() const;
 
+	void SetSaveData(int num);
+
 };
 

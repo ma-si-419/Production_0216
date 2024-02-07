@@ -227,7 +227,9 @@ void SceneShop::Update(Pad& pad)
 		}
 	}
 	//è„â∫ç∂âEÉLÅ[Ç™ó£Ç≥ÇÍÇΩÇÁ
-	if (!CheckHitKeyAll())
+	if (!CheckHitKeyAll() && !m_input.Buttons[XINPUT_BUTTON_DPAD_UP] 
+		&& !m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] && !m_input.Buttons[XINPUT_BUTTON_DPAD_RIGHT]
+		&& !m_input.Buttons[XINPUT_BUTTON_DPAD_LEFT])
 	{
 		m_isSelectKeyDown = false;
 	}
