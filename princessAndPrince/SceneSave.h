@@ -26,7 +26,7 @@ public:
 	void Draw();
 
 	//ロードしたデータによって表示する文字を変える
-	void DrawSceneName(int sceneNum);
+	void DrawSceneName(int sceneNum,int x,int y);
 	//ロードしたデータによって表示する数値を変える
 	int GetDrawData(int selectNum, dataKind kind);
 	//数値を右揃えにする
@@ -35,6 +35,10 @@ public:
 	void DrawFrame(int selectNum);
 	//セーブデータをセットする
 	void SetSaveData(int selectNum);
+	//セーブデータのナンバーを表示する
+	void DrawSaveDataNum();
+	//倒したボスの顔を表示する
+	void DrawDefeatedBoss(int clearStageNum,int x,int y);
 	
 
 private:
@@ -43,6 +47,12 @@ private:
 	int m_bgGraph;
 	//フレームのグラフィック
 	int m_frameGraph;
+	//エネミーの顔画像
+	int m_enemyHeadGraph;
+	//カーソルを動かしたときの音
+	int m_cursorSe;
+	//決定した時の音
+	int m_appSe;
 	//前のフレームにキーを押していたか
 	bool m_isLastKey;
 	//今どのセーブデータを選択しているか

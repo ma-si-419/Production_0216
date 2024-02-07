@@ -137,6 +137,8 @@ void DataManager::Init()
 	graphMap["sceneSaveGraph"] = LoadGraph("data/image/saveDataScene.png");
 	//セーブデータのフレームの画像
 	graphMap["saveDataFrameGraph"] = LoadGraph("data/image/saveDataFrame.png");
+	//エネミーの顔だけ画像
+	graphMap["enemyHeadGraph"] = LoadGraph("data/image/enemyHead.png");
 	//チュートリアル画像
 	graphMap["tutorialGraph1"] = LoadGraph("data/image/tutorial1.png");
 	graphMap["tutorialGraph2"] = LoadGraph("data/image/tutorial2.png");

@@ -35,6 +35,16 @@ namespace
 	//フレームの拡縮の速さ
 	constexpr float kFrameSpeedX = 0.6f;
 	constexpr float kFrameSpeedY = 0.3f;
+	//ステージの名前を表示する座標
+	constexpr int kStageNamePosX = 480;
+	constexpr int kStageNamePosY[3] = { 240,485,730 };
+	//データのナンバーを表示する座標
+	constexpr int kSaveDataNumPosX = 160;
+	constexpr int kSaveDataNumPosY[3] = { 180,420,660 };
+	//エネミーの頭を表示する間隔
+	constexpr int kEnemyHeadDistance = 40;
+	//エネミーの頭画像のグラフィックの大きさ
+	constexpr int kEnemyHeadGraphSize = 30;
 
 }
 SceneSave::SceneSave(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
@@ -45,10 +55,14 @@ SceneSave::SceneSave(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_selectSaveNum(0),
 	m_isZoom(true),
 	m_frameRatioX(0),
-	m_frameRatioY(0)
+	m_frameRatioY(0),
+	m_cursorSe(0)
 {
 	m_frameGraph = DataManager.SearchGraph("saveDataFrameGraph");
 	m_bgGraph = DataManager.SearchGraph("sceneSaveGraph");
+	m_enemyHeadGraph = DataManager.SearchGraph("enemyHeadGraph");
+	m_cursorSe = DataManager.SearchSound("cursorSe");
+	m_appSe = DataManager.SearchSound("approveSe");
 }
 
 SceneSave::~SceneSave()
@@ -122,6 +136,7 @@ void SceneSave::Update(Pad& pad)
 		if (CheckHitKey(KEY_INPUT_RETURN) || input.Buttons[XINPUT_BUTTON_A])
 		{
 			SetSaveData(m_selectSaveNum);
+			PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 			m_isLastKey = true;
 		}
 		else if (CheckHitKey(KEY_INPUT_UP) || CheckHitKey(KEY_INPUT_W) || input.Buttons[XINPUT_BUTTON_DPAD_UP])
@@ -129,6 +144,7 @@ void SceneSave::Update(Pad& pad)
 			if (m_selectSaveNum > 0)
 			{
 				m_selectSaveNum--;
+				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
 			}
 			m_isLastKey = true;
 		}
@@ -137,11 +153,12 @@ void SceneSave::Update(Pad& pad)
 			if (m_selectSaveNum < 2)
 			{
 				m_selectSaveNum++;
+				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
 			}
 			m_isLastKey = true;
 		}
 	}
-	if (!CheckHitKeyAll() && !input.Buttons[XINPUT_BUTTON_A] && 
+	if (!CheckHitKeyAll() && !input.Buttons[XINPUT_BUTTON_A] &&
 		!input.Buttons[XINPUT_BUTTON_DPAD_UP] && !input.Buttons[XINPUT_BUTTON_DPAD_DOWN])
 	{
 		m_isLastKey = false;
@@ -233,6 +250,18 @@ void SceneSave::Draw()
 	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, exp)), kUiPosYArr[7],//座標
 		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, exp));
 
+	//データの番号を表示する
+	DrawSaveDataNum();
+	//今どのシーンにいるかをを表示する
+	DrawSceneName(m_firstLoadData[static_cast<int>(stage)], kStageNamePosX, kStageNamePosY[0]);
+	DrawSceneName(m_secondLoadData[static_cast<int>(stage)], kStageNamePosX, kStageNamePosY[1]);
+	DrawSceneName(m_thirdLoadData[static_cast<int>(stage)], kStageNamePosX, kStageNamePosY[2]);
+	//倒したボスの顔を表示する
+	DrawDefeatedBoss(0, 600, 200);
+	DrawDefeatedBoss(2, 470, 445);
+	DrawDefeatedBoss(7, 600, 690);
+
+	//セーブデータのフレームを表示する
 	DrawFrame(m_selectSaveNum);
 #ifdef _DEBUG
 	DrawFormatString(100, 100, GetColor(0, 0, 0), "%d", m_selectSaveNum);
@@ -240,8 +269,75 @@ void SceneSave::Draw()
 
 }
 
-void SceneSave::DrawSceneName(int sceneNum)
+void SceneSave::DrawSceneName(int sceneNum, int x, int y)
 {
+	int stringWidth;
+	////影の表示
+	//DrawFormatString(x + kShiftShadowLange, y + kShiftShadowLange, GetColor(0, 0, 0), "ステージ %d", sceneNum + 1);
+	////ステージ名の表示
+	//DrawFormatString(x,y,GetColor(255,255,255),"ステージ %d",sceneNum + 1);
+	{
+
+		switch (sceneNum)
+		{
+		case 0:
+			stringWidth = GetStringLength("冒険の始まり") * kFontSize;
+			//影の表示
+			DrawString(x - stringWidth + kShiftShadowLange, y + kShiftShadowLange, "冒険の始まり", GetColor(0, 0, 0));
+			//ステージ名の表示
+			DrawString(x - stringWidth, y, "冒険の始まり", GetColor(255, 255, 255));
+			break;
+		case 1:
+			stringWidth = GetStringLength("賢者を訪ねて") * kFontSize;
+			//影の表示
+			DrawString(x - stringWidth + kShiftShadowLange, y + kShiftShadowLange, "賢者を訪ねて", GetColor(0, 0, 0));
+			//ステージ名の表示
+			DrawString(x - stringWidth, y, "賢者を訪ねて", GetColor(255, 255, 255));
+			break;
+		case 2:
+			stringWidth = GetStringLength("よみがえれ姫") * kFontSize;
+			//影の表示
+			DrawString(x - stringWidth + kShiftShadowLange, y + kShiftShadowLange, "よみがえれ姫", GetColor(0, 0, 0));
+			//ステージ名の表示
+			DrawString(x - stringWidth, y, "よみがえれ姫", GetColor(255, 255, 255));
+			break;
+		case 3:
+			stringWidth = GetStringLength("怒りのパワー") * kFontSize;
+			//影の表示
+			DrawString(x - stringWidth + kShiftShadowLange, y + kShiftShadowLange, "怒りのパワー", GetColor(0, 0, 0));
+			//ステージ名の表示
+			DrawString(x - stringWidth, y, "怒りのパワー", GetColor(255, 255, 255));
+			break;
+		case 4:
+			stringWidth = GetStringLength("アブナイ肝試し") * kFontSize;
+			//影の表示
+			DrawString(x - stringWidth + kShiftShadowLange, y + kShiftShadowLange, "アブナイ肝試し", GetColor(0, 0, 0));
+			//ステージ名の表示
+			DrawString(x - stringWidth, y, "アブナイ肝試し", GetColor(255, 255, 255));
+			break;
+		case 5:
+			stringWidth = GetStringLength("ドラゴンの巣窟") * kFontSize;
+			//影の表示
+			DrawString(x - stringWidth + kShiftShadowLange, y + kShiftShadowLange, "ドラゴンの巣窟", GetColor(0, 0, 0));
+			//ステージ名の表示
+			DrawString(x - stringWidth, y, "ドラゴンの巣窟", GetColor(255, 255, 255));
+			break;
+		case 6:
+			stringWidth = GetStringLength("雪に潜む者たち") * kFontSize;
+			//ステージ名の表示
+			DrawString(x - stringWidth, y, "雪に潜む者たち", GetColor(255, 255, 255));
+			//影の表示
+			DrawString(x - stringWidth + kShiftShadowLange, y + kShiftShadowLange, "雪に潜む者たち", GetColor(0, 0, 0));
+			break;
+		case 7:
+			stringWidth = GetStringLength("俺たちの戦いはこれからだ") * kFontSize;
+			//影の表示
+			DrawString(x - stringWidth + kShiftShadowLange, y + kShiftShadowLange, "俺たちの戦いはこれからだ", GetColor(0, 0, 0));
+			//ステージ名の表示
+			DrawString(x - stringWidth, y, "俺たちの戦いはこれからだ", GetColor(255, 255, 255));
+			break;
+		}
+	}
 }
 int SceneSave::GetDrawData(int selectNum, dataKind kind)
 {
@@ -489,4 +585,29 @@ void SceneSave::SetSaveData(int selectNum)
 	default:
 		break;
 	}
+}
+
+void SceneSave::DrawSaveDataNum()
+{
+	////影を表示
+	//DrawString(kSaveDataNumPosX + kShiftShadowLange, kSaveDataNumPosY[0] + kShiftShadowLange, "データ1", GetColor(0, 0, 0));
+	//DrawString(kSaveDataNumPosX + kShiftShadowLange, kSaveDataNumPosY[1] + kShiftShadowLange, "データ2", GetColor(0, 0, 0));
+	//DrawString(kSaveDataNumPosX + kShiftShadowLange, kSaveDataNumPosY[2] + kShiftShadowLange, "データ3", GetColor(0, 0, 0));
+	////データの番号を表示
+	//DrawString(kSaveDataNumPosX, kSaveDataNumPosY[0], "データ1", GetColor(255, 255, 255));
+	//DrawString(kSaveDataNumPosX, kSaveDataNumPosY[1], "データ2", GetColor(255, 255, 255));
+	//DrawString(kSaveDataNumPosX, kSaveDataNumPosY[2], "データ3", GetColor(255, 255, 255));
+	//影を表示
+	DrawFormatString(kSaveDataNumPosX + kShiftShadowLange, kSaveDataNumPosY[0] + kShiftShadowLange, GetColor(0, 0, 0), "ステージ%d", m_firstLoadData[static_cast<int>(stage)] + 1);
+	DrawFormatString(kSaveDataNumPosX + kShiftShadowLange, kSaveDataNumPosY[1] + kShiftShadowLange, GetColor(0, 0, 0), "ステージ%d", m_secondLoadData[static_cast<int>(stage)] + 1);
+	DrawFormatString(kSaveDataNumPosX + kShiftShadowLange, kSaveDataNumPosY[2] + kShiftShadowLange, GetColor(0, 0, 0), "ステージ%d", m_thirdLoadData[static_cast<int>(stage)] + 1);
+	//ステージ名の表示
+	DrawFormatString(kSaveDataNumPosX, kSaveDataNumPosY[0], GetColor(255, 255, 255), "ステージ%d", m_firstLoadData[static_cast<int>(stage)] + 1);
+	DrawFormatString(kSaveDataNumPosX, kSaveDataNumPosY[1], GetColor(255, 255, 255), "ステージ%d", m_secondLoadData[static_cast<int>(stage)] + 1);
+	DrawFormatString(kSaveDataNumPosX, kSaveDataNumPosY[2], GetColor(255, 255, 255), "ステージ%d", m_thirdLoadData[static_cast<int>(stage)] + 1);
+}
+
+void SceneSave::DrawDefeatedBoss(int clearStageNum,int x ,int y)
+{
+	DrawRectRotaGraph(x , y, 0, 0, kEnemyHeadGraphSize * clearStageNum, kEnemyHeadGraphSize, 1.7, 0.0, m_enemyHeadGraph, true, 0, 0);
 }
