@@ -91,18 +91,18 @@ void UI::Draw()
 	//今どちらの魔法を打っているかを表示する
 	if (m_pPrincess->GetMagicKind())
 	{
-		DrawRectRotaGraph(1340, 855, 106, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+		DrawRectRotaGraph(1320, 855, 106, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
 		DrawRectRotaGraph(1495, 855, 0, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
 
 	}
 	else
 	{
-		DrawRectRotaGraph(1340, 855, 0, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+		DrawRectRotaGraph(1320, 855, 0, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
 		DrawRectRotaGraph(1495, 855, 106, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
 
 	}
 	//炎魔法のUi表示
-	DrawRectRotaGraph(1338, 855, 0, Game::kFire * kItemGraphScale, kItemGraphScale, kItemGraphScale,
+	DrawRectRotaGraph(1318, 855, 0, Game::kFire * kItemGraphScale, kItemGraphScale, kItemGraphScale,
 		2.7, 4.72, m_magicGraph, true, false, false);
 	//風魔法のUi表示
 	DrawRectRotaGraph(1495, 855, 0, Game::kTyphoon * kItemGraphScale, kItemGraphScale, kItemGraphScale,

@@ -905,7 +905,7 @@ void SceneSave::DeleteSaveData(int dataNum)
 	if (dataNum == 0)
 	{
 		std::string tempS;
-		ofstream outputfile("./data/firstSaveData.txt");
+		ofstream outputfile("data/firstSaveData.txt");
 		outputfile << "0\n";
 		outputfile << "0\n";
 		outputfile << "0\n";
@@ -915,12 +915,12 @@ void SceneSave::DeleteSaveData(int dataNum)
 		outputfile << "0\n";
 		outputfile << "0\n";
 		outputfile << "0\n";
-		tempS = to_string(dataNum);
+		tempS = to_string(dataNum + 1);
 		outputfile << tempS;
 		outputfile.close();
 
 		//ファイルを開く
-		std::ifstream ifs("./data/firstSaveData.txt");
+		std::ifstream ifs("data/firstSaveData.txt");
 		int loopCount = 0;
 		//配列を作成
 		char str[kArraySize];
@@ -939,6 +939,7 @@ void SceneSave::DeleteSaveData(int dataNum)
 	{
 		std::string tempS;
 		ofstream outputfile("data/secondSaveData.txt");
+
 		outputfile << "0\n";
 		outputfile << "0\n";
 		outputfile << "0\n";
@@ -948,8 +949,9 @@ void SceneSave::DeleteSaveData(int dataNum)
 		outputfile << "0\n";
 		outputfile << "0\n";
 		outputfile << "0\n";
-		tempS = to_string(dataNum);
+		tempS = to_string(dataNum + 1);
 		outputfile << tempS;
+		outputfile.close();
 		{
 			//ファイルを開く
 			std::ifstream ifs("data/secondSaveData.txt");
@@ -980,8 +982,9 @@ void SceneSave::DeleteSaveData(int dataNum)
 		outputfile << "0\n";
 		outputfile << "0\n";
 		outputfile << "0\n";
-		tempS = to_string(dataNum);
+		tempS = to_string(dataNum + 1);
 		outputfile << tempS;
+		outputfile.close();
 		{
 			//ファイルを開く
 			std::ifstream ifs("data/thirdSaveData.txt");
@@ -1012,8 +1015,9 @@ void SceneSave::DeleteSaveData(int dataNum)
 		outputfile << "0\n";
 		outputfile << "0\n";
 		outputfile << "0\n";
-		tempS = to_string(dataNum);
+		tempS = to_string(dataNum + 1);
 		outputfile << tempS;
+		outputfile.close();
 		{
 			//ファイルを開く
 			std::ifstream ifs("data/fourthSaveData.txt");
@@ -1031,5 +1035,16 @@ void SceneSave::DeleteSaveData(int dataNum)
 			ifs.close();
 		}
 	}
+	UserData::userMainLevel = 0;
+	UserData::userAtkLevel = 0;
+	UserData::userDefLevel = 0;
+	UserData::userSpdLevel = 0;
+	UserData::userFireLevel = 0;
+	UserData::userWindLevel = 0;
+	UserData::userGold = 0;
+	UserData::userExp = 0;
+	UserData::userClearStageNum = 0;
+	UserData::userSaveDataNum = dataNum;
+
 }
 

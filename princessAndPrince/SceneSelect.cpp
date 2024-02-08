@@ -705,6 +705,7 @@ void SceneSelect::SetSaveData(int num)
 		outputfile << tempS + "\n";
 		tempS = to_string(UserData::userSaveDataNum);
 		outputfile << tempS;
+		outputfile.close();
 	}
 	if (num == 2)
 	{
