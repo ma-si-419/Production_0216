@@ -77,6 +77,8 @@ void DataManager::Init()
 	soundMap["playerStandUpSe"] = LoadSoundMem("data/sound/playerStandUpSe.mp3");
 	//姫が死んだときの効果音
 	soundMap["princessDeathSe"] = LoadSoundMem("data/sound/princessDeathSe.mp3");
+	//セーブシーンのBGM
+	soundMap["saveSceneBgm"] = LoadSoundMem("data/sound/saveSceneBgm.wav");
 	//プレイヤーのグラフィック
 	graphMap["playerGraph"] = LoadGraph("data/image/Monkey.png");
 	//プリンセスのグラフィック
@@ -139,6 +141,8 @@ void DataManager::Init()
 	graphMap["saveDataFrameGraph"] = LoadGraph("data/image/saveDataFrame.png");
 	//エネミーの顔だけ画像
 	graphMap["enemyHeadGraph"] = LoadGraph("data/image/enemyHead.png");
+	//セーブシーンのカーソル
+	graphMap["saveSceneCursorGraph"] = LoadGraph("data/image/cursor.png");
 	//チュートリアル画像
 	graphMap["tutorialGraph1"] = LoadGraph("data/image/tutorial1.png");
 	graphMap["tutorialGraph2"] = LoadGraph("data/image/tutorial2.png");

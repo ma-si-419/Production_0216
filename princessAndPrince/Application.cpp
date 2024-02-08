@@ -182,4 +182,29 @@ void Application::SetSaveData(int num)
 		tempS = to_string(UserData::userSaveDataNum);
 		outputfile << tempS;
 	}
+	if (num == 4)
+	{
+		std::string tempS;
+		ofstream outputfile("data/fourthSaveData.txt");
+		tempS = to_string(UserData::userMainLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userAtkLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userDefLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSpdLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userFireLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userWindLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userGold);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userExp);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userClearStageNum);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSaveDataNum);
+		outputfile << tempS;
+	}
 }

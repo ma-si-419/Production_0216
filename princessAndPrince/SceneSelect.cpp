@@ -228,7 +228,7 @@ void SceneSelect::Update(Pad& pad)
 					StopSoundMem(m_bgm);
 					PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
 					SetSaveData(UserData::userSaveDataNum);
-					m_sceneManager.ChangeScene(std::make_shared<SceneSave>(m_sceneManager, m_dataManager, m_stageSelectNum),true);
+					m_sceneManager.ChangeScene(std::make_shared<SceneSave>(m_sceneManager, m_dataManager, m_stageSelectNum), true);
 					m_isKeyDown = false;
 					m_isSelectScene = true;
 				}
@@ -425,7 +425,7 @@ void SceneSelect::Update(Pad& pad)
 		if (m_shopStartPosX < kShopMaxSizePosX)
 		{
 			StopSoundMem(m_bgm);
-			m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager, m_stageSelectNum),true);
+			m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager, m_stageSelectNum), true);
 		}
 	}
 	//ボスのアニメーションを回し続ける
@@ -448,7 +448,7 @@ void SceneSelect::Update(Pad& pad)
 		//音が鳴りやんだらフェードしていく
 		if (!CheckSoundMem(m_moveMainSceneSe))
 		{
-			m_sceneManager.ChangeScene(std::make_shared<SceneMain>(m_sceneManager, m_dataManager, m_stageSelectNum),false);
+			m_sceneManager.ChangeScene(std::make_shared<SceneMain>(m_sceneManager, m_dataManager, m_stageSelectNum), false);
 		}
 	}
 }
@@ -735,6 +735,31 @@ void SceneSelect::SetSaveData(int num)
 	{
 		std::string tempS;
 		ofstream outputfile("data/thirdSaveData.txt");
+		tempS = to_string(UserData::userMainLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userAtkLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userDefLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSpdLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userFireLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userWindLevel);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userGold);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userExp);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userClearStageNum);
+		outputfile << tempS + "\n";
+		tempS = to_string(UserData::userSaveDataNum);
+		outputfile << tempS;
+	}
+	if (num == 4)
+	{
+		std::string tempS;
+		ofstream outputfile("data/fourthSaveData.txt");
 		tempS = to_string(UserData::userMainLevel);
 		outputfile << tempS + "\n";
 		tempS = to_string(UserData::userAtkLevel);

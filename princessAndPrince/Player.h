@@ -32,17 +32,17 @@ public:
 	//倒れているかどうかを取得する
 	bool GetDeathFlag() { return m_isDeathFlag; }
 	//持っているゴールドの量を取得する
-	int GetGold() { return m_gold; }
+	int GetGold() { return static_cast<int>(m_gold); }
 	//ゲームオーバーの時は持っているゴールドを半分減らす
-	void SubGoldGameOver() { m_gold *= 0.5; }
+	void SubGoldGameOver() { m_gold *= 0.5f; }
 	//ゲームオーバーの時は持っている経験値を半分減らす
-	void SubExpGameOver() { m_exp *= 0.5; }
+	void SubExpGameOver() { m_exp *= 0.5f; }
 	//グラフハンドルを返す
 	int GetHandle() { return m_handle; }
 	//持っているゴールドを減らす
 	void SubGold(int subNum) { m_gold -= subNum; }
 	//持っている経験値の量を取得する
-	int GetExp() { return m_exp; }
+	int GetExp() { return static_cast<int>(m_exp); }
 	//持っている経験値を減らす
 	void SubExp(int subNum) { m_exp-= subNum; }
 	//防御力を取得する
@@ -101,9 +101,9 @@ private:
 	//倒れた時の座標を入れる変数
 	Vec2 m_deathPos;
 	//入手したお金を保存する
-	int m_gold;
+	float m_gold;
 	//入手した経験値を保存する
-	int m_exp;
+	float m_exp;
 	//復活する時間をカウントする変数
 	int m_revivalCount;
 	//クリア時の演出の時にカウントする変数

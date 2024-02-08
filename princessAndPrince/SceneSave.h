@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "DxLib.h"
 class SceneSave : public Scene
 {
 private:
@@ -25,8 +26,6 @@ public:
 	void Update(Pad& pad);
 	void Draw();
 
-	//ロードしたデータによって表示する文字を変える
-	void DrawSceneName(int sceneNum,int x,int y);
 	//ロードしたデータによって表示する数値を変える
 	int GetDrawData(int selectNum, dataKind kind);
 	//数値を右揃えにする
@@ -37,9 +36,18 @@ public:
 	void SetSaveData(int selectNum);
 	//セーブデータのナンバーを表示する
 	void DrawSaveDataNum();
-	//倒したボスの顔を表示する
-	void DrawDefeatedBoss(int clearStageNum,int x,int y);
-	
+	//ステータスを表示する
+	void DrawStatus();
+	//ファイルをロードする
+	void LoadFile();
+	//ボタンが入力されているかを返す
+	bool GetPushButton(XINPUT_STATE& input);
+	//フレームの拡縮をする
+	void ScalingFrame();
+	//カーソルを動かす
+	void MoveCursor(XINPUT_STATE& input);
+	//セーブデータをけす
+	void DeleteSaveData(int dataNum);
 
 private:
 	
@@ -49,20 +57,24 @@ private:
 	int m_frameGraph;
 	//エネミーの顔画像
 	int m_enemyHeadGraph;
+	//カーソルの画像
+	int m_cursorGraph;
 	//カーソルを動かしたときの音
 	int m_cursorSe;
 	//決定した時の音
 	int m_appSe;
+	//キャンセルした時の音
+	int m_cancelSe;
 	//前のフレームにキーを押していたか
 	bool m_isLastKey;
 	//今どのセーブデータを選択しているか
 	int m_selectSaveNum;
 	//セーブデータのウィンドウを表示しているか
 	bool m_isShowSaveWindow;
+	//データ削除のウィンドウを出しているかどうか
+	bool m_isShowDeleteWindow;
 	//ウィンドウのどの項目を選択しているか
 	int m_selectWindowNum;
-	//データ削除を選んだかどうか
-	bool m_isDeleteData;
 	//データ削除の選択肢
 	int m_selectDeleteNum;
 	//ロードしたデータ(一つ目)
@@ -71,11 +83,20 @@ private:
 	int m_secondLoadData[10];
 	//ロードしたデータ(三つ目)
 	int m_thirdLoadData[10];
+	//ロードしたデータ(四つ目)
+	int m_fourthLoadData[10];
 	//フレーム拡縮の大きさ
 	float m_frameRatioX;
 	float m_frameRatioY;
 	//フレームが拡大しているかどうか
 	bool m_isZoom;
-
+	//BGM
+	int m_bgm;
+	//シーン移動するかどうか
+	bool m_isMoveScene;
+	//カーソルの揺らす長さ
+	float m_cursorShakeLange;
+	//カーソルが右に動いているかどうか
+	bool m_isCursorMoveRight;
 };
 
