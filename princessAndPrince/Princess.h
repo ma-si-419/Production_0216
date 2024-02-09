@@ -25,7 +25,11 @@ public:
 	//持っている血の量を取得する
 	float GetBlood() { return m_nowBlood; }
 	//魔法のハンドル設定する
-	void SetMagicHandle(int handle) { m_magicHandle = handle; }
+	void SetMagicGraph(int handle) { m_magicHandle = handle; }
+	//矢印の画像を設定する
+	void SetArrowGraph(int graph) { m_arrowGraph = graph; }
+	//魔法の方向を示す矢印の画像を設定する
+	void SetMagicArrowGraph(int graph) { m_magicArrowGraph = graph; }
 	//Playerから血を受け取るときに使う
 	void ReceiveBlood(float blood);
 	//体力が0かどうか判断する関数
@@ -99,5 +103,9 @@ private:
 	int m_passBloodSe;
 	//炎魔法の効果音
 	int m_fireMagicSe;
+	//回転の矢印
+	int m_arrowGraph;
+	//魔法を撃つ方向に出す矢印
+	int m_magicArrowGraph;
 };
 

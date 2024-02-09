@@ -285,12 +285,9 @@ void Princess::Draw() const
 	//魔法を打つ方向に線を表示する
 	if (m_isMagic || m_pMain->GetSpecialMode())
 	{
-		DrawLine(m_pos.x, m_pos.y,//始点
-			m_pos.x + m_result.x, m_pos.y - m_result.y,//計算結果を始点に足して終点にする
-			GetColor(255, 255, 0));
-
+		//魔法を撃つ方向を示す矢印を表示する
+		DrawRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y), 1.0, -m_angle, m_magicArrowGraph, true, 0, 0);
 	}
-
 	//画像のどこを切り取るかを指定して、切り取った画像を表示する
 	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
 		srcX, srcY,//切り取る位置

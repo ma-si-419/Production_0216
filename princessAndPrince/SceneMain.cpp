@@ -81,7 +81,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_clearTime(0),
 	m_nextEnemyKind(0),
 	m_nextEnemyPopTime(0),
-	m_specialGauge(0),
+	m_specialGauge(100),
 	m_isSpecialMode(false),
 	m_isPause(false),
 	m_isStop(false),
@@ -135,7 +135,9 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_pPrincess = new Princess(this);
 	//プリンセスのメンバ変数にアクセス
 	m_pPrincess->SetHandle(m_princessHandle);
-	m_pPrincess->SetMagicHandle(m_dataManager.SearchGraph("itemGraph"));
+	m_pPrincess->SetMagicGraph(m_dataManager.SearchGraph("itemGraph"));
+	m_pPrincess->SetArrowGraph(m_dataManager.SearchGraph("arrowGraph"));
+	m_pPrincess->SetMagicArrowGraph(m_dataManager.SearchGraph("magicArrowGraph"));
 	//敵のグラフィックのロード
 	m_enemyHandle = m_dataManager.SearchGraph("enemyGraph");
 	//背景のグラフィックのロード
@@ -219,6 +221,8 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_pUi->SetMagicBgGraph(m_dataManager.SearchGraph("magicUiBgGraph"));
 	//怒りゲージのUiを設定する
 	m_pUi->SetAngryGaugeGraph(m_dataManager.SearchGraph("angryGaugeUiGraph"));
+	//怒りゲージがたまった時のUIを設定する
+	m_pUi->SetAngryButtonGraph(m_dataManager.SearchGraph("angryButtonMarkGraph"));
 	//選ばれたシーンによって表示するチュートリアルを設定する
 	switch (m_selectScene)
 	{

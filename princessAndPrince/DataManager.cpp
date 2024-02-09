@@ -143,6 +143,12 @@ void DataManager::Init()
 	graphMap["enemyHeadGraph"] = LoadGraph("data/image/enemyHead.png");
 	//セーブシーンのカーソル
 	graphMap["saveSceneCursorGraph"] = LoadGraph("data/image/cursor.png");
+	//矢印
+	graphMap["arrowGraph"] = LoadGraph("data/image/arrow.png");
+	//魔法の方向を示す矢印
+	graphMap["magicArrowGraph"] = LoadGraph("data/image/magicArrow.png");
+	//怒りゲージがたまったときのボタン表示画像
+	graphMap["angryButtonMarkGraph"] = LoadGraph("data/image/angryButtonMark.png");
 	//チュートリアル画像
 	graphMap["tutorialGraph1"] = LoadGraph("data/image/tutorial1.png");
 	graphMap["tutorialGraph2"] = LoadGraph("data/image/tutorial2.png");

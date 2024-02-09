@@ -4,6 +4,7 @@
 #include "SceneTitle.h"
 #include "UserData.h"
 #include "MyString.h"
+#include "resource.h"
 
 #include "Pad.h"
 
@@ -39,6 +40,7 @@ bool Application::Init()
 	m_isPush = true;
 
 	SetGraphMode(m_isWindowSize.w, m_isWindowSize.h, 32);
+	SetWindowIconID(IDB_PNG1);
 
 	if (DxLib_Init() == -1) {	//‰Šú‰»‚É¸”s‚µ‚½‚çƒAƒvƒŠ‚ğ—‚Æ‚·
 		return false;	//ˆÙíI—¹

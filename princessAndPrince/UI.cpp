@@ -34,6 +34,12 @@ namespace
 	constexpr int kShakeLange = 1;
 	//Uiを表示する座標
 	constexpr int kUiPosYArr[6] = {315,390,465,540,615,690};
+	//ボタンがどこまで大きくなるか
+	constexpr double kAngryButtonMaxRatio = 0.8;
+	//ボタンがどこまで小さくなるか
+	constexpr double kAngryButtonMinRatio = 0.4;
+	//ボタンが大きくなるスピード
+	constexpr double kAngryButtonZoomSpeed = 0.01;
 }
 UI::UI(Player* pPlayer, Princess* pPrincess, SceneMain* pMain) :
 	m_pPlayer(pPlayer),
@@ -77,6 +83,25 @@ void UI::Update()
 	{
 		m_isAngryGaugeUiShake = true;
 	}
+	if (m_isButtonZoom)
+	{
+		m_angryButtonRatio += kAngryButtonZoomSpeed;
+	}
+	else
+	{
+		m_angryButtonRatio -= kAngryButtonZoomSpeed;
+	}
+	if (m_angryButtonRatio > kAngryButtonMaxRatio)
+	{
+		m_isButtonZoom = false;
+		m_angryButtonRatio = kAngryButtonMaxRatio;
+	}
+	else if (m_angryButtonRatio < kAngryButtonMinRatio)
+	{
+		m_isButtonZoom = true;
+		m_angryButtonRatio = kAngryButtonMinRatio;
+	}
+	
 }
 
 void UI::Draw()
@@ -116,7 +141,7 @@ void UI::Draw()
 	else
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
-		DrawCircle(1340, 855, 50, GetColor(0, 0, 0));
+		DrawCircle(1320, 855, 50, GetColor(0, 0, 0));
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 	//聖剣モードのゲージを表示する
@@ -126,7 +151,10 @@ void UI::Draw()
 		805 + (int)kBarHeight, GetColor(255, 0, 0), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	DrawGraph(1050 + m_angryGaugeUiShiftPosX, 800, m_angryGaugeUiGraph, true);
-
+	if (m_pMain->GetSpecialGaugeRate() == 1)
+	{
+		DrawRotaGraph(1050, 800,m_angryButtonRatio,0.0,m_angryButtonGraph,true,0,0);
+	}
 }
 
 void UI::SceneClearUI()

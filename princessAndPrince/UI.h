@@ -37,6 +37,8 @@ public:
 	void SetMagicBgGraph(int graph) { m_magicUiBgGraph = graph; }
 	//怒りゲージを表示するUiのグラフィック
 	void SetAngryGaugeGraph(int graph) { m_angryGaugeUiGraph = graph; }
+	//怒りゲージがたまった時の画像
+	void SetAngryButtonGraph(int graph) { m_angryButtonGraph = graph; }
 private:
 	//プレイヤーのポインタを保存する
 	Player* m_pPlayer;
@@ -63,5 +65,11 @@ private:
 	//怒りゲージを揺らす時に使う
 	int m_angryGaugeUiShiftPosX;
 	bool m_isAngryGaugeUiShake;
+	//怒りゲージがたまった時のボタン表示
+	int m_angryButtonGraph;
+	//怒りゲージがたまった時のボタンを拡縮する値
+	double m_angryButtonRatio;
+	//今ボタンが拡大しているかどうか
+	bool m_isButtonZoom;
 };
 
