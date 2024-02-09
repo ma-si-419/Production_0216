@@ -245,6 +245,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 		m_tutorialNum = 1;
 		m_startTutorialNum = 5;
 		m_nowShowTutorialNum = m_startTutorialNum;
+		break;
 	default:
 		m_tutorialNum = 0;
 		m_nowShowTutorialNum = 0;
@@ -986,7 +987,7 @@ void SceneMain::Draw()
 	//ステージの最初にチュートリアルが表示する
 	if (m_isShowTutorial)
 	{
-		DrawGraph(120, 300, m_tutorialGraph[m_nowShowTutorialNum], true);
+		DrawGraph(85, 290, m_tutorialGraph[m_nowShowTutorialNum], true);
 	}
 	//黒いボックスを表示する
 	DrawRotaGraph(Game::kScreenWidth / 2, Game::kPlayScreenHeight / 2,//座標
