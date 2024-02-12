@@ -204,8 +204,5 @@
     <Image Include="icon1.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
-    <Image Include="..\..\icon.png">
-      <Filter>リソース ファイル</Filter>
-    </Image>
   </ItemGroup>
 </Project>

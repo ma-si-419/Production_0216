@@ -12,7 +12,8 @@ Character::Character() :
 	m_dirX(0),
 	m_dirY(0),
 	m_nowState(Game::kNormal),
-	m_radius(0)
+	m_radius(0),
+	m_knockBack()
 {
 }
 

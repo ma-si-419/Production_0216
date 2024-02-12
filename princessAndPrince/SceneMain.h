@@ -19,7 +19,7 @@ class Particle;
 struct popEnemy
 {
 	int enemyKind;
-	float popTime;
+	int popTime;
 };
 class SceneMain : public Scene
 {
@@ -66,8 +66,6 @@ public:
 	int GetDigits(int num);
 	//リザルトのGOLDのループを開始する
 	void StartExpLoop() { m_isExpLoop = true; }
-	//音量を設定する
-	void ChangeSoundVol(int volume);
 	//次のレベルまでの経験値量を返す
 	int GetNextExp();
 	//コインの効果音を返す
@@ -94,6 +92,10 @@ public:
 	int GetUiBg() { return m_uiBgGraph; }
 	//出てくるボスの数を設定する
 	void SetBossVol(int stageNum);
+	//最初にプレイヤーが死んだときに使用する関数
+	void StopScene() { m_isStop = true; }
+	//レバガチャのチュートリアルを出す
+	void ShowDeathTutorial() { m_isDeathTutorial = true; }
 
 private:
 	// グラフィックのハンドル
@@ -110,7 +112,6 @@ private:
 	UI* m_pUi;
 	//パーティクル
 	Particle* m_pParticle;
-
 	// 敵
 	vector<shared_ptr<Enemy>> m_pEnemy;
 	//アイテム
@@ -132,7 +133,7 @@ private:
 	//経験値の情報が入っている配列
 	int m_expList[50];
 	//チュートリアル画像が入っている配列
-	int m_tutorialGraph[6];
+	int m_tutorialGraph[7];
 	//ボスの数を入れる変数
 	int m_bossCount;
 	//倒したボスの数を入れる変数
@@ -267,5 +268,7 @@ private:
 	float m_boxAngle;
 	//ボックスが動いているか
 	bool m_isMoveBox;
+	//最初に死んだときに出すチュートリアルを出しているかどうか
+	bool m_isDeathTutorial;
 
 };

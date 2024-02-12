@@ -156,6 +156,7 @@ void DataManager::Init()
 	graphMap["tutorialGraph4"] = LoadGraph("data/image/tutorial4.png");
 	graphMap["tutorialGraph5"] = LoadGraph("data/image/tutorial5.png");
 	graphMap["tutorialGraph6"] = LoadGraph("data/image/tutorial6.png");
+	graphMap["tutorialGraph7"] = LoadGraph("data/image/tutorial7.png");
 	//ストーリー画像
 	graphMap["storyGraph1"] = LoadGraph("data/image/story1.png");
 	graphMap["storyGraph2"] = LoadGraph("data/image/story2.png");

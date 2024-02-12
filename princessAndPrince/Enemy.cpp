@@ -63,11 +63,11 @@ Enemy::Enemy(SceneMain* pMain) :
 	m_srcY(0),
 	m_knockBackPow(0),
 	m_itemHandle(0),
-	m_colScale(0)
+	m_colScale(0),
+	m_pParticle()
 {
 	m_animFrame = 0;
 	m_nowState = Game::kNormal;
-
 }
 Enemy::~Enemy()
 {
@@ -298,21 +298,21 @@ void Enemy::Init(int kinds)
 		//左方向から出てくる
 	case 0:
 		m_pos.x = -kGraphWidth * 2;
-		m_pos.y = GetRand(Game::kPlayScreenHeight);
+		m_pos.y = static_cast<float>(GetRand(Game::kPlayScreenHeight));
 		break;
 		//上方向から出てくる
 	case 1:
-		m_pos.x = GetRand(Game::kPlayScreenWidth);
+		m_pos.x = static_cast<float>(GetRand(Game::kPlayScreenWidth));
 		m_pos.y = -kGraphHeight * 2;
 		break;
 		//右方向から出てくる
 	case 2:
 		m_pos.x = Game::kPlayScreenWidth + kGraphWidth * 2;
-		m_pos.y = GetRand(Game::kPlayScreenHeight);
+		m_pos.y = static_cast<float>(GetRand(Game::kPlayScreenHeight));
 		break;
 		//下方向から出てくる
 	case 3:
-		m_pos.x = GetRand(Game::kPlayScreenWidth);
+		m_pos.x = static_cast<float>(GetRand(Game::kPlayScreenWidth));
 		m_pos.y = Game::kPlayScreenHeight + kGraphHeight * 2;
 	default:
 		break;
@@ -345,13 +345,17 @@ void Enemy::Update()
 				{
 					//状態を変化させる
 					m_nowState = Game::kDelete;
-					//血のメモリの確保
-					std::shared_ptr<Blood> pBlood
-						= std::make_shared<Blood>();
-					//血を落とす処理
-					pBlood->Init(m_pos);
-					pBlood->SetHandle(m_itemHandle);
-					m_pMain->AddItem(pBlood);
+					if (m_pMain->GetSceneNum() > 1)
+					{
+						//血のメモリの確保
+						std::shared_ptr<Blood> pBlood
+							= std::make_shared<Blood>();
+
+						//血を落とす処理
+						pBlood->Init(m_pos);
+						pBlood->SetHandle(m_itemHandle);
+						m_pMain->AddItem(pBlood);
+					}
 					//経験値のメモリの確保
 					std::shared_ptr<Exp> pExp
 						= std::make_shared<Exp>();
@@ -359,6 +363,8 @@ void Enemy::Update()
 					pExp->Init(m_pos);
 					pExp->SetExp(m_haveExp);
 					pExp->SetHandle(m_itemHandle);
+					//ボスの落とすアイテムだったら切り取る座標を変える
+					if(m_isBoss)pExp->SetBossItem();
 					m_pMain->AddItem(pExp);
 					//お金のメモリ確保
 					std::shared_ptr<Gold> pGold
@@ -367,6 +373,7 @@ void Enemy::Update()
 					pGold->Init(m_pos);
 					pGold->SetPrice(m_haveGold);
 					pGold->SetHandle(m_itemHandle);
+					if (m_isBoss)pGold->SetBossItem();
 					m_pMain->AddItem(pGold);
 					if (GetRand(100) < kDropProb && !m_isBoss)
 					{
@@ -454,12 +461,11 @@ void Enemy::Draw()
 			0.0,
 			m_handle, true, m_isLeftFlag);
 #ifdef _DEBUG
-		m_circleCol.Draw(m_radius * m_scale, 0x0000ff, false);
-		m_weakCircle.Draw(m_radius * m_scale, 0xff0000, false);
+		m_circleCol.Draw(static_cast<int>(m_radius * m_scale), 0x0000ff, false);
+		m_weakCircle.Draw(static_cast<int>(m_radius * m_scale), 0xff0000, false);
 #endif
 	}
 }
-
 void Enemy::HitPlayer(Player& player, bool weak)
 {
 	//プレイヤーの座標を参考にして、ノックバックの方向を決める
@@ -493,7 +499,6 @@ void Enemy::HitPlayer(Player& player, bool weak)
 		}
 	}
 }
-
 void Enemy::HitMagic(MagicBase* magic)
 {
 	//体力を減らす
@@ -515,13 +520,18 @@ void Enemy::HitMagic(MagicBase* magic)
 	}
 	//魔法で死んだ場合の処理をここに入れておく
 	if (m_hp < 0)
-	{//血のメモリの確保
-		std::shared_ptr<Blood> pBlood
-			= std::make_shared<Blood>();
-		//血を落とす処理
-		pBlood->Init(m_pos);
-		pBlood->SetHandle(m_itemHandle);
-		m_pMain->AddItem(pBlood);
+	{
+		//ステージ２までは血を落とさないようにする
+		if (m_pMain->GetSceneNum() > 1)
+		{
+			//血のメモリの確保
+			std::shared_ptr<Blood> pBlood
+				= std::make_shared<Blood>();
+			//血を落とす処理
+			pBlood->Init(m_pos);
+			pBlood->SetHandle(m_itemHandle);
+			m_pMain->AddItem(pBlood);
+		}
 		//経験値のメモリの確保
 		std::shared_ptr<Exp> pExp
 			= std::make_shared<Exp>();
@@ -529,6 +539,7 @@ void Enemy::HitMagic(MagicBase* magic)
 		pExp->SetExp(m_haveExp);
 		pExp->Init(m_pos);
 		pExp->SetHandle(m_itemHandle);
+		if (m_isBoss)pExp->SetBossItem();
 		m_pMain->AddItem(pExp);
 		//お金のメモリ確保
 		std::shared_ptr<Gold> pGold
@@ -537,6 +548,7 @@ void Enemy::HitMagic(MagicBase* magic)
 		pGold->SetPrice(m_haveGold);
 		pGold->Init(m_pos);
 		pGold->SetHandle(m_itemHandle);
+		if (m_isBoss)pGold->SetBossItem();
 		m_pMain->AddItem(pGold);
 		if (GetRand(100) < kDropProb && !m_isBoss)
 		{

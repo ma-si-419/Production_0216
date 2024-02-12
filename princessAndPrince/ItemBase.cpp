@@ -22,7 +22,9 @@ ItemBase::ItemBase() :
 	m_nowState(Game::kNormal),
 	m_haveExp(0),
 	m_haveGold(0),
-	m_moveVec(0, 0)
+	m_moveVec(0, 0),
+	m_pPlayer(),
+	m_srcX(0)
 {
 }
 
@@ -77,7 +79,7 @@ void ItemBase::Update()
 void ItemBase::Draw()
 {
 #ifdef _DEBUG
-	m_circleCol.Draw(m_colScale, 0x0000ff, false);
+	m_circleCol.Draw(static_cast<int>(m_colScale), 0x0000ff, false);
 #endif
 }
 

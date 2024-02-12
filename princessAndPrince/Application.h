@@ -15,10 +15,10 @@ struct Size
 class Application
 {
 private:
-	Size m_isWindowSize;
+	Size m_isWindowSize = {};
 
-	bool m_isScreen;
-	bool m_isPush;
+	bool m_isScreen = false;
+	bool m_isPush = false;
 	//シングルトンのためにprivateに
 	Application() {};
 
@@ -31,7 +31,7 @@ private:
 	/// </summary>
 	void Terminate();
 
-	LPCSTR m_fontPath; // 読み込むフォントファイルのパス
+	LPCSTR m_fontPath = 0; // 読み込むフォントファイルのパス
 
 public:
 

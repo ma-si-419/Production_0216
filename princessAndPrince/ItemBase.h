@@ -37,6 +37,8 @@ public:
 	void SetHandle(int handle) { m_handle = handle; }
 	//お金と経験値を取得した時は画面右上まで移動させる
 	void MoveItem(Player* player);
+	//ボスのお金と経験値はグラフィックを少し変える
+	void SetBossItem() { m_srcX = 64; };
 
 protected:
 	//表示位置
@@ -59,6 +61,8 @@ protected:
 	int m_haveGold;
 	//持っている経験値の量
 	int m_haveExp;
+	//グラフィックを切り取る座標
+	int m_srcX;
 
 };
 

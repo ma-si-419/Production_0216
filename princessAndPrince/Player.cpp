@@ -109,6 +109,11 @@ void Player::Init()
 	m_expSe = m_pMain->GetExpSe();
 	m_portionSe = m_pMain->GetPortionSe();
 	m_bloodSe = m_pMain->GetBloodSe();
+	//最初のステージで最初に死んだときはレバガチャのチュートリアルを入れる
+	if (UserData::userClearStageNum == 0)
+	{
+		m_isDeathTutorial = true;
+	}
 }
 
 void Player::Update()
@@ -267,10 +272,8 @@ void Player::Update()
 				m_dirX = 0;
 			}
 		}
-
 		//取得したKey入力から、Playerキャラの方向を作成してそれを返す。
 		GetDir(m_dirX, m_dirY);
-
 		// 正規化
 		m_moveVec.Normalize();
 		// 長さの変更
@@ -299,7 +302,7 @@ void Player::Update()
 			}
 		}
 		// 当たり判定の更新
-		m_circleCol.SetCenter(m_pos, m_radius);
+		m_circleCol.SetCenter(m_pos, static_cast<float>(m_radius));
 
 		// 斜め移動の場合も同じ速さで移動するようにする
 		if (m_isMove)
@@ -347,13 +350,13 @@ void Player::Update()
 	if (m_pMain->GetSpecialMode())
 	{
 		m_nowHp = m_hp;
-		m_atk = (2.0f + (UserData::userAtkLevel * 0.5f)) * 0.7f;
+		m_atk = (2.0f + (UserData::userAtkLevel * 0.5f)) * 0.7f + (UserData::userMainLevel * 0.1f);
 		m_spd = 4.0f;
 	}
 	else
 	{
-		m_atk = 2.0f + (UserData::userAtkLevel * 0.5f);
-		m_spd = 1.5f + (UserData::userSpdLevel * 0.1f);
+		m_atk = 2.0f + (UserData::userAtkLevel * 0.5f) + (UserData::userMainLevel * 0.1f);
+		m_spd = 1.5f + (UserData::userSpdLevel * 0.1f) + (UserData::userMainLevel * 0.02f);
 	}
 	//炎を揺らす演出
 	if (m_animFrame % 24 == 0)
@@ -403,29 +406,29 @@ void Player::Draw() const
 	////////////////////
 	{
 		//Hp等を見やすくするために後ろにBox作成
-		DrawBox((int)m_hpBarPos.x - kBoxSpace, (int)m_hpBarPos.y - kBoxSpace,//始点
-			(int)m_bloodBarPos.x + kMaxBarWidth + kBoxSpace,//始点の位置にバーの長さを足す
-			(int)m_bloodBarPos.y + (int)kBarHeight + kBoxSpace,//終点
+		DrawBox(static_cast<int>(m_hpBarPos.x - kBoxSpace), static_cast<int>(m_hpBarPos.y - kBoxSpace),//始点
+			static_cast<int>(m_bloodBarPos.x + kMaxBarWidth + kBoxSpace),//始点の位置にバーの長さを足す
+			static_cast<int>(m_bloodBarPos.y + kBarHeight + kBoxSpace),//終点
 			GetColor(75, 75, 75), true);
 		//Hpが見やすいようにHpの後ろに黒いBoxを出す
-		DrawBox((int)m_hpBarPos.x, (int)m_hpBarPos.y,//始点
-			(int)m_hpBarPos.x + (int)kMaxBarWidth,//始点の位置にバーの長さを足す
-			(int)m_hpBarPos.y + (int)kBarHeight,//終点
+		DrawBox(static_cast<int>(m_hpBarPos.x), static_cast<int>(m_hpBarPos.y),//始点
+			static_cast<int>(m_hpBarPos.x + kMaxBarWidth),//始点の位置にバーの長さを足す
+			static_cast<int>(m_hpBarPos.y + kBarHeight),//終点
 			GetColor(0, 0, 0), true);
 		//HPバーの表示
-		DrawBox((int)m_hpBarPos.x, (int)m_hpBarPos.y,//始点
-			(int)m_hpBarPos.x + (int)m_hpBarWidth,//始点の位置にバーの長さを足す
-			(int)m_hpBarPos.y + (int)kBarHeight,//終点
+		DrawBox(static_cast<int>(m_hpBarPos.x), static_cast<int>(m_hpBarPos.y),//始点
+			static_cast<int>(m_hpBarPos.x + m_hpBarWidth),//始点の位置にバーの長さを足す
+			static_cast<int>(m_hpBarPos.y + kBarHeight),//終点
 			GetColor(255, 255, 100), true);
 		//血の量が見やすいように血の量の後ろに白いBoxを出す
-		DrawBox((int)m_bloodBarPos.x, (int)m_bloodBarPos.y,//始点
-			(int)m_bloodBarPos.x + (int)kMaxBarWidth,//始点の位置にバーの長さを足す
-			(int)m_bloodBarPos.y + (int)kBarHeight,//終点
+		DrawBox(static_cast<int>(m_bloodBarPos.x), static_cast<int>(m_bloodBarPos.y),//始点
+			static_cast<int>(m_bloodBarPos.x + kMaxBarWidth),//始点の位置にバーの長さを足す
+			static_cast<int>(m_bloodBarPos.y + kBarHeight),//終点
 			GetColor(0, 0, 0), true);
 		//血の量バーの表示
-		DrawBox((int)m_bloodBarPos.x, (int)m_bloodBarPos.y,//始点
-			(int)m_bloodBarPos.x + (int)m_bloodBarWidth,//始点の位置にバーの長さを足す
-			(int)m_bloodBarPos.y + (int)kBarHeight,//終点
+		DrawBox(static_cast<int>(m_bloodBarPos.x), static_cast<int>(m_bloodBarPos.y),//始点
+			static_cast<int>(m_bloodBarPos.x + m_bloodBarWidth),//始点の位置にバーの長さを足す
+			static_cast<int>(m_bloodBarPos.y + kBarHeight),//終点
 			GetColor(255, 0, 0), true);
 	}
 
@@ -446,7 +449,7 @@ void Player::HitEnemy(Enemy enemy, bool weak)
 	if (weak)
 	{
 		//受けるダメージを半分にする
-		damage = enemy.GetAtk() - m_def / 2;
+		damage = static_cast<float>((enemy.GetAtk() - m_def) * 0.75);
 		//最低でも0.5ダメージは食らうようにする
 		if (damage < 1)
 		{
@@ -599,6 +602,12 @@ void Player::DeathMove()
 			m_isDeathFlag = true;
 			//倒れた座標を保存する
 			m_deathPos = m_pos;
+			if (m_isDeathTutorial)
+			{
+				m_pMain->ShowDeathTutorial();
+				m_pMain->StopScene();
+				m_isDeathTutorial = false;
+			}
 		}
 	}
 

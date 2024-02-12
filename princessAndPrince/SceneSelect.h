@@ -25,6 +25,14 @@ public:
 	bool GetCanBuyItem();
 	//セーブシーンに戻るときにセーブする
 	void SetSaveData(int num);
+	//ステージの名前を表示する
+	void DrawStageName(int num);
+	//ショップを拡大する
+	void ZoomShop();
+	//シーンとキャラを動かす
+	void MoveCharcter();
+	//ビックリマークを動かす
+	void MoveMark();
 private:
 	//今選択しているシーンを保存する
 	int m_stageSelectNum;
@@ -121,4 +129,12 @@ private:
 	int m_princessItemPriceList[21];
 	//変えるアイテムがあるかどうか
 	bool m_isBuy;
+	//ビックリマークのポジション
+	float m_exclamationMarkPosY;
+	//ビックリマークを動かす速さ
+	float m_exclamationMarkMoveSpeed;
+	//三角形を動かす座標
+	float m_shakeTrianglePosY;
+	//三角形を上に動かしているかどうか
+	bool m_isMoveUpTriangle;
 };

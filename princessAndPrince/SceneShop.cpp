@@ -132,7 +132,7 @@ void SceneShop::Init()
 		tempS = MyString::split(str, ",");
 		ItemPrice tempItem;
 		tempItem.playerItemPrice = std::stoi(tempS[0]);
-		tempItem.princessItemPrice = std::stof(tempS[1]);
+		tempItem.princessItemPrice = std::stoi(tempS[1]);
 		m_playerItemPriceList[m_loopCount] = tempItem.playerItemPrice;
 		m_princessItemPriceList[m_loopCount] = tempItem.princessItemPrice;
 		m_loopCount++;

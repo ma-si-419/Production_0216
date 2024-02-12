@@ -89,13 +89,17 @@ void TreasureBox::Update()
 				m_knockBackTime = 0;
 			}
 		}
-		m_circleCol.SetCenter(m_pos, m_colScale);
+		m_circleCol.SetCenter(m_pos, static_cast<float>(m_colScale));
 		if (m_hp < 0)
 		{
 			//どの処理が行われるか設定する
-			int randomNumber = GetRand(3);
-
-			if (randomNumber == 0)
+			int randomNumber = GetRand(2);
+			//2ステージまでは血を落とさないようにする
+			if (m_pMain->GetSceneNum() > 1)
+			{
+				randomNumber--;
+			}
+			if (randomNumber == -1)
 			{
 				for (int i = 0; i < kDropBlood; i++)
 				{
@@ -109,7 +113,7 @@ void TreasureBox::Update()
 					m_pMain->AddItem(pBlood);
 				}
 			}
-			else if (randomNumber == 1)
+			else if (randomNumber == 0)
 			{
 				for (int i = 0; i < kDropExp; i++)
 				{
@@ -124,7 +128,7 @@ void TreasureBox::Update()
 					m_pMain->AddItem(pExp);
 				}
 			}
-			else if (randomNumber == 2)
+			else if (randomNumber == 1)
 			{
 				for (int i = 0; i < kDropGold; i++)
 				{
@@ -140,7 +144,7 @@ void TreasureBox::Update()
 					m_pMain->AddItem(pGold);
 				}
 			}
-			else if (randomNumber == 3)
+			else if (randomNumber == 2)
 			{
 				//体力回復アイテムを落とす処理を作る
 				//ポーションのメモリ確保

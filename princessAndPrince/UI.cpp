@@ -33,7 +33,7 @@ namespace
 	//Uiを揺らす幅
 	constexpr int kShakeLange = 1;
 	//Uiを表示する座標
-	constexpr int kUiPosYArr[6] = {315,390,465,540,615,690};
+	constexpr int kUiPosYArr[6] = { 315,390,465,540,615,690 };
 	//ボタンがどこまで大きくなるか
 	constexpr double kAngryButtonMaxRatio = 0.8;
 	//ボタンがどこまで小さくなるか
@@ -101,7 +101,7 @@ void UI::Update()
 		m_isButtonZoom = true;
 		m_angryButtonRatio = kAngryButtonMinRatio;
 	}
-	
+
 }
 
 void UI::Draw()
@@ -153,7 +153,7 @@ void UI::Draw()
 	DrawGraph(1050 + m_angryGaugeUiShiftPosX, 800, m_angryGaugeUiGraph, true);
 	if (m_pMain->GetSpecialGaugeRate() == 1)
 	{
-		DrawRotaGraph(1050, 800,m_angryButtonRatio,0.0,m_angryButtonGraph,true,0,0);
+		DrawRotaGraph(1050, 800, m_angryButtonRatio, 0.0, m_angryButtonGraph, true, 0, 0);
 	}
 }
 
@@ -320,14 +320,29 @@ void UI::DrawStatus()
 	DrawString(kStatusPos, kUiPosYArr[3], "は や さLv", GetColor(255, 255, 255));
 	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userSpdLevel + 1), kUiPosYArr[3],//座標
 		GetColor(255, 255, 255), "%d", UserData::userSpdLevel + 1);
-	//風魔法のレベルを表示する
-	DrawString(kStatusPos, kUiPosYArr[4], "ファイアLv", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userFireLevel + 1), kUiPosYArr[4],//座標
-		GetColor(255, 255, 255), "%d", UserData::userFireLevel + 1);
-	//炎魔法のレベルを表示する
-	DrawString(kStatusPos, kUiPosYArr[5], "ウィンドLv", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userWindLevel + 1), kUiPosYArr[5],//座標
-		GetColor(255, 255, 255), "%d", UserData::userWindLevel + 1);
+	//ステージ２までは灰色で表示しておく
+	if (m_pMain->GetSceneNum() > 1)
+	{
+		//風魔法のレベルを表示する
+		DrawString(kStatusPos, kUiPosYArr[4], "ファイアLv", GetColor(255, 255, 255));
+		DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userFireLevel + 1), kUiPosYArr[4],//座標
+			GetColor(255, 255, 255), "%d", UserData::userFireLevel + 1);
+		//炎魔法のレベルを表示する
+		DrawString(kStatusPos, kUiPosYArr[5], "ウィンドLv", GetColor(255, 255, 255));
+		DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userWindLevel + 1), kUiPosYArr[5],//座標
+			GetColor(255, 255, 255), "%d", UserData::userWindLevel + 1);
+	}
+	else
+	{
+		//風魔法のレベルを表示する
+		DrawString(kStatusPos, kUiPosYArr[4], "ファイアLv", GetColor(128, 128, 128));
+		DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userFireLevel + 1), kUiPosYArr[4],//座標
+			GetColor(128, 128, 128), "%d", UserData::userFireLevel + 1);
+		//炎魔法のレベルを表示する
+		DrawString(kStatusPos, kUiPosYArr[5], "ウィンドLv", GetColor(128, 128, 128));
+		DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userWindLevel + 1), kUiPosYArr[5],//座標
+			GetColor(128, 128, 128), "%d", UserData::userWindLevel + 1);
+	}
 }
 
 void UI::DrawGetItem()

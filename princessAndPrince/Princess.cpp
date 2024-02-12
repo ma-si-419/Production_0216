@@ -75,7 +75,18 @@ Princess::Princess(SceneMain* pMain) :
 	m_pMain(pMain),
 	m_shakeTimeCount(kShakeTime),
 	m_shakeSpeed(kShakeSpeed),
-	m_drawState(Game::kStone)
+	m_drawState(Game::kStone),
+	m_arrowGraph(0),
+	m_fireMagicSe(0),
+	m_hitFlag(false),
+	m_magicArrowGraph(0),
+	m_magicHandle(0),
+	m_pMagic(),
+	m_pParticle(),
+	m_passBloodSe(0),
+	m_scale(0),
+	m_windMagicSe(0)
+
 {
 	m_pos.x = Game::kPlayScreenWidth / 2;
 	m_pos.y = Game::kPlayScreenHeight / 2;

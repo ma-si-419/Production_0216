@@ -130,4 +130,6 @@ private:
 	int m_playerDeathSe;
 	//プレイヤーが立ち上がるときの効果音
 	int m_standUpSe;
+	//プレイヤーが初めて死んだときにチュートリアルを出す
+	bool m_isDeathTutorial;
 };

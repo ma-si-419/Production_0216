@@ -18,6 +18,6 @@ void Blood::Draw()
 		0.0,
 		m_handle, true, false);
 #ifdef _DEBUG
-	m_circleCol.Draw(m_colScale, 0x0000ff, false);
+	m_circleCol.Draw(static_cast<int>(m_colScale), 0x0000ff, false);
 #endif
 }

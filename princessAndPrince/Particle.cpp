@@ -7,7 +7,7 @@ Particle::Particle(Vec2 pos, float lange, float speed, int scale, int color) :
 	m_initialPos(pos),
 	m_dirVec(static_cast<float>(GetRand(1000)) - 500, static_cast<float>(GetRand(1000)) - 500),
 	m_scale(GetRand(scale) + 2),
-	m_appearLange(GetRand(lange) + lange / 5),
+	m_appearLange(static_cast<float>(GetRand(lange) + lange / 5)),
 	m_spd(speed),
 	m_color(0),
 	m_isWhite(false)

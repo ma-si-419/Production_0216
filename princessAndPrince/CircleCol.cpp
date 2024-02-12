@@ -18,7 +18,7 @@ void CircleCol::Draw(int radius, unsigned int color, bool isFill) const
 void CircleCol::SetCenter(Vec2 pos, float radius)
 {
 	m_pos = pos;
-	m_radius = radius;
+	m_radius = static_cast<int>(radius);
 }
 
 Vec2 CircleCol::GetCenter() const

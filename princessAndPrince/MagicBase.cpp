@@ -130,7 +130,7 @@ void MagicBase::Draw()
 {
 	if (m_isFire)
 	{
-		DrawRectRotaGraph(m_magicPos.x, m_magicPos.y,
+		DrawRectRotaGraph(static_cast<int>(m_magicPos.x), static_cast<int>(m_magicPos.y),
 			0, Game::kFire * kGraphSize,
 			kGraphSize, kGraphSize,
 			kMagicSize,
@@ -141,7 +141,7 @@ void MagicBase::Draw()
 	}
 	else if (!m_isFire)
 	{
-		DrawRectRotaGraph(m_magicPos.x, m_magicPos.y,
+		DrawRectRotaGraph(static_cast<int>(m_magicPos.x), static_cast<int>(m_magicPos.y),
 			0, Game::kTyphoon * kGraphSize,
 			kGraphSize, kGraphSize,
 			kMagicSize,
@@ -150,7 +150,7 @@ void MagicBase::Draw()
 			true,
 			m_turnFlag,0);
 	}
-	m_circleCol.Draw(m_scale,0,0);
+	m_circleCol.Draw(static_cast<int>(m_scale),0,0);
 }
 
 float MagicBase::GetAtk()

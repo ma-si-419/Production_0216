@@ -85,6 +85,15 @@ namespace
 	constexpr int kBossFadeSpeed = 10;
 	//配列の大きさ
 	constexpr int kArraySize = 81;
+	//ビックリマークの初期座標
+	constexpr int kExclamationMarkPosX = 980;
+	constexpr float kExclamationMarkPosY = 300.0f;
+	//ビックリマークが揺れる幅
+	constexpr float kShakeExclamationMarkLange = 10;
+	//ビックリマークが動く速さ
+	constexpr float kExclamationMarkMoveSpeed = 0.5f;
+	//三角形を動かす長さ
+	constexpr float kShakeTriangleLange = 15.0f;
 }
 SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
 	Scene(sceneManager, DataManager),
@@ -118,7 +127,13 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, i
 	m_bossAlpha(0),
 	m_boxRatio(0),
 	m_boxAngle(0),
-	m_isBuy(false)
+	m_isBuy(false),
+	m_exclamationMarkPosY(kExclamationMarkPosY),
+	m_princessItemPriceList(),
+	m_playerItemPriceList(),
+	m_exclamationMarkMoveSpeed(kExclamationMarkMoveSpeed),
+	m_shakeTrianglePosY(0)
+
 {
 	m_appSe = DataManager.SearchSound("approveSe");
 	m_moveMainSceneSe = DataManager.SearchSound("moveMainSceneSe");
@@ -166,7 +181,7 @@ void SceneSelect::Init()
 		tempS = MyString::split(str, ",");
 		ItemPrice tempItem;
 		tempItem.playerItemPrice = std::stoi(tempS[0]);
-		tempItem.princessItemPrice = std::stof(tempS[1]);
+		tempItem.princessItemPrice = std::stoi(tempS[1]);
 		m_playerItemPriceList[loopCount] = tempItem.playerItemPrice;
 		m_princessItemPriceList[loopCount] = tempItem.princessItemPrice;
 		loopCount++;
@@ -252,9 +267,9 @@ void SceneSelect::Update(Pad& pad)
 			if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W) || CheckHitKey(KEY_INPUT_UP))
 			{
 				//移動不可だったら
-				if (m_stageSelectNum >= kMaxSceneNum)
+				if (m_stageSelectNum >= kMaxSceneNum || m_stageSelectNum >= UserData::userClearStageNum)
 				{
-					m_stageSelectNum = kMaxSceneNum;
+
 				}
 				//移動可能だったら
 				else
@@ -295,94 +310,7 @@ void SceneSelect::Update(Pad& pad)
 	//移動の演出中
 	if (m_isStaging)
 	{
-		//ボスを消す
-		m_bossAlpha = 0;
-		//アニメーションを動かす
-		m_animFrame++;
-		if (m_animFrame > kAnimFrameCycle)
-		{
-			m_animFrame = 0;
-		}
-
-		//キャラが上の端までついていなかったら
-		if (!m_isCharArrTopEnd)
-		{
-			//上入力がされていたら
-			if (m_isSceneUp)
-			{
-				//キャラを上に移動させる
-				m_charPosY -= kCharMoveSpeed;
-				m_dir = Game::kDirUp;
-			}
-		}
-		//キャラが上の端についたら
-		else
-		{
-			//キャラのポジションを下げる
-			m_charPosY += kBgMoveSpeed;
-			//キャラのポジションが下がりすぎないように
-			if (m_charPosY > 0)
-			{
-				m_charPosY = 0;
-			}
-			m_cutBgPosY -= kBgMoveSpeed;
-			//背景を切り取る制御
-			if (m_cutBgPosY % kBgGraphSize == 0 && !m_isMoveMainScene)
-			{
-				m_isStaging = false;
-				m_isCharArrTopEnd = false;
-				m_dir = Game::kDirDown;
-				m_animFrame = kAnimFrameNum;
-				if (m_isChangeStage)
-				{
-					m_stageSelectNum++;
-					m_isChangeStage = false;
-				}
-			}
-		}
-		//キャラが下の端までついていなかったら
-
-			//下入力がされていたら
-		if (!m_isSceneUp)
-		{
-			if (m_isCharMoveDown)
-			{
-				//キャラを下に移動させる
-				m_charPosY += kCharMoveSpeed;
-				m_dir = Game::kDirDown;
-				if (m_charPosY > 0)
-				{
-					m_isCharMoveDown = false;
-					m_animFrame = kAnimFrameNum;
-				}
-			}
-		}
-
-		//キャラが下の端についたら
-		if (m_isCharArrBottomEnd)
-		{
-			//キャラのポジションをあげる
-			m_charPosY -= kBgMoveSpeed;
-			//キャラのポジションがあがりすぎないように
-			if (m_charPosY + kPlayerPosY < kBgTopEndPos)
-			{
-				m_charPosY = kBgTopEndPos - kPlayerPosY;
-			}
-			m_cutBgPosY += kBgMoveSpeed;
-			//背景を切り取る制御
-			if (m_cutBgPosY % kBgGraphSize == 0 && !m_isMoveMainScene)
-			{
-				m_isCharMoveDown = true;
-				m_isCharArrBottomEnd = false;
-				m_dir = Game::kDirDown;
-
-				if (m_isChangeStage)
-				{
-					m_stageSelectNum--;
-					m_isChangeStage = false;
-				}
-			}
-		}
+		MoveCharcter();
 	}
 	else
 	{
@@ -415,29 +343,27 @@ void SceneSelect::Update(Pad& pad)
 		m_shopAnimFrame = 0;
 		m_shopSrcX = 0;
 	}
+	//ショップボタンが押されたらショップを拡大する
 	if (m_isShopButton)
 	{
-		m_shopStartPosX -= kShopStartPosXSpeed;
-		m_shopStartPosY -= kShopStartPosYSpeed;
-		m_shopEndPosX += kShopEndPosXSpeed;
-		m_shopEndPosY += kShopEndPosYSpeed;
-
-		if (m_shopStartPosX < kShopMaxSizePosX)
-		{
-			StopSoundMem(m_bgm);
-			m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager, m_stageSelectNum), true);
-		}
+		ZoomShop();
+	}
+	//ショップの左上に表示するビックリマークを動かす
+	{
+		MoveMark();
 	}
 	//ボスのアニメーションを回し続ける
-	m_bossAnimFrame++;
-	if (m_bossAnimFrame > kBossAnimFrameNum)
 	{
-		m_bossSrcX = kBossGraphSize;
-	}
-	if (m_bossAnimFrame > kBossAnimFrameNum * 2)
-	{
-		m_bossAnimFrame = 0;
-		m_bossSrcX = 0;
+		m_bossAnimFrame++;
+		if (m_bossAnimFrame > kBossAnimFrameNum)
+		{
+			m_bossSrcX = kBossGraphSize;
+		}
+		if (m_bossAnimFrame > kBossAnimFrameNum * 2)
+		{
+			m_bossAnimFrame = 0;
+			m_bossSrcX = 0;
+		}
 	}
 
 	//メインシーンに移動する
@@ -450,6 +376,22 @@ void SceneSelect::Update(Pad& pad)
 		{
 			m_sceneManager.ChangeScene(std::make_shared<SceneMain>(m_sceneManager, m_dataManager, m_stageSelectNum), false);
 		}
+	}
+	if (m_isMoveUpTriangle)
+	{
+		m_shakeTrianglePosY -= 0.5f;
+	}
+	else
+	{
+		m_shakeTrianglePosY += 0.5f;
+	}
+	if (-kShakeTriangleLange > m_shakeTrianglePosY)
+	{
+		m_isMoveUpTriangle = false;
+	}
+	else if (0 < m_shakeTrianglePosY)
+	{
+		m_isMoveUpTriangle = true;
 	}
 }
 
@@ -505,49 +447,10 @@ void SceneSelect::Draw()
 	if (m_isBuy)
 	{
 		//お店の左上にビックリマーク表示
-		DrawGraph(1050, 370, m_exclamationMarkGraph, true);
+		DrawGraph(kExclamationMarkPosX, static_cast<int>(m_exclamationMarkPosY), m_exclamationMarkGraph, true);
 	}
-	//選んでいるステージを表示する
-	{
-		int stringWidth;
-		switch (m_stageSelectNum)
-		{
-		case 0:
-			stringWidth = GetStringLength("冒険の始まり") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, kTitlePosY, "冒険の始まり", GetColor(255, 255, 255));
-			break;
-		case 1:
-			stringWidth = GetStringLength("賢者を訪ねて") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, kTitlePosY, "賢者を訪ねて", GetColor(255, 255, 255));
-			break;
-		case 2:
-			stringWidth = GetStringLength("よみがえれ姫") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, kTitlePosY, "よみがえれ姫", GetColor(255, 255, 255));
-			break;
-		case 3:
-			stringWidth = GetStringLength("怒りのパワー") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, kTitlePosY, "怒りのパワー", GetColor(255, 255, 255));
-			break;
-		case 4:
-			stringWidth = GetStringLength("アブナイ肝試し") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, kTitlePosY, "アブナイ肝試し", GetColor(255, 255, 255));
-			break;
-		case 5:
-			stringWidth = GetStringLength("ドラゴンの巣窟") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, kTitlePosY, "ドラゴンの巣窟", GetColor(255, 255, 255));
-			break;
-		case 6:
-			stringWidth = GetStringLength("雪に潜む者たち") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, kTitlePosY, "雪に潜む者たち", GetColor(255, 255, 255));
-			break;
-		case 7:
-			stringWidth = GetStringLength("俺たちの戦いはこれからだ") * kFontHalfSize;
-			DrawString(kTitlePosX - stringWidth, kTitlePosY, "俺たちの戦いはこれからだ", GetColor(255, 255, 255));
-			break;
-		default:
-			break;
-		}
-	}
+	//今選んでいるステージの名前を表示する
+	DrawStageName(m_stageSelectNum);
 	//ショップの表示
 	DrawRectExtendGraph(static_cast<int>(m_shopStartPosX), static_cast<int>(m_shopStartPosY),
 		m_shopEndPosX, m_shopEndPosY, m_shopSrcX, m_shopSrcY, 64, 64, m_shopGraph, true);
@@ -562,9 +465,9 @@ void SceneSelect::MoveScene(bool up)
 	speed = kBgGraphSize / kBgMoveSpeed;
 	if (up)
 	{
-		m_cutBgPosY -= speed;
+		m_cutBgPosY -= static_cast<int>(speed);
 		m_animFrame++;
-		if (m_animFrame > kAnimFrameCycle)
+		if (m_animFrame >= kAnimFrameCycle)
 		{
 			m_animFrame = 0;
 		}
@@ -572,9 +475,9 @@ void SceneSelect::MoveScene(bool up)
 	}
 	else
 	{
-		m_cutBgPosY += speed;
+		m_cutBgPosY += static_cast<int>(speed);
 		m_animFrame++;
-		if (m_animFrame > kAnimFrameCycle)
+		if (m_animFrame >= kAnimFrameCycle)
 		{
 			m_animFrame = 0;
 		}
@@ -584,16 +487,16 @@ void SceneSelect::MoveScene(bool up)
 
 void SceneSelect::DrawSceneSrideTriangle()
 {
-	if (m_stageSelectNum != kMaxSceneNum)
+	if (m_stageSelectNum < kMaxSceneNum && m_stageSelectNum < UserData::userClearStageNum)
 	{
 		//上の三角形表示
-		DrawTriangle(Game::kScreenWidth / 2 + kTriangleFrameScale, kHighTrianglePosY + kTriangleFrameScale,
-			Game::kScreenWidth / 2, kHighTrianglePosY,
-			Game::kScreenWidth / 2 - kTriangleFrameScale, kHighTrianglePosY + kTriangleFrameScale,
+		DrawTriangle(Game::kScreenWidth / 2 + kTriangleFrameScale, kHighTrianglePosY + kTriangleFrameScale + static_cast<int>(m_shakeTrianglePosY),
+			Game::kScreenWidth / 2, kHighTrianglePosY + static_cast<int>(m_shakeTrianglePosY),
+			Game::kScreenWidth / 2 - kTriangleFrameScale, kHighTrianglePosY + kTriangleFrameScale + static_cast<int>(m_shakeTrianglePosY),
 			GetColor(0, 0, 0), true);
-		DrawTriangle(Game::kScreenWidth / 2 + kTriangleScale, kHighTrianglePosY + kTriangleScale + kTriangleFrameShiftPosY,
-			Game::kScreenWidth / 2, kHighTrianglePosY + kTriangleFrameShiftPosY,
-			Game::kScreenWidth / 2 - kTriangleScale, kHighTrianglePosY + kTriangleScale + kTriangleFrameShiftPosY,
+		DrawTriangle(Game::kScreenWidth / 2 + kTriangleScale, kHighTrianglePosY + kTriangleScale + kTriangleFrameShiftPosY + static_cast<int>(m_shakeTrianglePosY),
+			Game::kScreenWidth / 2, kHighTrianglePosY + kTriangleFrameShiftPosY + static_cast<int>(m_shakeTrianglePosY),
+			Game::kScreenWidth / 2 - kTriangleScale, kHighTrianglePosY + kTriangleScale + kTriangleFrameShiftPosY + static_cast<int>(m_shakeTrianglePosY),
 			GetColor(255, 255, 255), true);
 	}
 
@@ -782,6 +685,169 @@ void SceneSelect::SetSaveData(int num)
 		tempS = to_string(UserData::userSaveDataNum);
 		outputfile << tempS;
 	}
+}
+
+void SceneSelect::DrawStageName(int num)
+{
+	int stringWidth;
+	switch (num)
+	{
+	case 0:
+		stringWidth = GetStringLength("冒険の始まり") * kFontHalfSize;
+		DrawString(kTitlePosX - stringWidth, kTitlePosY, "冒険の始まり", GetColor(255, 255, 255));
+		break;
+	case 1:
+		stringWidth = GetStringLength("賢者を訪ねて") * kFontHalfSize;
+		DrawString(kTitlePosX - stringWidth, kTitlePosY, "賢者を訪ねて", GetColor(255, 255, 255));
+		break;
+	case 2:
+		stringWidth = GetStringLength("よみがえれ姫") * kFontHalfSize;
+		DrawString(kTitlePosX - stringWidth, kTitlePosY, "よみがえれ姫", GetColor(255, 255, 255));
+		break;
+	case 3:
+		stringWidth = GetStringLength("怒りのパワー") * kFontHalfSize;
+		DrawString(kTitlePosX - stringWidth, kTitlePosY, "怒りのパワー", GetColor(255, 255, 255));
+		break;
+	case 4:
+		stringWidth = GetStringLength("アブナイ肝試し") * kFontHalfSize;
+		DrawString(kTitlePosX - stringWidth, kTitlePosY, "アブナイ肝試し", GetColor(255, 255, 255));
+		break;
+	case 5:
+		stringWidth = GetStringLength("ドラゴンの巣窟") * kFontHalfSize;
+		DrawString(kTitlePosX - stringWidth, kTitlePosY, "ドラゴンの巣窟", GetColor(255, 255, 255));
+		break;
+	case 6:
+		stringWidth = GetStringLength("雪に潜む者たち") * kFontHalfSize;
+		DrawString(kTitlePosX - stringWidth, kTitlePosY, "雪に潜む者たち", GetColor(255, 255, 255));
+		break;
+	case 7:
+		stringWidth = GetStringLength("俺たちの戦いはこれからだ") * kFontHalfSize;
+		DrawString(kTitlePosX - stringWidth, kTitlePosY, "俺たちの戦いはこれからだ", GetColor(255, 255, 255));
+		break;
+	default:
+		break;
+	}
+}
+
+void SceneSelect::ZoomShop()
+{
+	m_shopStartPosX -= kShopStartPosXSpeed;
+	m_shopStartPosY -= kShopStartPosYSpeed;
+	m_shopEndPosX += kShopEndPosXSpeed;
+	m_shopEndPosY += kShopEndPosYSpeed;
+
+	if (m_shopStartPosX < kShopMaxSizePosX)
+	{
+		StopSoundMem(m_bgm);
+		m_sceneManager.ChangeScene(std::make_shared<SceneShop>(m_sceneManager, m_dataManager, m_stageSelectNum), true);
+	}
+}
+
+void SceneSelect::MoveCharcter()
+{
+	//ボスを消す
+	m_bossAlpha = 0;
+	//アニメーションを動かす
+	m_animFrame++;
+	if (m_animFrame >= kAnimFrameCycle)
+	{
+		m_animFrame = 0;
+	}
+
+	//キャラが上の端までついていなかったら
+	if (!m_isCharArrTopEnd)
+	{
+		//上入力がされていたら
+		if (m_isSceneUp)
+		{
+			//キャラを上に移動させる
+			m_charPosY -= kCharMoveSpeed;
+			m_dir = Game::kDirUp;
+		}
+	}
+	//キャラが上の端についたら
+	else
+	{
+		//キャラのポジションを下げる
+		m_charPosY += kBgMoveSpeed;
+		//キャラのポジションが下がりすぎないように
+		if (m_charPosY > 0)
+		{
+			m_charPosY = 0;
+		}
+		m_cutBgPosY -= kBgMoveSpeed;
+		//背景を切り取る制御
+		if (m_cutBgPosY % kBgGraphSize == 0 && !m_isMoveMainScene)
+		{
+			m_isStaging = false;
+			m_isCharArrTopEnd = false;
+			m_dir = Game::kDirDown;
+			m_animFrame = kAnimFrameNum;
+			if (m_isChangeStage)
+			{
+				m_stageSelectNum++;
+				m_isChangeStage = false;
+			}
+		}
+	}
+	//キャラが下の端までついていなかったら
+
+		//下入力がされていたら
+	if (!m_isSceneUp)
+	{
+		if (m_isCharMoveDown)
+		{
+			//キャラを下に移動させる
+			m_charPosY += kCharMoveSpeed;
+			m_dir = Game::kDirDown;
+			if (m_charPosY > 0)
+			{
+				m_isCharMoveDown = false;
+				m_animFrame = kAnimFrameNum;
+			}
+		}
+	}
+
+	//キャラが下の端についたら
+	if (m_isCharArrBottomEnd)
+	{
+		//キャラのポジションをあげる
+		m_charPosY -= kBgMoveSpeed;
+		//キャラのポジションがあがりすぎないように
+		if (m_charPosY + kPlayerPosY < kBgTopEndPos)
+		{
+			m_charPosY = kBgTopEndPos - kPlayerPosY;
+		}
+		m_cutBgPosY += kBgMoveSpeed;
+		//背景を切り取る制御
+		if (m_cutBgPosY % kBgGraphSize == 0 && !m_isMoveMainScene)
+		{
+			m_isCharMoveDown = true;
+			m_isCharArrBottomEnd = false;
+			m_dir = Game::kDirDown;
+
+			if (m_isChangeStage)
+			{
+				m_stageSelectNum--;
+				m_isChangeStage = false;
+			}
+		}
+	}
+}
+
+void SceneSelect::MoveMark()
+{
+	//動きを反転させる処理
+	if (m_exclamationMarkPosY > kExclamationMarkPosY + kShakeExclamationMarkLange)
+	{
+		m_exclamationMarkMoveSpeed *= -1;
+	}
+	if (m_exclamationMarkPosY < kExclamationMarkPosY - kShakeExclamationMarkLange)
+	{
+		m_exclamationMarkMoveSpeed *= -1;
+	}
+	//ビックリマークを上下に動かす
+	m_exclamationMarkPosY += m_exclamationMarkMoveSpeed;
 }
 
 

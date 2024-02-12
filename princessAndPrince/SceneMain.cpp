@@ -54,7 +54,7 @@ namespace
 	//出すパーティクルの数
 	constexpr int kParticleVol = 30;
 	//クリア時に止める時間
-	constexpr int kResultTime = 60 + kClearTime;
+	constexpr int kResultTime = 30 + kClearTime;
 	//クリア時の演出の時間
 	constexpr int kDanceTime = 60 + kResultTime;
 	//レベルアップの文字を出すY座標
@@ -81,7 +81,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_clearTime(0),
 	m_nextEnemyKind(0),
 	m_nextEnemyPopTime(0),
-	m_specialGauge(100),
+	m_specialGauge(0),
 	m_isSpecialMode(false),
 	m_isPause(false),
 	m_isStop(false),
@@ -115,8 +115,11 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_isLastSe(true),
 	m_boxAngle(0),
 	m_boxRatio(25),
-	m_isMoveBox(true)
-
+	m_isMoveBox(true),
+	m_startTutorialNum(0),
+	m_isDeathTutorial(false),
+	m_specialModeStartCount(0),
+	m_pParticle()
 {
 	//プレイヤーのグラフィックのロード
 	m_playerHandle = m_dataManager.SearchGraph("playerGraph");
@@ -202,6 +205,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_tutorialGraph[3] = m_dataManager.SearchGraph("tutorialGraph4");
 	m_tutorialGraph[4] = m_dataManager.SearchGraph("tutorialGraph5");
 	m_tutorialGraph[5] = m_dataManager.SearchGraph("tutorialGraph6");
+	m_tutorialGraph[6] = m_dataManager.SearchGraph("tutorialGraph7");
 
 	//敵の最大数を設定
 	m_pEnemy.resize(kMaxEnemy);
@@ -231,19 +235,14 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 		m_startTutorialNum = 0;
 		m_nowShowTutorialNum = m_startTutorialNum;
 		break;
-	case 1:
-		m_tutorialNum = 1;
-		m_startTutorialNum = 2;
-		m_nowShowTutorialNum = m_startTutorialNum;
-		break;
 	case 2:
-		m_tutorialNum = 2;
+		m_tutorialNum = 3;
 		m_startTutorialNum = 3;
 		m_nowShowTutorialNum = m_startTutorialNum;
 		break;
 	case 3:
 		m_tutorialNum = 1;
-		m_startTutorialNum = 5;
+		m_startTutorialNum = 6;
 		m_nowShowTutorialNum = m_startTutorialNum;
 		break;
 	default:
@@ -288,7 +287,6 @@ void SceneMain::Init()
 	}
 	m_pPlayer->Init();
 	m_pPrincess->Init();
-	//	ChangeSoundVol(150);
 }
 
 
@@ -315,9 +313,20 @@ void SceneMain::Update(Pad& pad)
 		m_boxRatio = 0;
 		m_isMoveBox = false;
 	}
-	if (!m_isMoveBox)
+	//最初に死んだときにチュートリアルを表示する
+	if (m_isDeathTutorial)
 	{
-
+		if (CheckHitKey(KEY_INPUT_RETURN) || m_input.Buttons[XINPUT_BUTTON_A])
+		{
+			m_isDeathTutorial = false;
+			m_isStop = false;
+			m_isLastKey = true;
+			PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
+		}
+	}
+	//シーン移動の演出が終わったら
+	if (!m_isMoveBox && !m_isDeathTutorial)
+	{
 		//エンターキーを押したら次のチュートリアルに移行する
 		if (CheckHitKey(KEY_INPUT_RETURN) && !m_isLastKey && m_isShowTutorial ||
 			m_input.Buttons[XINPUT_BUTTON_A] && !m_isLastKey && m_isShowTutorial)
@@ -396,36 +405,37 @@ void SceneMain::Update(Pad& pad)
 			//リザルト画面に移行する
 			m_isResult = true;
 		}
-		//エネミーのスタックがなくなるまで回す
-		if (!m_popEnemyList.empty())
-		{
-			//ボスを倒したら敵を出てこないようにする
-			if (m_killBossCount < m_bossCount && !m_pPrincess->IsDeath())
-			{
-				m_enemyPopTimeCount++;
-			}
-			//設定した時間になったら
-			if (m_enemyPopTimeCount > m_nextEnemyPopTime * 40)
-			{
-				//カウントを初期化
-				m_enemyPopTimeCount = 0;
-				//エネミーを出現させる
-				CreateEnemy(m_nextEnemyKind);
-				//次に出てくるエネミーの情報を入れる
-				popEnemy temp = m_popEnemyList.top();
-				m_nextEnemyPopTime = temp.popTime;
-				m_nextEnemyKind = temp.enemyKind;
-				m_popEnemyList.pop();
-				if (m_nextEnemyKind > 6 && !m_isBossFlag)
-				{
-					m_isBossFlag = true;
-					m_isMusicFlag = true;
-				}
-			}
-		}
 		//リザルト状態のときは止まるようにする
 		if (!m_isStop)
 		{
+			//エネミーのスタックがなくなるまで回す
+			if (!m_popEnemyList.empty())
+			{
+				//ボスを倒したら敵を出てこないようにする
+				if (m_killBossCount < m_bossCount && !m_pPrincess->IsDeath())
+				{
+					m_enemyPopTimeCount++;
+				}
+				//設定した時間になったら
+				if (m_enemyPopTimeCount > m_nextEnemyPopTime * 40)
+				{
+					//カウントを初期化
+					m_enemyPopTimeCount = 0;
+					//エネミーを出現させる
+					CreateEnemy(m_nextEnemyKind);
+					//出てくる敵がボスだったら音楽を変える
+					if (m_nextEnemyKind > 6 && !m_isBossFlag)
+					{
+						m_isBossFlag = true;
+						m_isMusicFlag = true;
+					}
+					//次に出てくるエネミーの情報を入れる
+					popEnemy temp = m_popEnemyList.top();
+					m_nextEnemyPopTime = temp.popTime;
+					m_nextEnemyKind = temp.enemyKind;
+					m_popEnemyList.pop();
+				}
+			}
 			m_pPlayer->Update();
 			m_pPrincess->Update();
 			m_pUi->Update();
@@ -486,7 +496,6 @@ void SceneMain::Update(Pad& pad)
 				}
 			}
 		}
-
 
 		for (auto& magic : m_pMagic)
 		{
@@ -656,7 +665,7 @@ void SceneMain::Update(Pad& pad)
 				PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 				StopSoundMem(m_fieldBgm);
 				StopSoundMem(m_bossBgm);
-				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectScene),true);
+				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectScene), true);
 				return;
 				break;
 			}
@@ -746,7 +755,6 @@ void SceneMain::Update(Pad& pad)
 					m_pParticle = new Particle(temp, 40.0f, 4.0f, 5, 0);
 					AddParticle(m_pParticle);
 				}
-
 			}
 		}
 		//プレイヤーを前に向ける
@@ -835,7 +843,12 @@ void SceneMain::Update(Pad& pad)
 				PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 				m_isLastSe = false;
 			}
-			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectScene),true);
+			//まだクリアしてないステージだったらクリアしたことを保存する
+			if (m_selectScene >= UserData::userClearStageNum && m_isClearFlag)
+			{
+				UserData::userClearStageNum = m_selectScene + 1;
+			}
+			m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager, m_selectScene), true);
 			return;
 		}
 	}
@@ -989,6 +1002,11 @@ void SceneMain::Draw()
 	{
 		DrawGraph(85, 290, m_tutorialGraph[m_nowShowTutorialNum], true);
 	}
+	//最初に死んだときのチュートリアルを表示する
+	if (m_isDeathTutorial)
+	{
+		DrawGraph(85, 290, m_tutorialGraph[2], true);
+	}
 	//黒いボックスを表示する
 	DrawRotaGraph(Game::kScreenWidth / 2, Game::kPlayScreenHeight / 2,//座標
 		m_boxRatio, m_boxAngle, m_boxGraph, true, 0, 0);
@@ -1073,19 +1091,11 @@ int SceneMain::GetDigits(int num)
 	{
 		return 0;
 	}
+	else
+	{
+		return 0;
+	}
 }
-
-void SceneMain::ChangeSoundVol(int volume)
-{
-	ChangeVolumeSoundMem(volume, m_attackSe);
-	ChangeVolumeSoundMem(volume, m_danceMusic);
-	ChangeVolumeSoundMem(volume, m_resultGold);
-	ChangeVolumeSoundMem(volume, m_resultExp);
-	ChangeVolumeSoundMem(volume, m_fieldBgm);
-	ChangeVolumeSoundMem(volume, m_bossBgm);
-	ChangeVolumeSoundMem(volume, m_beforeDanceSe);
-}
-
 int SceneMain::GetNextExp()
 {
 	return m_expList[UserData::userMainLevel] - UserData::userExp;
@@ -1187,7 +1197,6 @@ void SceneMain::SetBossVol(int stageNum)
 		m_bossCount = 7;
 	}
 }
-
 bool SceneMain::AddMagic(MagicBase* pMagic)
 {
 	//魔法の配列の長さ
@@ -1244,4 +1253,3 @@ bool SceneMain::IsCollision(CircleCol col1, CircleCol col2)
 	}
 	return false;
 }
-

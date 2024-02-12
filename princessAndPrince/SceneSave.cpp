@@ -180,7 +180,7 @@ void SceneSave::Draw()
 		stringWidth = GetStringLength("キャンセル") * kFontSize;
 		DrawString(kWindowStringPosX - stringWidth, kWindowStringPosY[2], "キャンセル", GetColor(255, 255, 255));
 
-		DrawGraph(kWindowCursorPosX[m_selectWindowNum] + m_cursorShakeLange, kWindowStringPosY[m_selectWindowNum], m_cursorGraph, true);
+		DrawGraph(kWindowCursorPosX[m_selectWindowNum] + static_cast<int>(m_cursorShakeLange), kWindowStringPosY[m_selectWindowNum], m_cursorGraph, true);
 	}
 	if (m_isShowDeleteWindow)
 	{
@@ -195,7 +195,7 @@ void SceneSave::Draw()
 		stringWidth = GetStringLength("はい　　いいえ") * kFontSize;
 		DrawString(kDeleteStringPosX - stringWidth, kDeleteStringPosY[1] + kShiftShadowLange, "はい　　いいえ", GetColor(255, 255, 255));
 
-		DrawGraph(kDeleteCursorPosX[m_selectDeleteNum] + m_cursorShakeLange, kDeleteCursorPosY, m_cursorGraph, true);
+		DrawGraph(kDeleteCursorPosX[m_selectDeleteNum] + static_cast<int>(m_cursorShakeLange), kDeleteCursorPosY, m_cursorGraph, true);
 	}
 
 }
@@ -373,6 +373,7 @@ int SceneSave::GetDrawData(int selectNum, dataKind kind)
 		}
 		break;
 	default:
+		return 0;
 		break;
 	}
 }
