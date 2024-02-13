@@ -21,7 +21,7 @@ namespace
 
 }
 
-MagicBase::MagicBase(Princess* pPrincess,float scale) :
+MagicBase::MagicBase(Princess* pPrincess, float scale) :
 	//コンストラクタ時に存在しているフラグを立てる
 	m_nowState(Game::kNormal),
 	//プリンセスのポインタを入れる
@@ -32,9 +32,9 @@ MagicBase::MagicBase(Princess* pPrincess,float scale) :
 	m_princessPos(m_pPrincess->GetPos()),
 	m_magicPos(m_princessPos),
 	//炎魔法の攻撃力の初期化
-	m_fireAtk(UserData::userFireLevel * 1.0f),
+	m_fireAtk(UserData::userFireLevel * 2.0f + 5.0f),
 	//風魔法の攻撃力の初期化
-	m_windAtk(UserData::userWindLevel * 0.15f),
+	m_windAtk(UserData::userWindLevel * 0.15f + 0.15f),
 	//魔法の大きさの初期化
 	m_scale(scale),
 	//最初に撃っている魔法を炎にする
@@ -86,7 +86,7 @@ void MagicBase::Init(int MagicNum)
 void MagicBase::Update()
 {
 	m_magicPos += m_moveVec;
-	m_graphAngle = -std::atan2(m_moveVec.x,m_moveVec.y);
+	m_graphAngle = -std::atan2(m_moveVec.x, m_moveVec.y);
 	//風魔法を行っていたら
 	if (!m_isFire)
 	{
@@ -136,7 +136,7 @@ void MagicBase::Draw()
 			m_graphAngle,
 			m_handle,
 			true,
-			0,0);
+			0, 0);
 	}
 	else if (!m_isFire)
 	{
@@ -147,9 +147,13 @@ void MagicBase::Draw()
 			0,
 			m_handle,
 			true,
-			m_turnFlag,0);
+			m_turnFlag, 0);
 	}
-	m_circleCol.Draw(static_cast<int>(m_scale),0,0);
+#ifdef _DEBUG
+	m_circleCol.Draw(static_cast<int>(m_scale), 0, 0);
+
+#endif // _DEBUG
+
 }
 
 float MagicBase::GetAtk()

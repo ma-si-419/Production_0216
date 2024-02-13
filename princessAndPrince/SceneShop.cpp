@@ -110,6 +110,7 @@ SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_itemFrameGraph = DataManager.SearchGraph("itemFrameGraph");
 	m_backBoxGraph = DataManager.SearchGraph("backBoxGraph");
 	m_canBuyItemMark = DataManager.SearchGraph("canBuyItemMarkGraph");
+	m_backButtonGraph = DataManager.SearchGraph("backButtonGraph");
 }
 
 SceneShop::~SceneShop()
@@ -435,6 +436,8 @@ void SceneShop::Draw()
 {
 	//背景を表示する
 	DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kPlayScreenHeight, m_bgGraph, true);
+	//戻るボタンを押す
+	DrawString(115, 800, "B：戻る", GetColor(0, 0, 0));
 	//商品の後ろにボックスを表示
 	DrawBox(710, kPlayerItemFramePosY + 10,
 		710 + kItemBackBox, kPlayerItemFramePosY + kItemBackBox, GetColor(200, 152, 104), true);

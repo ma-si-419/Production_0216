@@ -382,11 +382,11 @@ int SceneSave::AlignmentRight(int num)
 {
 	if (num >= 1000000)
 	{
-		return kFontSize * 7;
+		return kFontSize * 6;
 	}
 	else if (num >= 100000)
 	{
-		return kFontSize * 6;
+		return kFontSize * 5;
 	}
 	else if (num >= 10000)
 	{

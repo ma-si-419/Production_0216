@@ -88,5 +88,7 @@ private:
 	int m_shakeGoldPosY;
 	//買えるアイテムの右上につけるマーク
 	int m_canBuyItemMark;
+	//戻るボタンのグラフィック
+	int m_backButtonGraph;
 };
 

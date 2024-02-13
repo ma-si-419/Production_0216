@@ -467,7 +467,7 @@ void SceneMain::Update(Pad& pad)
 							if (!m_isSpecialMode && m_selectScene > 1)
 							{
 								//敵の攻撃力に応じてゲージを上昇させる
-								AddSpecialGauge(enemy->GetAtk() * 0.85);
+								AddSpecialGauge(enemy->GetAtk() * 0.9f);
 							}
 							//エネミーの状態を推移させる
 							enemy->m_nowState = Game::kHitPlayer;
@@ -482,7 +482,7 @@ void SceneMain::Update(Pad& pad)
 							PlaySoundMem(m_hitPrincessSe, DX_PLAYTYPE_BACK);
 							if (!m_isSpecialMode && m_selectScene > 1)
 							{
-								AddSpecialGauge(enemy->GetAtk());
+								AddSpecialGauge(enemy->GetAtk() * 1.2f);
 							}
 						}
 						for (auto& magic : m_pMagic)
@@ -850,7 +850,7 @@ void SceneMain::Update(Pad& pad)
 				m_isLastSe = false;
 			}
 			//まだクリアしてないステージだったらクリアしたことを保存する
-			if (m_selectScene >= UserData::userClearStageNum && m_isClearFlag)
+			if (m_selectScene >= UserData::userClearStageNum && m_pPrincess->m_nowState != Game::kDelete)
 			{
 				UserData::userClearStageNum = m_selectScene + 1;
 			}
@@ -1200,7 +1200,7 @@ void SceneMain::SetBossVol(int stageNum)
 	}
 	else if (stageNum == 7)
 	{
-		m_bossCount = 7;
+		m_bossCount = 11;
 	}
 }
 bool SceneMain::AddMagic(MagicBase* pMagic)

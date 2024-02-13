@@ -143,6 +143,8 @@ void DataManager::Init()
 	graphMap["angryButtonMarkGraph"] = LoadGraph("data/image/angryButtonMark.png");
 	//怒りゲージが使えないときの画像
 	graphMap["stoneAngryGaugeGraph"] = LoadGraph("data/image/stoneAngryGauge.png");
+	//ショップに表示する戻るボタン
+	graphMap["backButtonGraph"] = LoadGraph("data/image/backButton.png");
 	//チュートリアル画像
 	graphMap["tutorialGraph1"] = LoadGraph("data/image/tutorial1.png");
 	graphMap["tutorialGraph2"] = LoadGraph("data/image/tutorial2.png");
