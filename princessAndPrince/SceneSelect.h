@@ -32,7 +32,7 @@ public:
 	//シーンとキャラを動かす
 	void MoveCharcter();
 	//ビックリマークを動かす
-	void MoveMark();
+	void ZoomMark();
 private:
 	//今選択しているシーンを保存する
 	int m_stageSelectNum;
@@ -130,9 +130,9 @@ private:
 	//変えるアイテムがあるかどうか
 	bool m_isBuy;
 	//ビックリマークのポジション
-	float m_exclamationMarkPosY;
+	float m_exclamationMarkRatio;
 	//ビックリマークを動かす速さ
-	float m_exclamationMarkMoveSpeed;
+	float m_exclamationMarkZoomSpeed;
 	//三角形を動かす座標
 	float m_shakeTrianglePosY;
 	//三角形を上に動かしているかどうか

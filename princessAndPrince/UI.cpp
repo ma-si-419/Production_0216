@@ -49,19 +49,26 @@ UI::UI(Player* pPlayer, Princess* pPrincess, SceneMain* pMain) :
 	m_isShowGold(false),
 	m_isLeaveButton(false),
 	m_isClearUIEnd(false),
-	m_angryGaugeUiShiftPosX(0)
+	m_angryGaugeUiShiftPosX(0),
+	m_stoneAngryGaugeGraph(0),
+	m_angryButtonGraph(0),
+	m_angryButtonRatio(1.0),
+	m_angryGaugeUiGraph(0),
+	m_isAngryGaugeUiShake(false),
+	m_isButtonZoom(false),
+	m_magicGraph(0),
+	m_magicUiBgGraph(0)
+
+
 {
 	m_buttonsGraph = m_pMain->GetButtonsGraph();
 }
-
 UI::~UI()
 {
 }
-
 void UI::Init()
 {
 }
-
 void UI::Update()
 {
 	if (m_pMain->GetSpecialGaugeRate() == 1)
@@ -103,7 +110,6 @@ void UI::Update()
 	}
 
 }
-
 void UI::Draw()
 {
 	//UIの背景(右側)表示
@@ -126,22 +132,40 @@ void UI::Draw()
 		DrawRectRotaGraph(1495, 855, 106, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
 
 	}
+	//シーン3まではどちらも光らせないようにする
+	if (m_pMain->GetSceneNum() < 2)
+	{
+		DrawRectRotaGraph(1320, 855, 0, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+		DrawRectRotaGraph(1495, 855, 0, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+	}
 	//炎魔法のUi表示
 	DrawRectRotaGraph(1318, 855, 0, Game::kFire * kItemGraphScale, kItemGraphScale, kItemGraphScale,
 		2.7, 4.72, m_magicGraph, true, false, false);
 	//風魔法のUi表示
 	DrawRectRotaGraph(1495, 855, 0, Game::kTyphoon * kItemGraphScale, kItemGraphScale, kItemGraphScale,
 		2.7, 0.0, m_magicGraph, true, false, false);
-	if (m_pPrincess->GetMagicKind())
+	if (m_pMain->GetSceneNum() > 1)
 	{
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
-		DrawCircle(1495, 855, 50, GetColor(0, 0, 0));
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		if (m_pPrincess->GetMagicKind())
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+			DrawCircle(1495, 855, 50, GetColor(0, 0, 0));
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
+		else
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+			DrawCircle(1320, 855, 50, GetColor(0, 0, 0));
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
 	}
+	//シーン３まではどちらも灰色に表示する
 	else
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 		DrawCircle(1320, 855, 50, GetColor(0, 0, 0));
+		DrawCircle(1495, 855, 50, GetColor(0, 0, 0));
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 	//聖剣モードのゲージを表示する
@@ -151,12 +175,15 @@ void UI::Draw()
 		805 + (int)kBarHeight, GetColor(255, 0, 0), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	DrawGraph(1050 + m_angryGaugeUiShiftPosX, 800, m_angryGaugeUiGraph, true);
+	if (m_pMain->GetSceneNum() < 3)
+	{
+		DrawGraph(1050 + m_angryGaugeUiShiftPosX, 800, m_stoneAngryGaugeGraph, true);
+	}
 	if (m_pMain->GetSpecialGaugeRate() == 1)
 	{
 		DrawRotaGraph(1050, 800, m_angryButtonRatio, 0.0, m_angryButtonGraph, true, 0, 0);
 	}
 }
-
 void UI::SceneClearUI()
 {
 	m_timeCount++;
@@ -203,7 +230,6 @@ void UI::SceneClearUI()
 		DrawString(480, 880, "で戻る", GetColor(255, 255, 255));
 	}
 }
-
 void UI::GameOverUI()
 {
 	m_timeCount++;
@@ -250,7 +276,6 @@ void UI::GameOverUI()
 		DrawString(480, 880, "で戻る", GetColor(255, 255, 255));
 	}
 }
-
 int UI::AlignmentRight(int num)
 {
 	if (num >= 10000)
@@ -279,8 +304,6 @@ int UI::AlignmentRight(int num)
 	}
 	return 0;
 }
-
-
 void UI::DrawStatus()
 {
 	//影を表示
@@ -344,7 +367,6 @@ void UI::DrawStatus()
 			GetColor(128, 128, 128), "%d", UserData::userWindLevel + 1);
 	}
 }
-
 void UI::DrawGetItem()
 {
 	//影を表示する

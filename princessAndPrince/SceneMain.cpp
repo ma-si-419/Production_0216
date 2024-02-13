@@ -119,7 +119,11 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_startTutorialNum(0),
 	m_isDeathTutorial(false),
 	m_specialModeStartCount(0),
-	m_pParticle()
+	m_pParticle(),
+	m_expList(),
+	m_isBackSelectScene(false),
+	m_isGameOverString(false),
+	m_isSelectKeyDown(false)
 {
 	//プレイヤーのグラフィックのロード
 	m_playerHandle = m_dataManager.SearchGraph("playerGraph");
@@ -227,6 +231,8 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_pUi->SetAngryGaugeGraph(m_dataManager.SearchGraph("angryGaugeUiGraph"));
 	//怒りゲージがたまった時のUIを設定する
 	m_pUi->SetAngryButtonGraph(m_dataManager.SearchGraph("angryButtonMarkGraph"));
+	//怒りゲージが使えない時のUIを設定する
+	m_pUi->SetStoneAngryGaugeGraph(m_dataManager.SearchGraph("stoneAngryGaugeGraph"));
 	//選ばれたシーンによって表示するチュートリアルを設定する
 	switch (m_selectScene)
 	{
@@ -458,7 +464,7 @@ void SceneMain::Update(Pad& pad)
 							//プレイヤーのダメージ処理を行う
 							m_pPlayer->HitEnemy(*enemy, IsCollision(m_pPlayer->GetColCircle(), enemy->GetWeakCircle()));
 							//スペシャルゲージがマックスじゃなかったらゲージを上昇させる
-							if (!m_isSpecialMode)
+							if (!m_isSpecialMode && m_selectScene > 1)
 							{
 								//敵の攻撃力に応じてゲージを上昇させる
 								AddSpecialGauge(enemy->GetAtk() * 0.85);
@@ -474,7 +480,7 @@ void SceneMain::Update(Pad& pad)
 							//魔女のダメージ処理を行う,エネミーのノックバックを行う
 							m_pPrincess->HitEnemy(*enemy);
 							PlaySoundMem(m_hitPrincessSe, DX_PLAYTYPE_BACK);
-							if (!m_isSpecialMode)
+							if (!m_isSpecialMode && m_selectScene > 1)
 							{
 								AddSpecialGauge(enemy->GetAtk());
 							}

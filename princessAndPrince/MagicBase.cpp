@@ -29,8 +29,8 @@ MagicBase::MagicBase(Princess* pPrincess,float scale) :
 	//移動ベクトルの初期化
 	m_moveVec(0, 0),
 	//ポジションの初期化
-	m_princessPos(0, 0),
-	m_magicPos(0,0),
+	m_princessPos(m_pPrincess->GetPos()),
+	m_magicPos(m_princessPos),
 	//炎魔法の攻撃力の初期化
 	m_fireAtk(UserData::userFireLevel * 1.0f),
 	//風魔法の攻撃力の初期化
@@ -54,7 +54,6 @@ MagicBase::~MagicBase()
 
 void MagicBase::Init(int MagicNum)
 {
-	m_princessPos = m_pPrincess->GetPos();
 	//炎攻撃を行っていたら
 	if (m_pPrincess->GetMagicKind())
 	{

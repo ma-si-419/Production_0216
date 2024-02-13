@@ -40,7 +40,7 @@ bool Application::Init()
 	m_isPush = true;
 
 	SetGraphMode(m_isWindowSize.w, m_isWindowSize.h, 32);
-	SetWindowIconID(IDB_PNG1);
+	SetWindowIconID(111);
 
 	if (DxLib_Init() == -1) {	//‰Šú‰»‚É¸”s‚µ‚½‚çƒAƒvƒŠ‚ğ—‚Æ‚·
 		return false;	//ˆÙíI—¹
@@ -112,7 +112,7 @@ void Application::SetSaveData(int num)
 	if (num == 1)
 	{
 		std::string tempS;
-		ofstream outputfile("data/firstSaveData.txt");
+		ofstream outputfile("./data/save/firstSaveData.txt");
 		tempS = to_string(UserData::userMainLevel);
 		outputfile << tempS + "\n";
 		tempS = to_string(UserData::userAtkLevel);
@@ -137,7 +137,7 @@ void Application::SetSaveData(int num)
 	if (num == 2)
 	{
 		std::string tempS;
-		ofstream outputfile("data/secondSaveData.txt");
+		ofstream outputfile("./data/save/secondSaveData.txt");
 		tempS = to_string(UserData::userMainLevel);
 		outputfile << tempS + "\n";
 		tempS = to_string(UserData::userAtkLevel);
@@ -162,7 +162,7 @@ void Application::SetSaveData(int num)
 	if (num == 3)
 	{
 		std::string tempS;
-		ofstream outputfile("data/thirdSaveData.txt");
+		ofstream outputfile("./data/save/thirdSaveData.txt");
 		tempS = to_string(UserData::userMainLevel);
 		outputfile << tempS + "\n";
 		tempS = to_string(UserData::userAtkLevel);
@@ -187,7 +187,7 @@ void Application::SetSaveData(int num)
 	if (num == 4)
 	{
 		std::string tempS;
-		ofstream outputfile("data/fourthSaveData.txt");
+		ofstream outputfile("./data/save/fourthSaveData.txt");
 		tempS = to_string(UserData::userMainLevel);
 		outputfile << tempS + "\n";
 		tempS = to_string(UserData::userAtkLevel);

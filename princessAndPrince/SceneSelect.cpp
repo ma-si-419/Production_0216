@@ -86,12 +86,12 @@ namespace
 	//配列の大きさ
 	constexpr int kArraySize = 81;
 	//ビックリマークの初期座標
-	constexpr int kExclamationMarkPosX = 980;
-	constexpr float kExclamationMarkPosY = 300.0f;
+	constexpr int kExclamationMarkPosX = 1100;
+	constexpr int kExclamationMarkPosY = 450;
 	//ビックリマークが揺れる幅
-	constexpr float kShakeExclamationMarkLange = 10;
+	constexpr float kZoomExclamationMarkLange = 1.5f;
 	//ビックリマークが動く速さ
-	constexpr float kExclamationMarkMoveSpeed = 0.5f;
+	constexpr float kExclamationMarkZoomSpeed = 0.02f;
 	//三角形を動かす長さ
 	constexpr float kShakeTriangleLange = 15.0f;
 }
@@ -128,10 +128,10 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, i
 	m_boxRatio(0),
 	m_boxAngle(0),
 	m_isBuy(false),
-	m_exclamationMarkPosY(kExclamationMarkPosY),
+	m_exclamationMarkRatio(1.0f),
 	m_princessItemPriceList(),
 	m_playerItemPriceList(),
-	m_exclamationMarkMoveSpeed(kExclamationMarkMoveSpeed),
+	m_exclamationMarkZoomSpeed(kExclamationMarkZoomSpeed),
 	m_shakeTrianglePosY(0)
 
 {
@@ -159,6 +159,13 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, i
 	m_enemyGraph = DataManager.SearchGraph("enemyGraph");
 	m_exclamationMarkGraph = DataManager.SearchGraph("exclamationMarkGraph");
 	m_boxGraph = DataManager.SearchGraph("boxGraph");
+	//選択不可能ステージにならないように
+	if (m_stageSelectNum > kMaxSceneNum)
+	{
+		m_stageSelectNum = kMaxSceneNum;
+		m_bossSrcY = kMaxSceneNum;
+		m_cutBgPosY = kBgGraphSize * kMaxSceneNum - kMaxSceneNum * kBgGraphSize;
+	}
 }
 
 SceneSelect::~SceneSelect()
@@ -187,7 +194,9 @@ void SceneSelect::Init()
 		loopCount++;
 	}
 	ifs.close();
+	//ショップに変えるアイテムがあるかを取得する
 	m_isBuy = GetCanBuyItem();
+
 }
 
 void SceneSelect::End()
@@ -348,10 +357,6 @@ void SceneSelect::Update(Pad& pad)
 	{
 		ZoomShop();
 	}
-	//ショップの左上に表示するビックリマークを動かす
-	{
-		MoveMark();
-	}
 	//ボスのアニメーションを回し続ける
 	{
 		m_bossAnimFrame++;
@@ -376,22 +381,6 @@ void SceneSelect::Update(Pad& pad)
 		{
 			m_sceneManager.ChangeScene(std::make_shared<SceneMain>(m_sceneManager, m_dataManager, m_stageSelectNum), false);
 		}
-	}
-	if (m_isMoveUpTriangle)
-	{
-		m_shakeTrianglePosY -= 0.5f;
-	}
-	else
-	{
-		m_shakeTrianglePosY += 0.5f;
-	}
-	if (-kShakeTriangleLange > m_shakeTrianglePosY)
-	{
-		m_isMoveUpTriangle = false;
-	}
-	else if (0 < m_shakeTrianglePosY)
-	{
-		m_isMoveUpTriangle = true;
 	}
 }
 
@@ -447,7 +436,7 @@ void SceneSelect::Draw()
 	if (m_isBuy)
 	{
 		//お店の左上にビックリマーク表示
-		DrawGraph(kExclamationMarkPosX, static_cast<int>(m_exclamationMarkPosY), m_exclamationMarkGraph, true);
+		DrawRotaGraph(kExclamationMarkPosX, kExclamationMarkPosY, m_exclamationMarkRatio, 0.0, m_exclamationMarkGraph, true);
 	}
 	//今選んでいるステージの名前を表示する
 	DrawStageName(m_stageSelectNum);
@@ -489,6 +478,7 @@ void SceneSelect::DrawSceneSrideTriangle()
 {
 	if (m_stageSelectNum < kMaxSceneNum && m_stageSelectNum < UserData::userClearStageNum)
 	{
+		m_shakeTrianglePosY = 0;
 		//上の三角形表示
 		DrawTriangle(Game::kScreenWidth / 2 + kTriangleFrameScale, kHighTrianglePosY + kTriangleFrameScale + static_cast<int>(m_shakeTrianglePosY),
 			Game::kScreenWidth / 2, kHighTrianglePosY + static_cast<int>(m_shakeTrianglePosY),
@@ -587,7 +577,7 @@ void SceneSelect::SetSaveData(int num)
 	if (num == 1)
 	{
 		std::string tempS;
-		ofstream outputfile("data/firstSaveData.txt");
+		ofstream outputfile("./data/save/firstSaveData.txt");
 		tempS = to_string(UserData::userMainLevel);
 		outputfile << tempS + "\n";
 		tempS = to_string(UserData::userAtkLevel);
@@ -613,7 +603,7 @@ void SceneSelect::SetSaveData(int num)
 	if (num == 2)
 	{
 		std::string tempS;
-		ofstream outputfile("data/secondSaveData.txt");
+		ofstream outputfile("./data/save/secondSaveData.txt");
 		tempS = to_string(UserData::userMainLevel);
 		outputfile << tempS + "\n";
 		tempS = to_string(UserData::userAtkLevel);
@@ -638,7 +628,7 @@ void SceneSelect::SetSaveData(int num)
 	if (num == 3)
 	{
 		std::string tempS;
-		ofstream outputfile("data/thirdSaveData.txt");
+		ofstream outputfile("./data/save/thirdSaveData.txt");
 		tempS = to_string(UserData::userMainLevel);
 		outputfile << tempS + "\n";
 		tempS = to_string(UserData::userAtkLevel);
@@ -663,7 +653,7 @@ void SceneSelect::SetSaveData(int num)
 	if (num == 4)
 	{
 		std::string tempS;
-		ofstream outputfile("data/fourthSaveData.txt");
+		ofstream outputfile("./data/save/fourthSaveData.txt");
 		tempS = to_string(UserData::userMainLevel);
 		outputfile << tempS + "\n";
 		tempS = to_string(UserData::userAtkLevel);
@@ -835,19 +825,19 @@ void SceneSelect::MoveCharcter()
 	}
 }
 
-void SceneSelect::MoveMark()
+void SceneSelect::ZoomMark()
 {
+	//ビックリマーク拡縮する
+	m_exclamationMarkRatio += m_exclamationMarkZoomSpeed;
 	//動きを反転させる処理
-	if (m_exclamationMarkPosY > kExclamationMarkPosY + kShakeExclamationMarkLange)
+	if (m_exclamationMarkRatio > kZoomExclamationMarkLange)
 	{
-		m_exclamationMarkMoveSpeed *= -1;
+		m_exclamationMarkZoomSpeed *= -1;
 	}
-	if (m_exclamationMarkPosY < kExclamationMarkPosY - kShakeExclamationMarkLange)
+	if (1.0f > m_exclamationMarkRatio)
 	{
-		m_exclamationMarkMoveSpeed *= -1;
+		m_exclamationMarkZoomSpeed *= -1;
 	}
-	//ビックリマークを上下に動かす
-	m_exclamationMarkPosY += m_exclamationMarkMoveSpeed;
 }
 
 

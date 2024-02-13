@@ -25,13 +25,13 @@ void DataManager::Init()
 	//聖剣モードを発動した時の効果音の効果音
 	soundMap["specialModeSe"] = LoadSoundMem("data/sound/specialModeSe.mp3");
 	//敵にぶつかった時の音
-	soundMap["attackSe"] = LoadSoundMem("data/sound/attack3.mp3");
+	soundMap["attackSe"] = LoadSoundMem("data/sound/attackSe.mp3");
 	//ダンスするときの効果音
 	soundMap["danceSe"] = LoadSoundMem("data/sound/clearSe.mp3");
 	//リザルト画面のゴールドの効果音
-	soundMap["resultGoldSe"] = LoadSoundMem("data/sound/gold1.mp3");
+	soundMap["resultGoldSe"] = LoadSoundMem("data/sound/goldSe.mp3");
 	//リザルト画面の経験値の効果音
-	soundMap["resultExpSe"] = LoadSoundMem("data/sound/exp1.mp3");
+	soundMap["resultExpSe"] = LoadSoundMem("data/sound/expSe.mp3");
 	//フィールドのBgm
 	soundMap["fieldBgm"] = LoadSoundMem("data/sound/fieldBgm.wav");
 	//ボスが出てきた時のBgm
@@ -41,7 +41,7 @@ void DataManager::Init()
 	//コインを拾った時の音
 	soundMap["coinSe"] = LoadSoundMem("data/sound/coinSe.mp3");
 	//経験値を拾った時の音
-	soundMap["expSe"] = LoadSoundMem("data/sound/expSe.mp3");
+	soundMap["expSe"] = LoadSoundMem("data/sound/dropExpSe.mp3");
 	//ショップでアイテムを買った時の音
 	soundMap["buySe"] = LoadSoundMem("data/sound/buySe.mp3");
 	//ショップでアイテムを買えなかった時の音
@@ -55,7 +55,7 @@ void DataManager::Init()
 	//弱点じゃないところにぶつかった時の効果音
 	soundMap["hitSe"] = LoadSoundMem("data/sound/hitSe.mp3");
 	//血を拾った時の効果音
-	soundMap["bloodSe"] = LoadSoundMem("data/sound/bloodSe1.mp3");
+	soundMap["bloodSe"] = LoadSoundMem("data/sound/bloodSe.mp3");
 	//血を渡したときの効果音
 	soundMap["passBloodSe"] = LoadSoundMem("data/sound/passBloodSe.mp3");
 	//ショップのBGM
@@ -65,7 +65,7 @@ void DataManager::Init()
 	//タイトルシーンのBgm
 	soundMap["titleBgm"] = LoadSoundMem("data/sound/titleBgm.wav");
 	//炎魔法のSe
-	soundMap["fireMagicSe"] = LoadSoundMem("data/sound/fireSe1.mp3");
+	soundMap["fireMagicSe"] = LoadSoundMem("data/sound/fireSe.mp3");
 	//Princessにぶつかった時のSe
 	soundMap["hitPrincessSe"] = LoadSoundMem("data/sound/hitPrincessSe.mp3");
 	//メインシーンに移行するときにならす音
@@ -85,8 +85,6 @@ void DataManager::Init()
 	graphMap["princessGraph"] = LoadGraph("data/image/Princess.png");
 	//エネミーのグラフィック
 	graphMap["enemyGraph"] = LoadGraph("data/image/Enemy.png");
-	//背景のグラフィック
-	graphMap["bgGraph"] = LoadGraph("data/image/fieldBg.png");
 	//商人のグラフィック
 	graphMap["traderGraph"] = LoadGraph("data/image/trader.png");
 	//ショップの背景
@@ -123,8 +121,6 @@ void DataManager::Init()
 	graphMap["magicUiBgGraph"] = LoadGraph("data/image/witchMagicUi.png");
 	//怒りゲージのUi
 	graphMap["angryGaugeUiGraph"] = LoadGraph("data/image/angryGauge.png");
-	//怒りモード時に表示する背景
-	graphMap["angryMarkGraph"] = LoadGraph("data/image/angryMark.png");
 	//怒りモード時の王子
 	graphMap["angryMonkeyGraph"] = LoadGraph("data/image/angryMonkey.png");
 	//怒りモード時のエフェクト
@@ -139,16 +135,14 @@ void DataManager::Init()
 	graphMap["sceneSaveGraph"] = LoadGraph("data/image/saveDataScene.png");
 	//セーブデータのフレームの画像
 	graphMap["saveDataFrameGraph"] = LoadGraph("data/image/saveDataFrame.png");
-	//エネミーの顔だけ画像
-	graphMap["enemyHeadGraph"] = LoadGraph("data/image/enemyHead.png");
 	//セーブシーンのカーソル
 	graphMap["saveSceneCursorGraph"] = LoadGraph("data/image/cursor.png");
-	//矢印
-	graphMap["arrowGraph"] = LoadGraph("data/image/arrow.png");
 	//魔法の方向を示す矢印
 	graphMap["magicArrowGraph"] = LoadGraph("data/image/magicArrow.png");
 	//怒りゲージがたまったときのボタン表示画像
 	graphMap["angryButtonMarkGraph"] = LoadGraph("data/image/angryButtonMark.png");
+	//怒りゲージが使えないときの画像
+	graphMap["stoneAngryGaugeGraph"] = LoadGraph("data/image/stoneAngryGauge.png");
 	//チュートリアル画像
 	graphMap["tutorialGraph1"] = LoadGraph("data/image/tutorial1.png");
 	graphMap["tutorialGraph2"] = LoadGraph("data/image/tutorial2.png");

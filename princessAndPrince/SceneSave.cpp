@@ -624,7 +624,7 @@ void SceneSave::LoadFile()
 {
 	{
 		//ファイルを開く
-		std::ifstream ifs("./data/firstSaveData.txt");
+		std::ifstream ifs("./data/save/firstSaveData.txt");
 		int loopCount = 0;
 		//配列を作成
 		char str[kArraySize];
@@ -640,7 +640,7 @@ void SceneSave::LoadFile()
 	}
 	{
 		//ファイルを開く
-		std::ifstream ifs("./data/secondSaveData.txt");
+		std::ifstream ifs("./data/save/secondSaveData.txt");
 		int loopCount = 0;
 		//配列を作成
 		char str[kArraySize];
@@ -656,7 +656,7 @@ void SceneSave::LoadFile()
 	}
 	{
 		//ファイルを開く
-		std::ifstream ifs("./data/thirdSaveData.txt");
+		std::ifstream ifs("./data/save/thirdSaveData.txt");
 		int loopCount = 0;
 		//配列を作成
 		char str[kArraySize];
@@ -672,7 +672,7 @@ void SceneSave::LoadFile()
 	}
 	{
 		//ファイルを開く
-		std::ifstream ifs("./data/fourthSaveData.txt");
+		std::ifstream ifs("./data/save/fourthSaveData.txt");
 		int loopCount = 0;
 		//配列を作成
 		char str[kArraySize];
@@ -906,7 +906,7 @@ void SceneSave::DeleteSaveData(int dataNum)
 	if (dataNum == 0)
 	{
 		std::string tempS;
-		ofstream outputfile("data/firstSaveData.txt");
+		ofstream outputfile("./data/save/firstSaveData.txt");
 		outputfile << "0\n";
 		outputfile << "0\n";
 		outputfile << "0\n";
@@ -921,7 +921,7 @@ void SceneSave::DeleteSaveData(int dataNum)
 		outputfile.close();
 
 		//ファイルを開く
-		std::ifstream ifs("data/firstSaveData.txt");
+		std::ifstream ifs("./data/save/firstSaveData.txt");
 		int loopCount = 0;
 		//配列を作成
 		char str[kArraySize];
@@ -939,7 +939,7 @@ void SceneSave::DeleteSaveData(int dataNum)
 	else if (dataNum == 1)
 	{
 		std::string tempS;
-		ofstream outputfile("data/secondSaveData.txt");
+		ofstream outputfile("./data/save/secondSaveData.txt");
 
 		outputfile << "0\n";
 		outputfile << "0\n";
@@ -955,7 +955,7 @@ void SceneSave::DeleteSaveData(int dataNum)
 		outputfile.close();
 		{
 			//ファイルを開く
-			std::ifstream ifs("data/secondSaveData.txt");
+			std::ifstream ifs("./data/save/secondSaveData.txt");
 			int loopCount = 0;
 			//配列を作成
 			char str[kArraySize];
@@ -973,7 +973,7 @@ void SceneSave::DeleteSaveData(int dataNum)
 	else if (dataNum == 2)
 	{
 		std::string tempS;
-		ofstream outputfile("data/thirdSaveData.txt");
+		ofstream outputfile("./data/save/thirdSaveData.txt");
 		outputfile << "0\n";
 		outputfile << "0\n";
 		outputfile << "0\n";
@@ -988,7 +988,7 @@ void SceneSave::DeleteSaveData(int dataNum)
 		outputfile.close();
 		{
 			//ファイルを開く
-			std::ifstream ifs("data/thirdSaveData.txt");
+			std::ifstream ifs("./data/save/thirdSaveData.txt");
 			int loopCount = 0;
 			//配列を作成
 			char str[kArraySize];
@@ -1006,7 +1006,7 @@ void SceneSave::DeleteSaveData(int dataNum)
 	else if (dataNum == 3)
 	{
 		std::string tempS;
-		ofstream outputfile("data/fourthSaveData.txt");
+		ofstream outputfile("./data/save/fourthSaveData.txt");
 		outputfile << "0\n";
 		outputfile << "0\n";
 		outputfile << "0\n";
@@ -1021,7 +1021,7 @@ void SceneSave::DeleteSaveData(int dataNum)
 		outputfile.close();
 		{
 			//ファイルを開く
-			std::ifstream ifs("data/fourthSaveData.txt");
+			std::ifstream ifs("./data/save/fourthSaveData.txt");
 			int loopCount = 0;
 			//配列を作成
 			char str[kArraySize];
