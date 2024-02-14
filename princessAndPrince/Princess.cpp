@@ -75,7 +75,7 @@ Princess::Princess(SceneMain* pMain) :
 	m_pMain(pMain),
 	m_shakeTimeCount(kShakeTime),
 	m_shakeSpeed(kShakeSpeed),
-	m_drawState(Game::kStone),
+	m_drawState(Game::WitchState::kStone),
 	m_arrowGraph(0),
 	m_fireMagicSe(0),
 	m_hitFlag(false),
@@ -125,14 +125,14 @@ void Princess::Init()
 void Princess::Update()
 {
 	//当たり判定の中心座標を設定
-	m_circleCol.SetCenter(m_pos, m_radius);
+	m_circleCol.SetCenter(m_pos, static_cast<float>(m_radius));
 	//HPバーの処理//
 	//座標を参考にHpバーの位置を設定
 	m_hpBarPos.x = m_pos.x - kMaxBarWidth / 2;
 	//	あとでマジックナンバーどうにかする
 	m_hpBarPos.y = m_pos.y - kHpBarPosY;
 	m_hpBarWidth = kMaxBarWidth * GetHpRate();
-	if (m_nowState != Game::kDelete)
+	if (m_nowState != Game::State::kDelete)
 	{
 
 		//血の量が上限値を超えていたら
@@ -152,7 +152,7 @@ void Princess::Update()
 		if (m_isMagic || m_pMain->GetSpecialMode())
 		{
 			//石の状態から直す
-			m_drawState = Game::kMagic;
+			m_drawState = Game::WitchState::kMagic;
 			//アニメーションを動かす
 			m_animFrame++;
 			//スペシャルモード中だったら動きを早くする
@@ -217,7 +217,7 @@ void Princess::Update()
 		}
 		else
 		{
-			m_drawState = Game::kStone;
+			m_drawState = Game::WitchState::kStone;
 		}
 		//Aボタンが押されたら
 		if (m_input.Buttons[XINPUT_BUTTON_A] && !m_isLastKeyFlag || CheckHitKey(KEY_INPUT_Z) && !m_isLastKeyFlag)
@@ -292,7 +292,7 @@ void Princess::Draw() const
 	int animEle = m_animFrame / kAnimFrameNum;
 
 	int srcX = kGraphWidth * kUseFrame[animEle];
-	int srcY = kGraphHeight * m_drawState;
+	int srcY = kGraphHeight * static_cast<int>(m_drawState);
 	//魔法を打つ方向に線を表示する
 	if (m_isMagic || m_pMain->GetSpecialMode())
 	{
@@ -307,29 +307,29 @@ void Princess::Draw() const
 		0.0,//回転率
 		m_handle, true, false);
 	//Hp等を見やすくするために後ろにBox作成
-	DrawBox((int)m_hpBarPos.x - kBoxSpace, (int)m_hpBarPos.y - kBoxSpace,//始点
-		(int)m_bloodBarPos.x + kMaxBarWidth + kBoxSpace,//始点の位置にバーの長さを足す
-		(int)m_bloodBarPos.y + (int)kBarHeight + kBoxSpace,//終点
+	DrawBox(static_cast<int>(m_hpBarPos.x) - kBoxSpace, static_cast<int>(m_hpBarPos.y) - kBoxSpace,//始点
+		static_cast<int>(m_bloodBarPos.x + kMaxBarWidth) + kBoxSpace,//始点の位置にバーの長さを足す
+		static_cast<int>(m_bloodBarPos.y + kBarHeight) + kBoxSpace,//終点
 		GetColor(75, 75, 75), true);
 	//Hpが見やすいようにHpの後ろに黒いBoxを出す
-	DrawBox((int)m_hpBarPos.x, (int)m_hpBarPos.y,//始点
-		(int)m_hpBarPos.x + (int)kMaxBarWidth,//始点の位置にバーの長さを足す
-		(int)m_hpBarPos.y + (int)kBarHeight,//終点
+	DrawBox(static_cast<int>(m_hpBarPos.x), static_cast<int>(m_hpBarPos.y),//始点
+		static_cast<int>(m_hpBarPos.x + kMaxBarWidth),//始点の位置にバーの長さを足す
+		static_cast<int>(m_hpBarPos.y + kBarHeight),//終点
 		GetColor(0, 0, 0), true);
 	//HPバーの表示
-	DrawBox((int)m_hpBarPos.x, (int)m_hpBarPos.y,//始点
-		(int)m_hpBarPos.x + (int)m_hpBarWidth,//始点の位置にバーの長さを足す
-		(int)m_hpBarPos.y + (int)kBarHeight,//終点
+	DrawBox(static_cast<int>(m_hpBarPos.x), static_cast<int>(m_hpBarPos.y),//始点
+		static_cast<int>(m_hpBarPos.x) + static_cast<int>(m_hpBarWidth),//始点の位置にバーの長さを足す
+		static_cast<int>(m_hpBarPos.y + kBarHeight),//終点
 		GetColor(255, 255, 100), true);
 	//血の量が見やすいように血の量の後ろに白いBoxを出す
-	DrawBox((int)m_bloodBarPos.x, (int)m_bloodBarPos.y,//始点
-		(int)m_bloodBarPos.x + (int)kMaxBarWidth,//始点の位置にバーの長さを足す
-		(int)m_bloodBarPos.y + (int)kBarHeight,//終点
+	DrawBox(static_cast<int>(m_bloodBarPos.x), static_cast<int>(m_bloodBarPos.y),//始点
+		static_cast<int>(m_bloodBarPos.x + kMaxBarWidth),//始点の位置にバーの長さを足す
+		static_cast<int>(m_bloodBarPos.y + kBarHeight),//終点
 		GetColor(0, 0, 0), true);
 	//血の量バーの表示
-	DrawBox((int)m_bloodBarPos.x, (int)m_bloodBarPos.y,//始点
-		(int)m_bloodBarPos.x + (int)m_bloodBarWidth,//始点の位置にバーの長さを足す
-		(int)m_bloodBarPos.y + (int)kBarHeight,//終点
+	DrawBox(static_cast<int>(m_bloodBarPos.x), static_cast<int>(m_bloodBarPos.y),//始点
+		static_cast<int>(m_bloodBarPos.x + m_bloodBarWidth),//始点の位置にバーの長さを足す
+		static_cast<int>(m_bloodBarPos.y + kBarHeight),//終点
 		GetColor(255, 0, 0), true);
 
 
@@ -376,8 +376,8 @@ bool Princess::IsDeath()
 	if (m_nowHp <= 0)
 	{
 		m_nowHp = 0;
-		m_nowState = Game::kDelete;
-		m_drawState = Game::kBreak;
+		m_nowState = Game::State::kDelete;
+		m_drawState = Game::WitchState::kBreak;
 		m_animFrame = 24;
 		return true;
 	}

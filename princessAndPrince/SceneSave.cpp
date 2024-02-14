@@ -207,175 +207,176 @@ int SceneSave::GetDrawData(int selectNum, dataKind kind)
 	{
 	case 0:
 		//メインレベル
-		if (kind == main)
+		if (kind == dataKind::main)
 		{
-			return m_firstLoadData[static_cast<int>(main)];
+			return m_firstLoadData[static_cast<int>(dataKind::main)];
 		}
 		//こうげきレベル
-		if (kind == atk)
+		if (kind == dataKind::atk)
 		{
-			return m_firstLoadData[static_cast<int>(atk)];
+			return m_firstLoadData[static_cast<int>(dataKind::atk)];
 		}
 		//防御レベル
-		if (kind == def)
+		if (kind == dataKind::def)
 		{
-			return m_firstLoadData[static_cast<int>(def)];
+			return m_firstLoadData[static_cast<int>(dataKind::def)];
 		}
 		//いどうレベル
-		if (kind == spd)
+		if (kind == dataKind::spd)
 		{
-			return m_firstLoadData[static_cast<int>(spd)];
+			return m_firstLoadData[static_cast<int>(dataKind::spd)];
 		}
 		//ファイアレベル
-		if (kind == fire)
+		if (kind == dataKind::fire)
 		{
-			return m_firstLoadData[static_cast<int>(fire)];
+			return m_firstLoadData[static_cast<int>(dataKind::fire)];
 		}
 		//ウィンドレベル
-		if (kind == wind)
+		if (kind == dataKind::wind)
 		{
-			return m_firstLoadData[static_cast<int>(wind)];
+			return m_firstLoadData[static_cast<int>(dataKind::wind)];
 		}
 		//所持ゴールド
-		if (kind == gold)
+		if (kind == dataKind::gold)
 		{
-			return m_firstLoadData[static_cast<int>(gold)];
+			return m_firstLoadData[static_cast<int>(dataKind::gold)];
 		}
 		//総獲得経験値
-		if (kind == exp)
+		if (kind == dataKind::exp)
 		{
-			return m_firstLoadData[static_cast<int>(exp)];
+			return m_firstLoadData[static_cast<int>(dataKind::exp)];
 		}
 		break;
 	case 1:
 		//メインレベル
-		if (kind == main)
+		if (kind == dataKind::main)
 		{
-			return m_secondLoadData[static_cast<int>(main)];
+			return m_secondLoadData[static_cast<int>(dataKind::main)];
 		}
 		//こうげきレベル
-		if (kind == atk)
+		if (kind == dataKind::atk)
 		{
-			return m_secondLoadData[static_cast<int>(atk)];
+			return m_secondLoadData[static_cast<int>(dataKind::atk)];
 		}
 		//防御レベル
-		if (kind == def)
+		if (kind == dataKind::def)
 		{
-			return m_secondLoadData[static_cast<int>(def)];
+			return m_secondLoadData[static_cast<int>(dataKind::def)];
 		}
 		//いどうレベル
-		if (kind == spd)
+		if (kind == dataKind::spd)
 		{
-			return m_secondLoadData[static_cast<int>(spd)];
+			return m_secondLoadData[static_cast<int>(dataKind::spd)];
 		}
 		//ファイアレベル
-		if (kind == fire)
+		if (kind == dataKind::fire)
 		{
-			return m_secondLoadData[static_cast<int>(fire)];
+			return m_secondLoadData[static_cast<int>(dataKind::fire)];
 		}
 		//ウィンドレベル
-		if (kind == wind)
+		if (kind == dataKind::wind)
 		{
-			return m_secondLoadData[static_cast<int>(wind)];
+			return m_secondLoadData[static_cast<int>(dataKind::wind)];
 		}
 		//所持ゴールド
-		if (kind == gold)
+		if (kind == dataKind::gold)
 		{
-			return m_secondLoadData[static_cast<int>(gold)];
+			return m_secondLoadData[static_cast<int>(dataKind::gold)];
 		}
 		//総獲得経験値
-		if (kind == exp)
+		if (kind == dataKind::exp)
 		{
-			return m_secondLoadData[static_cast<int>(exp)];
+			return m_secondLoadData[static_cast<int>(dataKind::exp)];
 		}
 		break;
 	case 2:
 		//メインレベル
-		if (kind == main)
+		if (kind == dataKind::main)
 		{
-			return m_thirdLoadData[static_cast<int>(main)];
+			return m_thirdLoadData[static_cast<int>(dataKind::main)];
 		}
 		//こうげきレベル
-		if (kind == atk)
+		if (kind == dataKind::atk)
 		{
-			return m_thirdLoadData[static_cast<int>(atk)];
+			return m_thirdLoadData[static_cast<int>(dataKind::atk)];
 		}
 		//防御レベル
-		if (kind == def)
+		if (kind == dataKind::def)
 		{
-			return m_thirdLoadData[static_cast<int>(def)];
+			return m_thirdLoadData[static_cast<int>(dataKind::def)];
 		}
 		//いどうレベル
-		if (kind == spd)
+		if (kind == dataKind::spd)
 		{
-			return m_thirdLoadData[static_cast<int>(spd)];
+			return m_thirdLoadData[static_cast<int>(dataKind::spd)];
 		}
 		//ファイアレベル
-		if (kind == fire)
+		if (kind == dataKind::fire)
 		{
-			return m_thirdLoadData[static_cast<int>(fire)];
+			return m_thirdLoadData[static_cast<int>(dataKind::fire)];
 		}
 		//ウィンドレベル
-		if (kind == wind)
+		if (kind == dataKind::wind)
 		{
-			return m_thirdLoadData[static_cast<int>(wind)];
+			return m_thirdLoadData[static_cast<int>(dataKind::wind)];
 		}
 		//所持ゴールド
-		if (kind == gold)
+		if (kind == dataKind::gold)
 		{
-			return m_thirdLoadData[static_cast<int>(gold)];
+			return m_thirdLoadData[static_cast<int>(dataKind::gold)];
 		}
 		//総獲得経験値
-		if (kind == exp)
+		if (kind == dataKind::exp)
 		{
-			return m_thirdLoadData[static_cast<int>(exp)];
+			return m_thirdLoadData[static_cast<int>(dataKind::exp)];
 		}
 	case 3:
 		//メインレベル
-		if (kind == main)
+		if (kind == dataKind::main)
 		{
-			return m_fourthLoadData[static_cast<int>(main)];
+			return m_fourthLoadData[static_cast<int>(dataKind::main)];
 		}
 		//こうげきレベル
-		if (kind == atk)
+		if (kind == dataKind::atk)
 		{
-			return m_fourthLoadData[static_cast<int>(atk)];
+			return m_fourthLoadData[static_cast<int>(dataKind::atk)];
 		}
 		//防御レベル
-		if (kind == def)
+		if (kind == dataKind::def)
 		{
-			return m_fourthLoadData[static_cast<int>(def)];
+			return m_fourthLoadData[static_cast<int>(dataKind::def)];
 		}
 		//いどうレベル
-		if (kind == spd)
+		if (kind == dataKind::spd)
 		{
-			return m_fourthLoadData[static_cast<int>(spd)];
+			return m_fourthLoadData[static_cast<int>(dataKind::spd)];
 		}
 		//ファイアレベル
-		if (kind == fire)
+		if (kind == dataKind::fire)
 		{
-			return m_fourthLoadData[static_cast<int>(fire)];
+			return m_fourthLoadData[static_cast<int>(dataKind::fire)];
 		}
 		//ウィンドレベル
-		if (kind == wind)
+		if (kind == dataKind::wind)
 		{
-			return m_fourthLoadData[static_cast<int>(wind)];
+			return m_fourthLoadData[static_cast<int>(dataKind::wind)];
 		}
 		//所持ゴールド
-		if (kind == gold)
+		if (kind == dataKind::gold)
 		{
-			return m_fourthLoadData[static_cast<int>(gold)];
+			return m_fourthLoadData[static_cast<int>(dataKind::gold)];
 		}
 		//総獲得経験値
-		if (kind == exp)
+		if (kind == dataKind::exp)
 		{
-			return m_fourthLoadData[static_cast<int>(exp)];
+			return m_fourthLoadData[static_cast<int>(dataKind::exp)];
 		}
 		break;
 	default:
 		return 0;
 		break;
 	}
+	return 0;
 }
 
 int SceneSave::AlignmentRight(int num)
@@ -483,60 +484,60 @@ void SceneSave::SetSaveData(int selectNum)
 	switch (selectNum)
 	{
 	case 0:
-		UserData::userMainLevel = m_firstLoadData[static_cast<int>(main)];
-		UserData::userAtkLevel = m_firstLoadData[static_cast<int>(atk)];
-		UserData::userDefLevel = m_firstLoadData[static_cast<int>(def)];
-		UserData::userSpdLevel = m_firstLoadData[static_cast<int>(spd)];
-		UserData::userFireLevel = m_firstLoadData[static_cast<int>(fire)];
-		UserData::userWindLevel = m_firstLoadData[static_cast<int>(wind)];
-		UserData::userGold = m_firstLoadData[static_cast<int>(gold)];
-		UserData::userExp = m_firstLoadData[static_cast<int>(exp)];
-		UserData::userClearStageNum = m_firstLoadData[stage];
-		UserData::userSaveDataNum = m_firstLoadData[dataNum];
+		UserData::userMainLevel = m_firstLoadData[static_cast<int>(dataKind::main)];
+		UserData::userAtkLevel = m_firstLoadData[static_cast<int>(dataKind::atk)];
+		UserData::userDefLevel = m_firstLoadData[static_cast<int>(dataKind::def)];
+		UserData::userSpdLevel = m_firstLoadData[static_cast<int>(dataKind::spd)];
+		UserData::userFireLevel = m_firstLoadData[static_cast<int>(dataKind::fire)];
+		UserData::userWindLevel = m_firstLoadData[static_cast<int>(dataKind::wind)];
+		UserData::userGold = m_firstLoadData[static_cast<int>(dataKind::gold)];
+		UserData::userExp = m_firstLoadData[static_cast<int>(dataKind::exp)];
+		UserData::userClearStageNum = m_firstLoadData[static_cast<int>(dataKind::stage)];
+		UserData::userSaveDataNum = m_firstLoadData[static_cast<int>(dataKind::dataNum)];
 		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager,
-			m_firstLoadData[static_cast<int>(stage)]), true);
+			m_firstLoadData[static_cast<int>(dataKind::stage)]), true);
 		break;
 	case 1:
-		UserData::userMainLevel = m_secondLoadData[static_cast<int>(main)];
-		UserData::userAtkLevel = m_secondLoadData[static_cast<int>(atk)];
-		UserData::userDefLevel = m_secondLoadData[static_cast<int>(def)];
-		UserData::userSpdLevel = m_secondLoadData[static_cast<int>(spd)];
-		UserData::userFireLevel = m_secondLoadData[static_cast<int>(fire)];
-		UserData::userWindLevel = m_secondLoadData[static_cast<int>(wind)];
-		UserData::userGold = m_secondLoadData[static_cast<int>(gold)];
-		UserData::userExp = m_secondLoadData[static_cast<int>(exp)];
-		UserData::userClearStageNum = m_secondLoadData[stage];
-		UserData::userSaveDataNum = m_secondLoadData[dataNum];
+		UserData::userMainLevel = m_secondLoadData[static_cast<int>(dataKind::main)];
+		UserData::userAtkLevel = m_secondLoadData[static_cast<int>(dataKind::atk)];
+		UserData::userDefLevel = m_secondLoadData[static_cast<int>(dataKind::def)];
+		UserData::userSpdLevel = m_secondLoadData[static_cast<int>(dataKind::spd)];
+		UserData::userFireLevel = m_secondLoadData[static_cast<int>(dataKind::fire)];
+		UserData::userWindLevel = m_secondLoadData[static_cast<int>(dataKind::wind)];
+		UserData::userGold = m_secondLoadData[static_cast<int>(dataKind::gold)];
+		UserData::userExp = m_secondLoadData[static_cast<int>(dataKind::exp)];
+		UserData::userClearStageNum = m_secondLoadData[static_cast<int>(dataKind::stage)];
+		UserData::userSaveDataNum = m_secondLoadData[static_cast<int>(dataKind::dataNum)];
 		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager,
-			m_secondLoadData[static_cast<int>(stage)]), true);
+			m_secondLoadData[static_cast<int>(dataKind::stage)]), true);
 		break;
 	case 2:
-		UserData::userMainLevel = m_thirdLoadData[static_cast<int>(main)];
-		UserData::userAtkLevel = m_thirdLoadData[static_cast<int>(atk)];
-		UserData::userDefLevel = m_thirdLoadData[static_cast<int>(def)];
-		UserData::userSpdLevel = m_thirdLoadData[static_cast<int>(spd)];
-		UserData::userFireLevel = m_thirdLoadData[static_cast<int>(fire)];
-		UserData::userWindLevel = m_thirdLoadData[static_cast<int>(wind)];
-		UserData::userGold = m_thirdLoadData[static_cast<int>(gold)];
-		UserData::userExp = m_thirdLoadData[static_cast<int>(exp)];
-		UserData::userClearStageNum = m_thirdLoadData[stage];
-		UserData::userSaveDataNum = m_thirdLoadData[dataNum];
+		UserData::userMainLevel = m_thirdLoadData[static_cast<int>(dataKind::main)];
+		UserData::userAtkLevel = m_thirdLoadData[static_cast<int>(dataKind::atk)];
+		UserData::userDefLevel = m_thirdLoadData[static_cast<int>(dataKind::def)];
+		UserData::userSpdLevel = m_thirdLoadData[static_cast<int>(dataKind::spd)];
+		UserData::userFireLevel = m_thirdLoadData[static_cast<int>(dataKind::fire)];
+		UserData::userWindLevel = m_thirdLoadData[static_cast<int>(dataKind::wind)];
+		UserData::userGold = m_thirdLoadData[static_cast<int>(dataKind::gold)];
+		UserData::userExp = m_thirdLoadData[static_cast<int>(dataKind::exp)];
+		UserData::userClearStageNum = m_thirdLoadData[static_cast<int>(dataKind::stage)];
+		UserData::userSaveDataNum = m_thirdLoadData[static_cast<int>(dataKind::dataNum)];
 		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager,
-			m_thirdLoadData[static_cast<int>(stage)]), true);
+			m_thirdLoadData[static_cast<int>(dataKind::stage)]), true);
 		break;
 	case 3:
-		UserData::userMainLevel = m_fourthLoadData[static_cast<int>(main)];
-		UserData::userAtkLevel = m_fourthLoadData[static_cast<int>(atk)];
-		UserData::userDefLevel = m_fourthLoadData[static_cast<int>(def)];
-		UserData::userSpdLevel = m_fourthLoadData[static_cast<int>(spd)];
-		UserData::userFireLevel = m_fourthLoadData[static_cast<int>(fire)];
-		UserData::userWindLevel = m_fourthLoadData[static_cast<int>(wind)];
-		UserData::userGold = m_fourthLoadData[static_cast<int>(gold)];
-		UserData::userExp = m_fourthLoadData[static_cast<int>(exp)];
-		UserData::userClearStageNum = m_fourthLoadData[stage];
-		UserData::userSaveDataNum = m_fourthLoadData[dataNum];
+		UserData::userMainLevel = m_fourthLoadData[static_cast<int>(dataKind::main)];
+		UserData::userAtkLevel = m_fourthLoadData[static_cast<int>(dataKind::atk)];
+		UserData::userDefLevel = m_fourthLoadData[static_cast<int>(dataKind::def)];
+		UserData::userSpdLevel = m_fourthLoadData[static_cast<int>(dataKind::spd)];
+		UserData::userFireLevel = m_fourthLoadData[static_cast<int>(dataKind::fire)];
+		UserData::userWindLevel = m_fourthLoadData[static_cast<int>(dataKind::wind)];
+		UserData::userGold = m_fourthLoadData[static_cast<int>(dataKind::gold)];
+		UserData::userExp = m_fourthLoadData[static_cast<int>(dataKind::exp)];
+		UserData::userClearStageNum = m_fourthLoadData[static_cast<int>(dataKind::stage)];
+		UserData::userSaveDataNum = m_fourthLoadData[static_cast<int>(dataKind::dataNum)];
 		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager,
-			m_fourthLoadData[static_cast<int>(stage)]), true);
+			m_fourthLoadData[static_cast<int>(dataKind::stage)]), true);
 		break;
 	default:
 		break;
@@ -561,63 +562,63 @@ void SceneSave::DrawStatus()
 {
 	//影を表示
 	{
-		DrawString(kMainStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(main)] + kShiftShadowLange, "Lv", GetColor(0, 0, 0));
-		DrawFormatString(kMainLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, main) + 1), kUiPosYArr[0] + kShiftShadowLange,//座標
-			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, main) + 1);
-		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(atk)] + kShiftShadowLange, "こうげきLv", GetColor(0, 0, 0));
-		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, atk) + 1), kUiPosYArr[1] + kShiftShadowLange,//座標
-			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, atk) + 1);
-		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(def)] + kShiftShadowLange, "ぼうぎょLv", GetColor(0, 0, 0));
-		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, def) + 1), kUiPosYArr[2] + kShiftShadowLange,//座標
-			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, def) + 1);
-		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(spd)] + kShiftShadowLange, "は や さLv", GetColor(0, 0, 0));
-		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, spd) + 1), kUiPosYArr[3] + kShiftShadowLange,//座標
-			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, spd) + 1);
-		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(fire)] + kShiftShadowLange, "ファイアLv", GetColor(0, 0, 0));
-		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, fire) + 1), kUiPosYArr[4] + kShiftShadowLange,//座標
-			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, fire) + 1);
-		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(wind)] + kShiftShadowLange, "ウィンドLv", GetColor(0, 0, 0));
-		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, wind) + 1), kUiPosYArr[5] + kShiftShadowLange,//座標
-			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, wind) + 1);
-		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(gold)] + kShiftShadowLange, "所持ゴールド", GetColor(0, 0, 0));
-		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, gold)), kUiPosYArr[6] + kShiftShadowLange,//座標
-			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, gold));
-		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(exp)] + kShiftShadowLange, "総獲得経験値", GetColor(0, 0, 0));
-		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, exp)), kUiPosYArr[7] + kShiftShadowLange,//座標
-			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, exp));
+		DrawString(kMainStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(dataKind::main)] + kShiftShadowLange, "Lv", GetColor(0, 0, 0));
+		DrawFormatString(kMainLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::main) + 1), kUiPosYArr[0] + kShiftShadowLange,//座標
+			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, dataKind::main) + 1);
+		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(dataKind::atk)] + kShiftShadowLange, "こうげきLv", GetColor(0, 0, 0));
+		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::atk) + 1), kUiPosYArr[1] + kShiftShadowLange,//座標
+			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, dataKind::atk) + 1);
+		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(dataKind::def)] + kShiftShadowLange, "ぼうぎょLv", GetColor(0, 0, 0));
+		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::def) + 1), kUiPosYArr[2] + kShiftShadowLange,//座標
+			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, dataKind::def) + 1);
+		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(dataKind::spd)] + kShiftShadowLange, "は や さLv", GetColor(0, 0, 0));
+		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::spd) + 1), kUiPosYArr[3] + kShiftShadowLange,//座標
+			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, dataKind::spd) + 1);
+		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(dataKind::fire)] + kShiftShadowLange, "ファイアLv", GetColor(0, 0, 0));
+		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::fire) + 1), kUiPosYArr[4] + kShiftShadowLange,//座標
+			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, dataKind::fire) + 1);
+		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(dataKind::wind)] + kShiftShadowLange, "ウィンドLv", GetColor(0, 0, 0));
+		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::wind) + 1), kUiPosYArr[5] + kShiftShadowLange,//座標
+			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, dataKind::wind) + 1);
+		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(dataKind::gold)] + kShiftShadowLange, "所持ゴールド", GetColor(0, 0, 0));
+		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::gold)), kUiPosYArr[6] + kShiftShadowLange,//座標
+			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, dataKind::gold));
+		DrawString(kStatusPos + kShiftShadowLange, kUiPosYArr[static_cast<int>(dataKind::exp)] + kShiftShadowLange, "総獲得経験値", GetColor(0, 0, 0));
+		DrawFormatString(kStatusLevelPos + kShiftShadowLange - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::exp)), kUiPosYArr[7] + kShiftShadowLange,//座標
+			GetColor(0, 0, 0), "%d", GetDrawData(m_selectSaveNum, dataKind::exp));
 	}
 	//メインレベルを表示する
-	DrawString(kMainStatusPos, kUiPosYArr[static_cast<int>(main)], "Lv", GetColor(255, 255, 255));
-	DrawFormatString(kMainLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, main) + 1), kUiPosYArr[0],//座標
-		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, main) + 1);
+	DrawString(kMainStatusPos, kUiPosYArr[static_cast<int>(dataKind::main)], "Lv", GetColor(255, 255, 255));
+	DrawFormatString(kMainLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::main) + 1), kUiPosYArr[0],//座標
+		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, dataKind::main) + 1);
 	//攻撃力のレベルを表示する
-	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(atk)], "こうげきLv", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, atk) + 1), kUiPosYArr[1],//座標
-		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, atk) + 1);
+	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(dataKind::atk)], "こうげきLv", GetColor(255, 255, 255));
+	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::atk) + 1), kUiPosYArr[1],//座標
+		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, dataKind::atk) + 1);
 	//防御力のレベルを表示する
-	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(def)], "ぼうぎょLv", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, def) + 1), kUiPosYArr[2],//座標
-		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, def) + 1);
+	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(dataKind::def)], "ぼうぎょLv", GetColor(255, 255, 255));
+	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::def) + 1), kUiPosYArr[2],//座標
+		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, dataKind::def) + 1);
 	//移動力のレベルを表示する
-	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(spd)], "は や さLv", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, spd) + 1), kUiPosYArr[3],//座標
-		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, spd) + 1);
+	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(dataKind::spd)], "は や さLv", GetColor(255, 255, 255));
+	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::spd) + 1), kUiPosYArr[3],//座標
+		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, dataKind::spd) + 1);
 	//風魔法のレベルを表示する
-	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(fire)], "ファイアLv", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, fire) + 1), kUiPosYArr[4],//座標
-		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, fire) + 1);
+	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(dataKind::fire)], "ファイアLv", GetColor(255, 255, 255));
+	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::fire) + 1), kUiPosYArr[4],//座標
+		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, dataKind::fire) + 1);
 	//炎魔法のレベルを表示する
-	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(wind)], "ウィンドLv", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, wind) + 1), kUiPosYArr[5],//座標
-		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, wind) + 1);
+	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(dataKind::wind)], "ウィンドLv", GetColor(255, 255, 255));
+	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::wind) + 1), kUiPosYArr[5],//座標
+		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, dataKind::wind) + 1);
 	//ゴールドの量
-	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(gold)], "所持ゴールド", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, gold)), kUiPosYArr[6],//座標
-		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, gold));
+	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(dataKind::gold)], "所持ゴールド", GetColor(255, 255, 255));
+	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::gold)), kUiPosYArr[6],//座標
+		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, dataKind::gold));
 	//総獲得量の表示
-	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(exp)], "総獲得経験値", GetColor(255, 255, 255));
-	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, exp)), kUiPosYArr[7],//座標
-		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, exp));
+	DrawString(kStatusPos, kUiPosYArr[static_cast<int>(dataKind::exp)], "総獲得経験値", GetColor(255, 255, 255));
+	DrawFormatString(kStatusLevelPos - AlignmentRight(GetDrawData(m_selectSaveNum, dataKind::exp)), kUiPosYArr[7],//座標
+		GetColor(255, 255, 255), "%d", GetDrawData(m_selectSaveNum, dataKind::exp));
 }
 
 void SceneSave::LoadFile()

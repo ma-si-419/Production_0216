@@ -41,7 +41,5 @@ private:
 	int m_enemyGraph;
 	//プリンセスのグラフィック
 	int m_princessGraph;
-	//ChangeWindowModeのグラフィック
-	int m_changeWindowModeGraph;
 };
 

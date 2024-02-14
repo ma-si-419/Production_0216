@@ -72,7 +72,7 @@ namespace
 	constexpr int kShopEndPosXSpeed = 20;
 	constexpr int kShopEndPosYSpeed = 5;
 	//ショップが最終的に大きくなる座標
-	constexpr int kShopMaxSizePosX = 500;
+	constexpr int kShopMaxSizePosX = -150;
 	//キャラの動くスピード
 	constexpr int kCharMoveSpeed = 10;
 	//背景の上辺の高さ
@@ -102,7 +102,7 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, i
 	m_isSelectKeyDown(false),
 	m_isSelectScene(false),
 	m_animFrame(kAnimFrameNum),
-	m_dir(Game::kDirDown),
+	m_dir(Game::Dir::kDirDown),
 	m_cutBgPosY(kBgGraphSize* kMaxSceneNum - selectSceneNum * kBgGraphSize),
 	m_isStaging(false),
 	m_shopAnimFrame(0),
@@ -132,7 +132,8 @@ SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, i
 	m_princessItemPriceList(),
 	m_playerItemPriceList(),
 	m_exclamationMarkZoomSpeed(kExclamationMarkZoomSpeed),
-	m_shakeTrianglePosY(0)
+	m_shakeTrianglePosY(0),
+	m_isMoveUpTriangle(false)
 
 {
 	m_appSe = DataManager.SearchSound("approveSe");
@@ -241,7 +242,7 @@ void SceneSelect::Update(Pad& pad)
 					//別の音に変える
 					PlaySoundMem(m_moveMainSceneSe, DX_PLAYTYPE_BACK);
 					m_animFrame = 24;
-					m_dir = Game::kDirDeath;
+					m_dir = Game::Dir::kDirDeath;
 					m_isMoveMainScene = true;
 					m_isKeyDown = false;
 					m_isSelectScene = true;
@@ -393,7 +394,7 @@ void SceneSelect::Draw()
 	int animEle = m_animFrame / kAnimFrameNum;
 	//画像のどこを切り取るか計算
 	int srcX = kGraphWidth * kUseFrame[animEle];
-	int srcY = kGraphHeight * m_dir;
+	int srcY = kGraphHeight * static_cast<int>(m_dir);
 
 	//サルと姫の描画
 	DrawRectRotaGraph(kPlayerPosX, kPlayerPosY + m_charPosY,
@@ -460,7 +461,7 @@ void SceneSelect::MoveScene(bool up)
 		{
 			m_animFrame = 0;
 		}
-		m_dir = Game::kDirUp;
+		m_dir = Game::Dir::kDirUp;
 	}
 	else
 	{
@@ -470,7 +471,7 @@ void SceneSelect::MoveScene(bool up)
 		{
 			m_animFrame = 0;
 		}
-		m_dir = Game::kDirDown;
+		m_dir = Game::Dir::kDirDown;
 	}
 }
 
@@ -752,7 +753,7 @@ void SceneSelect::MoveCharcter()
 		{
 			//キャラを上に移動させる
 			m_charPosY -= kCharMoveSpeed;
-			m_dir = Game::kDirUp;
+			m_dir = Game::Dir::kDirUp;
 		}
 	}
 	//キャラが上の端についたら
@@ -771,7 +772,7 @@ void SceneSelect::MoveCharcter()
 		{
 			m_isStaging = false;
 			m_isCharArrTopEnd = false;
-			m_dir = Game::kDirDown;
+			m_dir = Game::Dir::kDirDown;
 			m_animFrame = kAnimFrameNum;
 			if (m_isChangeStage)
 			{
@@ -789,7 +790,7 @@ void SceneSelect::MoveCharcter()
 		{
 			//キャラを下に移動させる
 			m_charPosY += kCharMoveSpeed;
-			m_dir = Game::kDirDown;
+			m_dir = Game::Dir::kDirDown;
 			if (m_charPosY > 0)
 			{
 				m_isCharMoveDown = false;
@@ -814,7 +815,7 @@ void SceneSelect::MoveCharcter()
 		{
 			m_isCharMoveDown = true;
 			m_isCharArrBottomEnd = false;
-			m_dir = Game::kDirDown;
+			m_dir = Game::Dir::kDirDown;
 
 			if (m_isChangeStage)
 			{

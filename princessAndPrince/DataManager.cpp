@@ -1,7 +1,8 @@
 #include "DataManager.h"
 #include "DxLib.h"
 
-DataManager::DataManager()
+DataManager::DataManager():
+	m_fontHandle(0)
 {
 	
 
@@ -145,8 +146,6 @@ void DataManager::Init()
 	graphMap["stoneAngryGaugeGraph"] = LoadGraph("data/image/stoneAngryGauge.png");
 	//ショップに表示する戻るボタン
 	graphMap["backButtonGraph"] = LoadGraph("data/image/backButton.png");
-	//タイトルに表示するChangeWindowMode
-	graphMap["changeWindowModeGraph"] = LoadGraph("data/image/changeWindowMode.png");
 	//チュートリアル画像
 	graphMap["tutorialGraph1"] = LoadGraph("data/image/tutorial1.png");
 	graphMap["tutorialGraph2"] = LoadGraph("data/image/tutorial2.png");

@@ -67,7 +67,7 @@ Enemy::Enemy(SceneMain* pMain) :
 	m_pParticle()
 {
 	m_animFrame = 0;
-	m_nowState = Game::kNormal;
+	m_nowState = Game::State::kNormal;
 }
 Enemy::~Enemy()
 {
@@ -322,7 +322,7 @@ void Enemy::Init(int kinds)
 void Enemy::Update()
 {
 	//状態がkDeleteじゃない場合のみ動く
-	if (m_nowState != Game::kDelete)
+	if (m_nowState != Game::State::kDelete)
 	{
 		//アニメーションの更新処理
 		m_animFrame++;
@@ -344,7 +344,7 @@ void Enemy::Update()
 				if (m_hp < 0)
 				{
 					//状態を変化させる
-					m_nowState = Game::kDelete;
+					m_nowState = Game::State::kDelete;
 					if (m_pMain->GetSceneNum() > 1)
 					{
 						//血のメモリの確保
@@ -393,26 +393,26 @@ void Enemy::Update()
 			}
 		}
 		//魔法に連続で当たらないように状態を変化させる
-		if (m_nowState == Game::kHitMagic)
+		if (m_nowState == Game::State::kHitMagic)
 		{
 			m_hitCount++;
 			if (m_hitCount > kHitMagicInterval)
 			{
-				m_nowState = Game::kNormal;
+				m_nowState = Game::State::kNormal;
 				m_hitCount = 0;
 			}
 		}
 		//プレイヤーに連続で当たらないように状態を変化させる
-		if (m_nowState == Game::kHitPlayer)
+		if (m_nowState == Game::State::kHitPlayer)
 		{
 			m_hitCount++;
 			if (m_hitCount > kHitPlayerInterval)
 			{
-				m_nowState = Game::kNormal;
+				m_nowState = Game::State::kNormal;
 				m_hitCount = 0;
 			}
 		}
-		if (m_nowState != Game::kStop)
+		if (m_nowState != Game::State::kStop)
 		{
 			//移動量の計算
 			m_moveVec = m_targetPos - m_pos;
@@ -446,7 +446,7 @@ void Enemy::Update()
 void Enemy::Draw()
 {
 	//状態がkDeleteじゃない場合のみ動かす
-	if (m_nowState != Game::kDelete)
+	if (m_nowState != Game::State::kDelete)
 	{
 
 		int animEle = m_animFrame / kAnimFrameNum;
@@ -516,7 +516,7 @@ void Enemy::HitMagic(MagicBase* magic)
 	if (magic->GetMagicKind())
 	{
 		//ぶつかった魔法を消す
-		magic->m_nowState = Game::kDelete;
+		magic->m_nowState = Game::State::kDelete;
 	}
 	//魔法で死んだ場合の処理をここに入れておく
 	if (m_hp < 0)
@@ -564,6 +564,6 @@ void Enemy::HitMagic(MagicBase* magic)
 		{
 			m_pMain->CountKillBoss();
 		}
-		m_nowState = Game::kDelete;
+		m_nowState = Game::State::kDelete;
 	}
 }

@@ -4,7 +4,7 @@
 class SceneSave : public Scene
 {
 private:
-	enum dataKind
+	enum class dataKind
 	{
 		main,
 		atk,

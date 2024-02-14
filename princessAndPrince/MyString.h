@@ -6,7 +6,7 @@
 using namespace std;
 
 
-static class MyString
+class MyString
 {
 public:
 	/// <summary>

@@ -12,7 +12,7 @@ namespace Game
 	//基本的なキャラクターの円の大きさ
 	constexpr int kRadius = 48;
 	/*向いている方向を保持するenum*/
-	enum Dir
+	enum class Dir
 	{
 		kDirDown,	 // 下
 		kDirLeftDown,// 左下
@@ -25,7 +25,7 @@ namespace Game
 		kDirDeath//死んでいる状態
 	};
 	/*アイテムの種類を保持するenum*/
-	enum ItemKinds
+	enum class ItemKinds
 	{
 		kEmpty,//初期化用
 		kExp,//経験値
@@ -34,7 +34,7 @@ namespace Game
 		kPortion//回復アイテム
 	};
 	/*状態を管理するenum*/
-	enum State
+	enum class State
 	{
 		kNormal,//基本的な状態
 		kHitPlayer,//ぶつかった状態(めり込んでぶつかり、処理が複数行われないため)
@@ -44,13 +44,13 @@ namespace Game
 		kHitEnemy,//敵とぶつかった状態
 		kStop//移動を制限している状態
 	};
-	enum WitchState
+	enum  class WitchState
 	{
 		kMagic,//魔法を撃っている状態
 		kStone,//石になっている状態
 		kBreak//壊された状態
 	};
-	enum ItemGraph
+	enum class ItemGraph
 	{
 		kArmor,
 		kDropCoin,

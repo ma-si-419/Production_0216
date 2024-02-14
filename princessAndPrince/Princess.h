@@ -43,9 +43,9 @@ public:
 	//攻撃力を取得する
 	float GetAtk() { return m_atk; }
 	//石の状態にする
-	void TransStone() {m_drawState = Game::kStone; }
+	void TransStone() {m_drawState = Game::WitchState::kStone; }
 	//聖剣モードを始めるときに呼ぶ
-	void StartSpecialMode() { m_drawState = Game::kMagic; m_animFrame = 0; }
+	void StartSpecialMode() { m_drawState = Game::WitchState::kMagic; m_animFrame = 0; }
 private:
 	//メインシーンのポインタを保存する変数
 	SceneMain* m_pMain;

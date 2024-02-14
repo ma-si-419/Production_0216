@@ -23,7 +23,7 @@ namespace
 
 MagicBase::MagicBase(Princess* pPrincess, float scale) :
 	//コンストラクタ時に存在しているフラグを立てる
-	m_nowState(Game::kNormal),
+	m_nowState(Game::State::kNormal),
 	//プリンセスのポインタを入れる
 	m_pPrincess(pPrincess),
 	//移動ベクトルの初期化
@@ -32,7 +32,7 @@ MagicBase::MagicBase(Princess* pPrincess, float scale) :
 	m_princessPos(m_pPrincess->GetPos()),
 	m_magicPos(m_princessPos),
 	//炎魔法の攻撃力の初期化
-	m_fireAtk(UserData::userFireLevel * 2.0f + 5.0f),
+	m_fireAtk(UserData::userFireLevel * 1.5f + 3.0f),
 	//風魔法の攻撃力の初期化
 	m_windAtk(UserData::userWindLevel * 0.15f + 0.15f),
 	//魔法の大きさの初期化
@@ -44,7 +44,10 @@ MagicBase::MagicBase(Princess* pPrincess, float scale) :
 	//風魔法の変数の初期化
 	m_windAngle(0),
 	m_windLength(0),
-	m_isRightWind(true)
+	m_isRightWind(true),
+	m_graphAngle(0.0f),
+	m_handle(0),
+	m_turnFlag(false)
 {
 }
 
@@ -113,14 +116,14 @@ void MagicBase::Update()
 	}
 	// 縦軸の移動制限
 	if (m_magicPos.y < 0 - m_scale)
-		m_nowState = Game::kDelete;
+		m_nowState = Game::State::kDelete;
 	else if (Game::kPlayScreenHeight + m_scale < m_magicPos.y)
-		m_nowState = Game::kDelete;
+		m_nowState = Game::State::kDelete;
 	// 横軸の移動制限
 	if (m_magicPos.x < 0 - m_scale)
-		m_nowState = Game::kDelete;
+		m_nowState = Game::State::kDelete;
 	else if (Game::kPlayScreenWidth + m_scale < m_magicPos.x)
-		m_nowState = Game::kDelete;
+		m_nowState = Game::State::kDelete;
 	m_circleCol.SetCenter(m_magicPos, m_scale);
 
 }
@@ -130,7 +133,7 @@ void MagicBase::Draw()
 	if (m_isFire)
 	{
 		DrawRectRotaGraph(static_cast<int>(m_magicPos.x), static_cast<int>(m_magicPos.y),
-			0, Game::kFire * kGraphSize,
+			0, static_cast<int>(Game::ItemGraph::kFire) * kGraphSize,
 			kGraphSize, kGraphSize,
 			kMagicSize,
 			m_graphAngle,
@@ -141,7 +144,7 @@ void MagicBase::Draw()
 	else if (!m_isFire)
 	{
 		DrawRectRotaGraph(static_cast<int>(m_magicPos.x), static_cast<int>(m_magicPos.y),
-			0, Game::kTyphoon * kGraphSize,
+			0, static_cast<int>(Game::ItemGraph::kTyphoon) * kGraphSize,
 			kGraphSize, kGraphSize,
 			kMagicSize,
 			0,

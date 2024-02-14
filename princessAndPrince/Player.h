@@ -60,12 +60,12 @@ public:
 	//クリアした時の演出
 	void ClearDance();
 	//向いている方向を前方にする
-	void TurnFront() { m_dir = Game::kDirDown; }
+	void TurnFront() { m_dir = Game::Dir::kDirDown; }
 	//今動いているベクトルを取得する
 	Vec2 GetMoveVec() { return m_moveVec; }
 	//怒りモードを始めるときによぶ
-	void SetSpecialMode() { m_dir = Game::kDirDeath; m_animFrame = 24; }
-	void StartSpecialMode() { m_dir = Game::kDirDown; m_animFrame = 0; }
+	void SetSpecialMode() { m_dir = Game::Dir::kDirDeath; m_animFrame = 24; }
+	void StartSpecialMode() { m_dir = Game::Dir::kDirDown; m_animFrame = 0; }
 	//怒りモード時のグラフィック
 	void SetPlayerAngryGraph(int graph) { m_playerAngryGraph = graph; }
 	void SetAngryFireGraph(int graph) { m_angryFireGraph = graph; }

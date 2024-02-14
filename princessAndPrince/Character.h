@@ -65,35 +65,35 @@ protected:
 
 		if (x == -1 && y == -1)
 		{
-			m_dir = Game::kDirLeftUp;
+			m_dir = Game::Dir::kDirLeftUp;
 		}
 		else if (x == 0 && y == -1)
 		{
-			m_dir = Game::kDirUp;
+			m_dir = Game::Dir::kDirUp;
 		}
 		else if (x == 1 && y == -1)
 		{
-			m_dir = Game::kDirRightUp;
+			m_dir = Game::Dir::kDirRightUp;
 		}
 		else if (x == 1 && y == 0)
 		{
-			m_dir = Game::kDirRight;
+			m_dir = Game::Dir::kDirRight;
 		}
 		else if (x == 1 && y == 1)
 		{
-			m_dir = Game::kDirRightDown;
+			m_dir = Game::Dir::kDirRightDown;
 		}
 		else if (x == 0 && y == 1)
 		{
-			m_dir = Game::kDirDown;
+			m_dir = Game::Dir::kDirDown;
 		}
 		else if (x == -1 && y == 1)
 		{
-			m_dir = Game::kDirLeftDown;
+			m_dir = Game::Dir::kDirLeftDown;
 		}
 		else if (x == -1 && y == 0)
 		{
-			m_dir = Game::kDirLeft;
+			m_dir = Game::Dir::kDirLeft;
 		}
 	}
 };

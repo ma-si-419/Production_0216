@@ -399,14 +399,14 @@ void SceneMain::Update(Pad& pad)
 			{
 				if (enemy)
 				{
-					if (enemy->m_nowState != Game::kDelete)
+					if (enemy->m_nowState != Game::State::kDelete)
 						//エネミーの移動を止める
-						enemy->m_nowState = Game::kStop;
+						enemy->m_nowState = Game::State::kStop;
 				}
 			}
 			StopSoundMem(m_fieldBgm);
 			StopSoundMem(m_bossBgm);
-			m_pPlayer->m_nowState = Game::kStop;
+			m_pPlayer->m_nowState = Game::State::kStop;
 			m_isGameOver = true;
 			//リザルト画面に移行する
 			m_isResult = true;
@@ -451,13 +451,13 @@ void SceneMain::Update(Pad& pad)
 				if (enemy)
 				{
 					//状態がkDeleteじゃない場合のみ動く
-					if (enemy->m_nowState != Game::kDelete)
+					if (enemy->m_nowState != Game::State::kDelete)
 					{
 						enemy->Update();
 						//プレイヤーとエネミーがぶつかったとき
-						if (m_pPlayer->m_nowState != Game::kDelete &&//プレイヤーが死んでいないときに
+						if (m_pPlayer->m_nowState != Game::State::kDelete &&//プレイヤーが死んでいないときに
 							IsCollision(m_pPlayer->GetColCircle(), enemy->GetColCircle()) &&//プレイヤーとエネミーがぶつかったら
-							enemy->m_nowState != Game::kHitPlayer && enemy->m_nowState != Game::kStop)//エネミーがkDeleteじゃないときのみ
+							enemy->m_nowState != Game::State::kHitPlayer && enemy->m_nowState != Game::State::kStop)//エネミーがkDeleteじゃないときのみ
 						{
 							//エネミーのダメージ処理を行う
 							enemy->HitPlayer(*m_pPlayer, IsCollision(m_pPlayer->GetColCircle(), enemy->GetWeakCircle()));
@@ -470,12 +470,12 @@ void SceneMain::Update(Pad& pad)
 								AddSpecialGauge(enemy->GetAtk() * 0.9f);
 							}
 							//エネミーの状態を推移させる
-							enemy->m_nowState = Game::kHitPlayer;
+							enemy->m_nowState = Game::State::kHitPlayer;
 							PlaySoundMem(m_attackSe, DX_PLAYTYPE_BACK);
 						}
 						//魔女とエネミーがぶつかったとき
 						if (IsCollision(m_pPrincess->GetColCircle(), enemy->GetColCircle()) &&
-							m_pPrincess->m_nowState != Game::kDelete && enemy->m_nowState != Game::kStop)
+							m_pPrincess->m_nowState != Game::State::kDelete && enemy->m_nowState != Game::State::kStop)
 						{
 							//魔女のダメージ処理を行う,エネミーのノックバックを行う
 							m_pPrincess->HitEnemy(*enemy);
@@ -490,10 +490,10 @@ void SceneMain::Update(Pad& pad)
 
 							if (magic &&//magicがnullじゃない場合
 								IsCollision(magic->GetCircleCol(), enemy->GetColCircle()) &&//MagicとEnemyがぶつかったら
-								enemy->m_nowState != Game::kHitMagic)//状態がkHitMagicじゃなかったら
+								enemy->m_nowState != Game::State::kHitMagic)//状態がkHitMagicじゃなかったら
 							{
 								//エネミーの状態を変化させる
-								enemy->m_nowState = Game::kHitMagic;
+								enemy->m_nowState = Game::State::kHitMagic;
 								//魔法のダメージ処理を行う
 								enemy->HitMagic(magic);
 							}
@@ -509,7 +509,7 @@ void SceneMain::Update(Pad& pad)
 			if (magic)
 			{
 				//状態がデリートになっていないとき
-				if (magic->m_nowState != Game::kDelete)
+				if (magic->m_nowState != Game::State::kDelete)
 				{
 					//魔法の更新処理を行う
 					magic->Update();
@@ -535,12 +535,12 @@ void SceneMain::Update(Pad& pad)
 			if (item)
 			{
 				//アイテムが存在している場合
-				if (item->m_nowState != Game::kDelete)
+				if (item->m_nowState != Game::State::kDelete)
 				{
 					item->Update();
 					//アイテムとプレイヤーが接触し、アイテムの状態がkNoneじゃなかったら
 					if (IsCollision(m_pPlayer->GetColCircle(), item->GetColCircle()) &&
-						item->m_nowState != Game::kNone)
+						item->m_nowState != Game::State::kNone)
 					{
 						m_pPlayer->PickUpItem(item);
 					}
@@ -554,7 +554,7 @@ void SceneMain::Update(Pad& pad)
 			if (treasure)
 			{
 				//アイテムが存在している場合
-				if (treasure->m_nowState != Game::kDelete)
+				if (treasure->m_nowState != Game::State::kDelete)
 				{
 					treasure->Update();
 					//プレイヤーとぶつかったら
@@ -569,7 +569,7 @@ void SceneMain::Update(Pad& pad)
 					{
 						if (magic &&//magicがnullじゃなかったら
 							IsCollision(magic->GetCircleCol(), treasure->GetColCircle()) &&
-							treasure->m_nowState != Game::kHitMagic)
+							treasure->m_nowState != Game::State::kHitMagic)
 						{
 							treasure->HitMagic();
 						}
@@ -599,7 +599,7 @@ void SceneMain::Update(Pad& pad)
 				}
 			}
 		}
-		if (m_specialGauge >= kMaxSpecialGauge && m_pPrincess->m_nowState != Game::kDelete)
+		if (m_specialGauge >= kMaxSpecialGauge && m_pPrincess->m_nowState != Game::State::kDelete)
 		{
 			if (m_lastSpace && !m_isStop)
 			{
@@ -749,9 +749,9 @@ void SceneMain::Update(Pad& pad)
 		//マップ上にいる敵を消す
 		for (const auto& enemy : m_pEnemy)
 		{
-			if (enemy && enemy->m_nowState != Game::kDelete)
+			if (enemy && enemy->m_nowState != Game::State::kDelete)
 			{
-				enemy->m_nowState = Game::kDelete;
+				enemy->m_nowState = Game::State::kDelete;
 				Vec2 temp;
 				//消えるときにエフェクトを出す
 				temp = enemy->GetPos();
@@ -850,7 +850,7 @@ void SceneMain::Update(Pad& pad)
 				m_isLastSe = false;
 			}
 			//まだクリアしてないステージだったらクリアしたことを保存する
-			if (m_selectScene >= UserData::userClearStageNum && m_pPrincess->m_nowState != Game::kDelete)
+			if (m_selectScene >= UserData::userClearStageNum && m_pPrincess->m_nowState != Game::State::kDelete)
 			{
 				UserData::userClearStageNum = m_selectScene + 1;
 			}
@@ -892,7 +892,7 @@ void SceneMain::Draw()
 		if (magic)
 		{
 			//アイテムが存在している場合
-			if (magic->m_nowState != Game::kDelete)
+			if (magic->m_nowState != Game::State::kDelete)
 			{
 				magic->Draw();
 
@@ -903,8 +903,8 @@ void SceneMain::Draw()
 	{
 		if (item)
 		{
-			if (item->m_nowState != Game::kDelete &&
-				item->m_nowState != Game::kNone)
+			if (item->m_nowState != Game::State::kDelete &&
+				item->m_nowState != Game::State::kNone)
 			{
 				item->Draw();
 			}
@@ -916,7 +916,7 @@ void SceneMain::Draw()
 		if (treasure)
 		{
 			//アイテムが存在している場合
-			if (treasure->m_nowState != Game::kDelete)
+			if (treasure->m_nowState != Game::State::kDelete)
 			{
 				treasure->Draw();
 			}
@@ -949,7 +949,7 @@ void SceneMain::Draw()
 	{
 		if (item)
 		{
-			if (item->m_nowState == Game::kNone)
+			if (item->m_nowState == Game::State::kNone)
 			{
 				item->Draw();
 			}

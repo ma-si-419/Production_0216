@@ -139,10 +139,10 @@ void UI::Draw()
 		DrawRectRotaGraph(1495, 855, 0, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
 	}
 	//炎魔法のUi表示
-	DrawRectRotaGraph(1318, 855, 0, Game::kFire * kItemGraphScale, kItemGraphScale, kItemGraphScale,
+	DrawRectRotaGraph(1318, 855, 0, static_cast<int>(Game::ItemGraph::kFire) * kItemGraphScale, kItemGraphScale, kItemGraphScale,
 		2.7, 4.72, m_magicGraph, true, false, false);
 	//風魔法のUi表示
-	DrawRectRotaGraph(1495, 855, 0, Game::kTyphoon * kItemGraphScale, kItemGraphScale, kItemGraphScale,
+	DrawRectRotaGraph(1495, 855, 0, static_cast<int>(Game::ItemGraph::kTyphoon) * kItemGraphScale, kItemGraphScale, kItemGraphScale,
 		2.7, 0.0, m_magicGraph, true, false, false);
 	if (m_pMain->GetSceneNum() > 1)
 	{
@@ -197,7 +197,7 @@ void UI::SceneClearUI()
 		int stringWidth = GetDrawStringWidth("ゲームクリア", -1);
 		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 - 150, 200, "ゲ ー ム", GetColor(255, 255, 255));
 		DrawRectRotaGraph((Game::kPlayScreenWidth - stringWidth) / 2 + 100, 200,
-			48, Game::kDirDeath * 16,
+			48, static_cast<int>(Game::Dir::kDirDeath) * 16,
 			16, 16,
 			6.0,
 			0.0,
@@ -243,7 +243,7 @@ void UI::GameOverUI()
 		int stringWidth = GetDrawStringWidth("ゲームオーバー", -1);
 		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 - 150, 200, "ゲ ー ム", GetColor(255, 255, 255));
 		DrawRectRotaGraph((Game::kPlayScreenWidth - stringWidth) / 2 + 100, 220,
-			16, Game::kDirDeath * 16,
+			16, static_cast<int>(Game::Dir::kDirDeath) * 16,
 			16, 16,
 			6.0,
 			0.0,

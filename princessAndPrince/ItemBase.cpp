@@ -15,11 +15,11 @@ namespace
 }
 ItemBase::ItemBase() :
 	m_handle(0),
-	m_kind(Game::kEmpty),
+	m_kind(Game::ItemKinds::kEmpty),
 	m_pos(0, 0),
 	m_isExist(false),
 	m_colScale(kColScale),
-	m_nowState(Game::kNormal),
+	m_nowState(Game::State::kNormal),
 	m_haveExp(0),
 	m_haveGold(0),
 	m_moveVec(0, 0),
@@ -64,12 +64,12 @@ void ItemBase::Update()
 	m_pos += m_moveVec;
 	if (m_pos.x > Game::kScreenWidth - 300)
 	{
-		m_nowState = Game::kDelete;
-		if (m_kind == Game::kGold)
+		m_nowState = Game::State::kDelete;
+		if (m_kind == Game::ItemKinds::kGold)
 		{
 			m_pPlayer->PickUpGold(m_haveGold);
 		}
-		if (m_kind == Game::kExp)
+		if (m_kind == Game::ItemKinds::kExp)
 		{
 			m_pPlayer->PickUpExp(m_haveExp);
 		}

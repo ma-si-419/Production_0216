@@ -3,7 +3,7 @@
 
 Gold::Gold()
 {
-	m_kind = Game::kGold;
+	m_kind = Game::ItemKinds::kGold;
 }
 
 Gold::~Gold()
@@ -13,7 +13,7 @@ Gold::~Gold()
 void Gold::Draw()
 {
 	DrawRectRotaGraph(static_cast<int>(m_pos.x),static_cast<int>(m_pos.y),
-		m_srcX, Game::kDropCoin * 32,
+		m_srcX, static_cast<int>(Game::ItemGraph::kDropCoin) * 32,
 		32, 32,
 		2.0,
 		0.0,

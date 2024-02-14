@@ -4,7 +4,7 @@
 
 Portion::Portion()
 {
-	m_kind = Game::kPortion;
+	m_kind = Game::ItemKinds::kPortion;
 }
 
 Portion::~Portion()
@@ -14,7 +14,7 @@ Portion::~Portion()
 void Portion::Draw()
 {
 	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
-		0, Game::kDropPortion * 32,
+		0, static_cast<int>(Game::ItemGraph::kDropPortion) * 32,
 		32, 32,
 		2.0,
 		0.0,

@@ -35,7 +35,13 @@ TreasureBox::TreasureBox(SceneMain* sceneMain) :
 	m_handle(-1),
 	m_isExist(true),
 	m_knockBackVec(),
-	m_knockBackPow(kKnockBackPow)
+	m_knockBackPow(kKnockBackPow),
+	m_exp(0),
+	m_gold(0),
+	m_knockBackTime(0),
+	m_magicCount(0),
+	m_nowState(Game::State::kNormal),
+	m_pParticle()
 {
 }
 
@@ -45,7 +51,7 @@ TreasureBox::~TreasureBox()
 
 void TreasureBox::Init(Vec2 pos)
 {
-	m_nowState = Game::kNormal;
+	m_nowState = Game::State::kNormal;
 	//全部同じ位置に出てしまわないように少しばらけさせる
 	m_pos.x = pos.x + GetRand(30) - 15;
 	m_pos.y = pos.y + GetRand(30) - 15;
@@ -72,7 +78,7 @@ void TreasureBox::Init(Vec2 pos)
 
 void TreasureBox::Update()
 {
-	if (m_nowState != Game::kDelete)
+	if (m_nowState != Game::State::kDelete)
 	{
 		m_pos -= m_knockBackVec;
 		//ノックバック処理
@@ -157,15 +163,15 @@ void TreasureBox::Update()
 				m_pMain->AddItem(pPortion);
 			}
 			//状態を変化させる
-			m_nowState = Game::kDelete;
+			m_nowState = Game::State::kDelete;
 
 		}
-		if (m_nowState == Game::kHitMagic)
+		if (m_nowState == Game::State::kHitMagic)
 		{
 			m_magicCount++;
 			if (m_magicCount > kHitMagicInterval)
 			{
-				m_nowState = Game::kNormal;
+				m_nowState = Game::State::kNormal;
 				m_magicCount = 0;
 			}
 		}
@@ -176,7 +182,7 @@ void TreasureBox::Draw()
 {
 	
 	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
-		0, Game::kDropTreasure * 32,
+		0, static_cast<int>(Game::ItemGraph::kDropTreasure) * 32,
 		32, 32,
 		2.0,
 		0.0,
@@ -206,7 +212,7 @@ void TreasureBox::HitPlayer(Player* player)
 
 void TreasureBox::HitMagic()
 {
-	m_nowState = Game::kHitMagic;
+	m_nowState = Game::State::kHitMagic;
 	//白いエフェクトを出す
 	for (int i = 0; i < kParticleVol; i++)
 	{
@@ -276,7 +282,7 @@ void TreasureBox::HitMagic()
 			m_pMain->AddItem(pPortion);
 		}
 		//状態を変化させる
-		m_nowState = Game::kDelete;
+		m_nowState = Game::State::kDelete;
 
 	}
 }

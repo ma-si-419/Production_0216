@@ -3,7 +3,7 @@
 
 Exp::Exp()
 {
-	m_kind = Game::kExp;
+	m_kind = Game::ItemKinds::kExp;
 }
 
 Exp::~Exp()
@@ -13,7 +13,7 @@ Exp::~Exp()
 void Exp::Draw()
 {
 	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
-		m_srcX, Game::kDropExp * 32,
+		m_srcX, static_cast<int>(Game::ItemGraph::kDropExp) * 32,
 		32, 32,
 		2.0,
 		0.0,

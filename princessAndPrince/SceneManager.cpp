@@ -14,7 +14,7 @@ SceneManager::~SceneManager()
 
 void SceneManager::Update(Pad& pad)
 {
-	if (m_isChangeScene && m_pFade->GetFadeState() == kFadeIn)
+	if (m_isChangeScene && m_pFade->GetFadeState() == fadeState::kFadeIn)
 	{
 		if (scenes_.empty())//ƒŠƒXƒg‚ª‹ó‚Á‚Û‚¾‚Á‚½‚ç“ü‚ê‘Ö‚¦‚¸‚É
 		{
@@ -30,7 +30,7 @@ void SceneManager::Update(Pad& pad)
 
 	}
 	m_pFade->Update();
-	if (m_pFade->GetFadeState() == kNormal)
+	if (m_pFade->GetFadeState() == fadeState::kNormal)
 	{
 		//––”ö‚Ì‚İÀs
 		scenes_.back()->Update(pad);

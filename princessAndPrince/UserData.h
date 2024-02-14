@@ -1,10 +1,5 @@
 #pragma once
-#include "SceneMain.h"
-#include "SceneShop.h"
-#include "Player.h"
-#include "Princess.h"
-#include "UI.h"
-static class UserData
+class UserData
 {
 public:
 	static int userGold;

@@ -1,5 +1,5 @@
 #pragma once
-enum fadeState
+enum class fadeState
 {
 	kFadeIn,//フェードインする状態
 	kNormal,
@@ -15,7 +15,7 @@ public:
 	//描画処理
 	void Draw();
 	//フェードの状態を返す
-	bool GetFadeState() { return m_fadeState; }
+	fadeState GetFadeState() { return m_fadeState; }
 	//フェードを開始する
 	void StartFadeOut() { m_fadeState = fadeState::kFadeOut; }
 	//フェードを開始しない

@@ -73,13 +73,13 @@ Player::Player(SceneMain* pMain) :
 	m_pos.x = Game::kPlayScreenWidth / 2 + 100;
 	m_pos.y = Game::kPlayScreenHeight / 2;
 	//最初の向きを下向きに設定
-	m_dir = Game::kDirDown;
+	m_dir = Game::Dir::kDirDown;
 	//アニメーションの最初の画像を設定
 	m_animFrame = kAnimFrameNum;
 	//円の半径を設定
 	m_radius = Game::kRadius;
 	//状態を初期化
-	m_nowState = Game::kNormal;
+	m_nowState = Game::State::kNormal;
 
 }
 
@@ -121,7 +121,7 @@ void Player::Update()
 	// パッドの十字キーを使用してプレイヤーを移動させる
 	int pad = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 	//倒れているときは徐々に回復するようにする
-	if (m_nowState == Game::kDelete)
+	if (m_nowState == Game::State::kDelete)
 	{
 		//少しずつ回復するようにする
 		m_nowHp += GetHealRate();
@@ -216,9 +216,9 @@ void Player::Update()
 			if (m_revivalCount > kRevivalTime)
 			{
 				//状態をkNormalに変化させる
-				m_nowState = Game::kNormal;
+				m_nowState = Game::State::kNormal;
 				//向いている向きを下向きにする
-				m_dir = Game::kDirDown;
+				m_dir = Game::Dir::kDirDown;
 				//死んだフラッグをfalseにする
 				m_isDeathFlag = false;
 				m_revivalCount = 0;
@@ -227,7 +227,7 @@ void Player::Update()
 		}
 	}
 	//体力が0の時以外動くようにする
-	if (m_nowHp > 0 && m_nowState != Game::kDelete)
+	if (m_nowHp > 0 && m_nowState != Game::State::kDelete)
 	{
 
 
@@ -235,7 +235,7 @@ void Player::Update()
 
 		m_moveVec.x = 0.0f;
 		m_moveVec.y = 0.0f;
-		if (m_nowState != Game::kStop)
+		if (m_nowState != Game::State::kStop)
 		{
 
 			//ユーザのKey入力を取得
@@ -281,11 +281,11 @@ void Player::Update()
 		//移動量にノックバックを足す
 		m_moveVec -= m_knockBack;
 		// 座標にベクトルを足す
-		if (m_nowState != Game::kHitEnemy)
+		if (m_nowState != Game::State::kHitEnemy)
 		{
 			m_pos += m_moveVec;
 		}
-		else if (m_nowState == Game::kHitEnemy)
+		else if (m_nowState == Game::State::kHitEnemy)
 		{
 			m_pos -= m_knockBack;
 		}
@@ -296,7 +296,7 @@ void Player::Update()
 			//一定時間ノックバックしたら
 			if (m_knockBackTime > 5)
 			{
-				m_nowState = Game::kNormal;
+				m_nowState = Game::State::kNormal;
 				m_knockBack *= 0;
 				m_knockBackTime = 0;
 			}
@@ -365,7 +365,7 @@ void Player::Update()
 	}
 	if (m_nowHp <= 0)
 	{
-		m_nowState = Game::kDelete;
+		m_nowState = Game::State::kDelete;
 	}
 }
 
@@ -375,7 +375,7 @@ void Player::Draw() const
 
 	//画像のどこを切り取るか計算
 	int srcX = kGraphWidth * kUseFrame[animEle];
-	int srcY = kGraphHeight * m_dir;
+	int srcY = kGraphHeight * static_cast<int>(m_dir);
 	//描画処理
 	//怒りモードかどうかでグラフィックを変える
 	if (!m_pMain->GetSpecialMode())
@@ -439,7 +439,7 @@ void Player::Draw() const
 
 void Player::HitEnemy(Enemy enemy, bool weak)
 {
-	m_nowState = Game::kHitEnemy;
+	m_nowState = Game::State::kHitEnemy;
 	m_knockBack = enemy.GetPos() - m_pos;
 	m_knockBack.Normalize();
 	//エネミーの移動速度に応じてノックバックする
@@ -482,7 +482,7 @@ void Player::HitEnemy(Enemy enemy, bool weak)
 	{
 		m_nowHp = 0;
 		//状態をkDeleteに変化させる
-		m_nowState = Game::kDelete;
+		m_nowState = Game::State::kDelete;
 	}
 }
 void Player::HitTreasure(TreasureBox* treasureBox)
@@ -490,28 +490,28 @@ void Player::HitTreasure(TreasureBox* treasureBox)
 	m_knockBack = m_moveVec;
 	m_knockBack.Normalize();
 	m_knockBack *= kKnockBackScale * treasureBox->GetKnockBackPow() * (GetRand(2) + 1);
-	m_nowState = Game::kHitEnemy;
+	m_nowState = Game::State::kHitEnemy;
 }
 void Player::PickUpItem(std::shared_ptr<ItemBase> item)
 {
 	switch (item->GetKind())
 	{
-	case Game::kEmpty:
+	case Game::ItemKinds::kEmpty:
 		printfDx("バグ");
 		break;
-	case Game::kExp:
+	case Game::ItemKinds::kExp:
 		PlaySoundMem(m_expSe, DX_PLAYTYPE_BACK);
 		//持っている経験値量を増やす
-		item->m_nowState = Game::kNone;
+		item->m_nowState = Game::State::kNone;
 		item->MoveItem(this);
 		break;
-	case Game::kGold:
+	case Game::ItemKinds::kGold:
 		PlaySoundMem(m_coinSe, DX_PLAYTYPE_BACK);
 		//持っているお金を増やす
-		item->m_nowState = Game::kNone;
+		item->m_nowState = Game::State::kNone;
 		item->MoveItem(this);
 		break;
-	case Game::kBlood:
+	case Game::ItemKinds::kBlood:
 		//プレイヤーの持つ血の量を増やす
 		//持っているの血の量が上限値よりも大きくなかったら
 		if (m_nowBlood < m_maxBlood)
@@ -519,13 +519,13 @@ void Player::PickUpItem(std::shared_ptr<ItemBase> item)
 			m_nowBlood++;
 		}
 		PlaySoundMem(m_bloodSe, DX_PLAYTYPE_BACK);
-		item->m_nowState = Game::kDelete;
+		item->m_nowState = Game::State::kDelete;
 		break;
-	case Game::kPortion:
+	case Game::ItemKinds::kPortion:
 		PlaySoundMem(m_portionSe, DX_PLAYTYPE_BACK);
 		//プレイヤーの体力を全回復させる
 		m_nowHp = m_hp;
-		item->m_nowState = Game::kDelete;
+		item->m_nowState = Game::State::kDelete;
 	}
 }
 
@@ -565,20 +565,20 @@ void Player::DeathMove()
 			{
 				PlaySoundMem(m_playerTurnSe, DX_PLAYTYPE_BACK);
 			}
-			m_dir = Game::kDirDown;
+			m_dir = Game::Dir::kDirDown;
 			m_animFrame = 0;
 		}
 		else if (m_knockBackTime < 40)
 		{
-			m_dir = Game::kDirLeft;
+			m_dir = Game::Dir::kDirLeft;
 		}
 		else if (m_knockBackTime < 60)
 		{
-			m_dir = Game::kDirUp;
+			m_dir = Game::Dir::kDirUp;
 		}
 		else if (m_knockBackTime < 80)
 		{
-			m_dir = Game::kDirRight;
+			m_dir = Game::Dir::kDirRight;
 
 		}
 		else
@@ -589,7 +589,7 @@ void Player::DeathMove()
 				{
 					PlaySoundMem(m_playerDeathSe, DX_PLAYTYPE_BACK);
 				}
-				m_dir = Game::kDirDeath;
+				m_dir = Game::Dir::kDirDeath;
 			}
 		}
 		//一定時間ノックバックしたら
@@ -622,31 +622,31 @@ void Player::ClearDance()
 		m_danceCount = 0;
 		switch (m_dir)
 		{
-		case Game::kDirDown:
-			m_dir = Game::kDirLeft;
+		case Game::Dir::kDirDown:
+			m_dir = Game::Dir::kDirLeft;
 			break;
-		case Game::kDirLeftDown:
-			m_dir = Game::kDirLeft;
+		case Game::Dir::kDirLeftDown:
+			m_dir = Game::Dir::kDirLeft;
 			break;
-		case Game::kDirLeft:
-			m_dir = Game::kDirUp;
+		case Game::Dir::kDirLeft:
+			m_dir = Game::Dir::kDirUp;
 			break;
-		case Game::kDirLeftUp:
-			m_dir = Game::kDirUp;
+		case Game::Dir::kDirLeftUp:
+			m_dir = Game::Dir::kDirUp;
 			break;
-		case Game::kDirUp:
-			m_dir = Game::kDirRight;
+		case Game::Dir::kDirUp:
+			m_dir = Game::Dir::kDirRight;
 			break;
-		case Game::kDirRightUp:
-			m_dir = Game::kDirRight;
+		case Game::Dir::kDirRightUp:
+			m_dir = Game::Dir::kDirRight;
 			break;
-		case Game::kDirRight:
-			m_dir = Game::kDirDown;
+		case Game::Dir::kDirRight:
+			m_dir = Game::Dir::kDirDown;
 			break;
-		case Game::kDirRightDown:
-			m_dir = Game::kDirDown;
+		case Game::Dir::kDirRightDown:
+			m_dir = Game::Dir::kDirDown;
 			break;
-		case Game::kDirDeath:
+		case Game::Dir::kDirDeath:
 			break;
 		default:
 			break;
@@ -655,7 +655,7 @@ void Player::ClearDance()
 	}
 	if (m_turnCount > kTurnCount)
 	{
-		m_dir = Game::kDirDeath;
+		m_dir = Game::Dir::kDirDeath;
 		m_animFrame = kAnimFrameNum * 2;
 	}
 	if (m_turnCount > kTurnCount + 6)

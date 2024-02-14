@@ -95,7 +95,10 @@ SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_isMax(false),
 	m_showGold(UserData::userGold),
 	m_subGold(0),
-	m_shakeGoldPosY(0)
+	m_shakeGoldPosY(0),
+	m_isMoveCursor(false),
+	m_playerItemPriceList(),
+	m_princessItemPriceList()
 {
 	m_cursorSe = DataManager.SearchSound("cursorSe");
 	m_cancelSe = DataManager.SearchSound("cancelSe");
@@ -528,31 +531,31 @@ void SceneShop::Draw()
 	DrawString(kGPosX, kGoldPosY, "G", GetColor(255, 255, 255));
 	//アイテムの表示
 	DrawRectRotaGraph(kItemPosX[0], kItemPosY,
-		0, Game::kSword * kItemGraphSize,
+		0, static_cast<int>(Game::ItemGraph::kSword) * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
 		4.0,
 		0.0,
 		m_itemGraph, true, false);
 	DrawRectRotaGraph(kItemPosX[1], kItemPosY,
-		0, Game::kArmor * kItemGraphSize,
+		0, static_cast<int>(Game::ItemGraph::kArmor) * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
 		4.0,
 		0.0,
 		m_itemGraph, true, false);
 	DrawRectRotaGraph(kItemPosX[2], kItemPosY,
-		0, Game::kBoots * kItemGraphSize,
+		0, static_cast<int>(Game::ItemGraph::kBoots) * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
 		4.0,
 		0.0,
 		m_itemGraph, true, false);
 	DrawRectRotaGraph(kItemPosX[3], kMagicPosY,
-		0, Game::kFire * kItemGraphSize,
+		0, static_cast<int>(Game::ItemGraph::kFire) * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
 		4.0,
 		4.72,
 		m_itemGraph, true, false);
 	DrawRectRotaGraph(kItemPosX[4], kMagicPosY,
-		0, Game::kTyphoon * kItemGraphSize,
+		0, static_cast<int>(Game::ItemGraph::kTyphoon) * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
 		4.0,
 		0.0,
