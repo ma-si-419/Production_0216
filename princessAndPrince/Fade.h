@@ -14,8 +14,6 @@ public:
 	void Update();
 	//描画処理
 	void Draw();
-	void FadeIn();
-	void FadeOut();
 	//フェードの状態を返す
 	bool GetFadeState() { return m_fadeState; }
 	//フェードを開始する

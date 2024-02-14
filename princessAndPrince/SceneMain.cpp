@@ -1154,7 +1154,7 @@ void SceneMain::SetEnemyInfo(int stageNum)
 		tempS = MyString::split(str, ",");
 		popEnemy tempEnemy;
 		tempEnemy.enemyKind = std::stoi(tempS[0]);
-		tempEnemy.popTime = std::stof(tempS[1]);
+		tempEnemy.popTime = std::stoi(tempS[1]);
 		m_popEnemyList.push(tempEnemy);
 	}
 	//最初に出てくるエネミーの情報を入れる

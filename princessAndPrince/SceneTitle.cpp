@@ -29,6 +29,7 @@ SceneTitle::SceneTitle(SceneManager& sceneManager, DataManager& DataManager, int
 	m_playerGraph = DataManager.SearchGraph("playerGraph");
 	m_enemyGraph = DataManager.SearchGraph("enemyGraph");
 	m_princessGraph = DataManager.SearchGraph("princessGraph");
+	m_changeWindowModeGraph = DataManager.SearchGraph("changeWindowModeGraph");
 }
 
 SceneTitle::~SceneTitle()
@@ -75,6 +76,7 @@ void SceneTitle::Draw()
 {
 	DrawGraph(0, 0, m_bgGraph, true);
 	DrawGraph(0, 0, m_titleGraph, true);
+	DrawGraph(25, 20, m_changeWindowModeGraph, true);
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 170);
 	DrawBox(0, 800, Game::kScreenWidth, 850, GetColor(0, 0, 0), true);
