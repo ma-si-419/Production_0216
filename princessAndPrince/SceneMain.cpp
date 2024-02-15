@@ -465,12 +465,8 @@ void SceneMain::Update(Pad& pad)
 							//スペシャルゲージがマックスじゃなかったらゲージを上昇させる
 							if (!m_isSpecialMode && m_selectScene > 1)
 							{
-								//選ばれたシーンが3よりもあとだったら
-								if (m_selectScene > 3)
-								{
-									//敵の攻撃力に応じてゲージを上昇させる
-									AddSpecialGauge(enemy->GetAtk());
-								}
+								//敵の攻撃力に応じてゲージを上昇させる
+								AddSpecialGauge(enemy->GetAtk());
 							}
 							//エネミーの状態を推移させる
 							enemy->m_nowState = Game::State::kHitPlayer;
@@ -485,11 +481,7 @@ void SceneMain::Update(Pad& pad)
 							PlaySoundMem(m_hitPrincessSe, DX_PLAYTYPE_BACK);
 							if (!m_isSpecialMode && m_selectScene > 1)
 							{
-								//選ばれたシーンが3よりもあとだったら
-								if (m_selectScene > 3)
-								{
-									AddSpecialGauge(enemy->GetAtk() * 1.5f);
-								}
+								AddSpecialGauge(enemy->GetAtk() * 1.5f);
 							}
 						}
 						for (auto& magic : m_pMagic)
@@ -1207,7 +1199,7 @@ void SceneMain::SetBossVol(int stageNum)
 	}
 	else if (stageNum == 7)
 	{
-		m_bossCount = 11;
+		m_bossCount = 14;
 	}
 }
 bool SceneMain::AddMagic(MagicBase* pMagic)
