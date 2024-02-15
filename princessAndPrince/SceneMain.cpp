@@ -1,5 +1,4 @@
-#include <DxLib.h>
-#include <cassert>
+#include "DxLib.h"
 #include "Pad.h"
 #include "CircleCol.h"
 
@@ -466,8 +465,12 @@ void SceneMain::Update(Pad& pad)
 							//スペシャルゲージがマックスじゃなかったらゲージを上昇させる
 							if (!m_isSpecialMode && m_selectScene > 1)
 							{
-								//敵の攻撃力に応じてゲージを上昇させる
-								AddSpecialGauge(enemy->GetAtk() * 0.9f);
+								//選ばれたシーンが3よりもあとだったら
+								if (m_selectScene > 3)
+								{
+									//敵の攻撃力に応じてゲージを上昇させる
+									AddSpecialGauge(enemy->GetAtk());
+								}
 							}
 							//エネミーの状態を推移させる
 							enemy->m_nowState = Game::State::kHitPlayer;
@@ -482,7 +485,11 @@ void SceneMain::Update(Pad& pad)
 							PlaySoundMem(m_hitPrincessSe, DX_PLAYTYPE_BACK);
 							if (!m_isSpecialMode && m_selectScene > 1)
 							{
-								AddSpecialGauge(enemy->GetAtk() * 1.2f);
+								//選ばれたシーンが3よりもあとだったら
+								if (m_selectScene > 3)
+								{
+									AddSpecialGauge(enemy->GetAtk() * 1.5f);
+								}
 							}
 						}
 						for (auto& magic : m_pMagic)

@@ -560,11 +560,11 @@ bool SceneSelect::GetCanBuyItem()
 	{
 		return true;
 	}
-	else if (UserData::userGold >= m_playerItemPriceList[UserData::userFireLevel])
+	else if (UserData::userGold >= m_princessItemPriceList[UserData::userFireLevel])
 	{
 		return true;
 	}
-	else if (UserData::userGold >= m_playerItemPriceList[UserData::userWindLevel])
+	else if (UserData::userGold >= m_princessItemPriceList[UserData::userWindLevel])
 	{
 		return true;
 	}

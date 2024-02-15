@@ -67,7 +67,16 @@ Player::Player(SceneMain* pMain) :
 	m_danceCount(0),
 	m_playerAngryGraph(0),
 	m_angryFireGraph(0),
-	m_isAngryFireReverseFlag(0)
+	m_isAngryFireReverseFlag(0),
+	m_bloodSe(0),
+	m_coinSe(0),
+	m_expSe(0),
+	m_isDeathTutorial(0),
+	m_playerDeathSe(0),
+	m_playerTurnSe(0),
+	m_portionSe(0),
+	m_revivalCount(0),
+	m_standUpSe(0)
 {
 	//‰ŠúÀ•W‚ð–‚—‚Ì—×‚ÉÝ’è
 	m_pos.x = Game::kPlayScreenWidth / 2 + 100;
@@ -184,6 +193,12 @@ void Player::Update()
 					m_pos.y = GetRand(10) + m_deathPos.y;
 				}
 			}
+			if (!(pad & PAD_INPUT_UP) && !CheckHitKey(KEY_INPUT_W) && !(pad & PAD_INPUT_DOWN) && !CheckHitKey(KEY_INPUT_S)
+				&& !(pad & PAD_INPUT_LEFT) && !CheckHitKey(KEY_INPUT_A) && !(pad & PAD_INPUT_RIGHT) && !CheckHitKey(KEY_INPUT_D))
+			{
+				m_lastPad = 5;
+			}
+
 		}
 		if (m_nowHp >= m_hp)
 		{
