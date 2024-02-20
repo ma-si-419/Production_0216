@@ -900,10 +900,18 @@ void SceneSave::MoveCursor(XINPUT_STATE& input)
 		}
 		m_isLastKey = true;
 	}
+	//–ß‚éƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ç
 	else if (CheckHitKey(KEY_INPUT_ESCAPE) || input.Buttons[XINPUT_BUTTON_B])
 	{
+
 		PlaySoundMem(m_cancelSe, DX_PLAYTYPE_BACK);
-		if (m_isShowSaveWindow)
+		
+		if (m_isShowDeleteWindow)
+		{
+			m_isShowDeleteWindow = false;
+			m_isShowSaveWindow = true;
+		}
+		else if (m_isShowSaveWindow)
 		{
 			m_isShowSaveWindow = false;
 		}
