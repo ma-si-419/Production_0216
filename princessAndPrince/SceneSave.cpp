@@ -707,23 +707,28 @@ bool SceneSave::GetPushButton(XINPUT_STATE& input)
 
 void SceneSave::ScalingFrame()
 {
+	//規定値よりも小さくなったら
 	if (m_frameRatioX > kFrameRatioLangeX || m_frameRatioY > kFrameRatioLangeY)
 	{
-
+		//拡大を始める
 		m_isZoom = true;
 	}
+	//規定値よりも大きくなったら
 	else if (m_frameRatioX < -kFrameRatioLangeX || m_frameRatioY < -kFrameRatioLangeY)
 	{
-
+		//縮小を始める
 		m_isZoom = false;
 	}
+	//拡大しているかどうか
 	if (m_isZoom)
 	{
+		//フレームの拡大
 		m_frameRatioX -= kFrameSpeedX;
 		m_frameRatioY -= kFrameSpeedY;
 	}
 	else
 	{
+		//フレームの縮小
 		m_frameRatioX += kFrameSpeedX;
 		m_frameRatioY += kFrameSpeedY;
 	}
@@ -793,24 +798,28 @@ void SceneSave::MoveCursor(XINPUT_STATE& input)
 	//上ボタンが押されたら
 	else if (CheckHitKey(KEY_INPUT_UP) || CheckHitKey(KEY_INPUT_W) || input.Buttons[XINPUT_BUTTON_DPAD_UP])
 	{
-		//セーブウィンドウが開かれていないとき
-		if (!m_isShowSaveWindow)
+		//デリートウィンドウが開かれていないとき
+		if (!m_isShowDeleteWindow)
 		{
-			//下の行にある場合
-			if (m_selectSaveNum > 1)
+			//セーブウィンドウが開かれていないとき
+			if (!m_isShowSaveWindow)
 			{
-				//上の行に動かす
-				m_selectSaveNum -= 2;
-				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+				//下の行にある場合
+				if (m_selectSaveNum > 1)
+				{
+					//上の行に動かす
+					m_selectSaveNum -= 2;
+					PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+				}
 			}
-		}
-		else
-		{
-			//動かせる場所にカーソルがあったら
-			if (m_selectWindowNum > 0)
+			else
 			{
-				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
-				m_selectWindowNum--;
+				//動かせる場所にカーソルがあったら
+				if (m_selectWindowNum > 0)
+				{
+					PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+					m_selectWindowNum--;
+				}
 			}
 		}
 		m_isLastKey = true;
@@ -818,24 +827,29 @@ void SceneSave::MoveCursor(XINPUT_STATE& input)
 	//下ボタンが押されたら
 	else if (CheckHitKey(KEY_INPUT_DOWN) || CheckHitKey(KEY_INPUT_S) || input.Buttons[XINPUT_BUTTON_DPAD_DOWN])
 	{
-		if (!m_isShowSaveWindow)
+		//デリートウィンドウが表示されていないとき
+		if (!m_isShowDeleteWindow)
 		{
+			//セーブウィンドウが開かれていないとき
+			if (!m_isShowSaveWindow)
+			{
 
-			//上の行にある場合
-			if (m_selectSaveNum < 2)
-			{
-				//下の行に動かす
-				m_selectSaveNum += 2;
-				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+				//上の行にある場合
+				if (m_selectSaveNum < 2)
+				{
+					//下の行に動かす
+					m_selectSaveNum += 2;
+					PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+				}
 			}
-		}
-		else
-		{
-			//動かせる場所にカーソルがあったら
-			if (m_selectWindowNum < 2)
+			else
 			{
-				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
-				m_selectWindowNum++;
+				//動かせる場所にカーソルがあったら
+				if (m_selectWindowNum < 2)
+				{
+					PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
+					m_selectWindowNum++;
+				}
 			}
 		}
 		m_isLastKey = true;

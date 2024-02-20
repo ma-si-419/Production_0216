@@ -9,7 +9,13 @@
 #include "Princess.h"
 #include "ItemBase.h"
 #include "UserData.h"
-
+enum class Status
+{
+	main,//メインレベル
+	atk,//こうげきレベル
+	spd,//速さレベル
+	def//防御レベル
+};
 namespace
 {
 	// 移動速度
@@ -48,6 +54,16 @@ namespace
 	constexpr int kDanceTIme = 5;
 	//クリア時の回る回数
 	constexpr int kTurnCount = 16;
+	//初期座標
+	constexpr int kInitialPosX = Game::kPlayScreenWidth / 2 + 100;
+	constexpr int kInitialPosY = Game::kPlayScreenHeight / 2;
+	//初期ステータス
+	constexpr float kInitialStatusArray[4] = { 30.0f,2.0f,1.5f,1.0f };
+	//アイテムを買った時のステータスの上り幅
+	constexpr float kItemBonusArray[4] = { 0.0f,0.5f,0.1f,0.5f };
+	//レベルアップした時のステータスの上り幅
+	constexpr float kLevelUpBonusArray[4] = { 2.0f,0.1f,0.02f,0.05f };
+
 }
 
 Player::Player(SceneMain* pMain) :
@@ -79,8 +95,8 @@ Player::Player(SceneMain* pMain) :
 	m_standUpSe(0)
 {
 	//初期座標を魔女の隣に設定
-	m_pos.x = Game::kPlayScreenWidth / 2 + 100;
-	m_pos.y = Game::kPlayScreenHeight / 2;
+	m_pos.x = kInitialPosX;
+	m_pos.y = kInitialPosY;
 	//最初の向きを下向きに設定
 	m_dir = Game::Dir::kDirDown;
 	//アニメーションの最初の画像を設定
@@ -99,10 +115,11 @@ Player::~Player()
 
 void Player::Init()
 {
-	m_atk = 2.0f + (UserData::userAtkLevel * 0.5f) + (UserData::userMainLevel * 0.1f);
-	m_hp = 30 + (UserData::userMainLevel * 2.0f);
-	m_spd = 1.5f + (UserData::userSpdLevel * 0.1f) + (UserData::userMainLevel * 0.02f);
-	m_def = 1.0f + (UserData::userDefLevel * 0.5f) + (UserData::userMainLevel * 0.05f);
+	//ステータスを設定する
+	m_hp = kInitialStatusArray[static_cast<int>(Status::main)] + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::main)]);
+	m_atk = kInitialStatusArray[static_cast<int>(Status::atk)] + (UserData::userAtkLevel * kItemBonusArray[static_cast<int>(Status::atk)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::atk)]);
+	m_spd = kInitialStatusArray[static_cast<int>(Status::spd)] + (UserData::userSpdLevel * kItemBonusArray[static_cast<int>(Status::spd)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::spd)]);
+	m_def = kInitialStatusArray[static_cast<int>(Status::def)] + (UserData::userDefLevel * kItemBonusArray[static_cast<int>(Status::def)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::def)]);
 	m_nowHp = m_hp;
 	//座標を参考にHpバーの位置を設定
 	m_hpBarPos.x = m_pos.x - kMaxBarWidth / 2;

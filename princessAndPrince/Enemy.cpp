@@ -293,6 +293,8 @@ void Enemy::Init(int kinds)
 		m_isBoss = true;
 		m_knockBackPow = 2;
 	}
+
+	//出現位置を設定する
 	switch (bornPos)
 	{
 		//左方向から出てくる
@@ -364,7 +366,7 @@ void Enemy::Update()
 					pExp->SetExp(m_haveExp);
 					pExp->SetHandle(m_itemHandle);
 					//ボスの落とすアイテムだったら切り取る座標を変える
-					if(m_isBoss)pExp->SetBossItem();
+					if (m_isBoss)pExp->SetBossItem();
 					m_pMain->AddItem(pExp);
 					//お金のメモリ確保
 					std::shared_ptr<Gold> pGold
@@ -425,6 +427,8 @@ void Enemy::Update()
 			m_circleCol.SetCenter(m_pos, m_radius * m_colScale);
 			//弱点のY座標の更新
 			m_weakPos.y = m_pos.y + kShiftPosY;
+			//弱点当たり判定の更新
+			m_weakCircle.SetCenter(m_weakPos, m_radius * m_colScale);
 		}
 		if (m_moveVec.x > 0)
 		{
@@ -439,8 +443,6 @@ void Enemy::Update()
 			m_weakPos.x = m_pos.x + kShiftPosX;
 
 		}
-		//弱点当たり判定の更新
-		m_weakCircle.SetCenter(m_weakPos, m_radius * m_colScale);
 	}
 }
 void Enemy::Draw()
@@ -461,8 +463,8 @@ void Enemy::Draw()
 			0.0,
 			m_handle, true, m_isLeftFlag);
 #ifdef _DEBUG
-		m_circleCol.Draw(static_cast<int>(m_radius * m_scale), 0x0000ff, false);
-		m_weakCircle.Draw(static_cast<int>(m_radius * m_scale), 0xff0000, false);
+		m_circleCol.Draw(static_cast<int>(m_radius * m_colScale), 0x0000ff, false);
+		m_weakCircle.Draw(static_cast<int>(m_radius * m_colScale), 0xff0000, false);
 #endif
 	}
 }

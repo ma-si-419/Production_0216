@@ -69,6 +69,10 @@ namespace
 	//ステージのサイズ
 	constexpr int kStageGraphSize = 640;
 	constexpr int kAllStageSize = kStageGraphSize * 7;
+	//ボックスの回転する速さ
+	constexpr float kBoxRotaSpeed = 0.15f;
+	//ボックスの大きくなる速さ
+	constexpr float kBoxZoomSpeed = 0.4f;
 }
 SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int stageNum) :
 	Scene(sceneManager, DataManager),
@@ -310,8 +314,8 @@ void SceneMain::Update(Pad& pad)
 #endif 
 	if (m_boxRatio > 0)
 	{
-		m_boxAngle -= 0.15f;
-		m_boxRatio -= 0.4f;
+		m_boxAngle -= kBoxRotaSpeed;
+		m_boxRatio -= kBoxZoomSpeed;
 	}
 	else if (m_isMoveBox)
 	{
@@ -463,7 +467,7 @@ void SceneMain::Update(Pad& pad)
 							//プレイヤーのダメージ処理を行う
 							m_pPlayer->HitEnemy(*enemy, IsCollision(m_pPlayer->GetColCircle(), enemy->GetWeakCircle()));
 							//スペシャルゲージがマックスじゃなかったらゲージを上昇させる
-							if (!m_isSpecialMode && m_selectScene > 1)
+							if (!m_isSpecialMode && m_selectScene > 2)
 							{
 								//敵の攻撃力に応じてゲージを上昇させる
 								AddSpecialGauge(enemy->GetAtk());
@@ -479,11 +483,12 @@ void SceneMain::Update(Pad& pad)
 							//魔女のダメージ処理を行う,エネミーのノックバックを行う
 							m_pPrincess->HitEnemy(*enemy);
 							PlaySoundMem(m_hitPrincessSe, DX_PLAYTYPE_BACK);
-							if (!m_isSpecialMode && m_selectScene > 1)
+							if (!m_isSpecialMode && m_selectScene > 2)
 							{
 								AddSpecialGauge(enemy->GetAtk() * 1.5f);
 							}
 						}
+						//魔法の処理
 						for (auto& magic : m_pMagic)
 						{
 
