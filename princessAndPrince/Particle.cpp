@@ -16,13 +16,16 @@ Particle::Particle(Vec2 pos, float lange, float speed, int scale, int color) :
 	switch (color)
 	{
 	case 0:
+		//îí
 		m_color = GetColor(GetRand(30) + 225, GetRand(30) + 225, GetRand(30) + 225);
 		m_isWhite = true;
 		break;
 	case 1:
+		//ê‘
 		m_color = GetColor(GetRand(55) + 200, GetRand(100), 0);
 		break;
 	case 2:
+		//ì¯
 		m_color = GetColor(GetRand(155) + 100, GetRand(155) + 100, GetRand(155) + 100);
 		break;
 	default:

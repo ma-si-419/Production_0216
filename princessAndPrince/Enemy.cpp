@@ -44,7 +44,12 @@ namespace
 	constexpr int kEffectSize = 60;
 	//パーティクルの数
 	constexpr int kParticleVol = 30;
-
+	//パーティクルの大きさ
+	constexpr int kParticleScale = 5;
+	//パーティクルの表示される長さ
+	constexpr float kParticleLange = 40.0f;
+	//パーティクルの速さ
+	constexpr float kParticleSpeed = 4.0f;
 }
 Enemy::Enemy(SceneMain* pMain) :
 	m_targetPos(Game::kPlayScreenWidth / 2, Game::kPlayScreenHeight / 2),
@@ -484,7 +489,7 @@ void Enemy::HitPlayer(Player& player, bool weak)
 		//赤いエフェクトを出す
 		for (int i = 0; i < kParticleVol; i++)
 		{
-			m_pParticle = new Particle(m_hitPos, 40.0f, 4.0f, 5, 1);
+			m_pParticle = new Particle(m_hitPos, kParticleLange, kParticleSpeed, kParticleScale, static_cast<int>(Game::ParticleKind::kRed));
 			m_pMain->AddParticle(m_pParticle);
 		}
 		m_knockBack *= 0.6f;
@@ -496,7 +501,7 @@ void Enemy::HitPlayer(Player& player, bool weak)
 		//白いエフェクトを出す
 		for (int i = 0; i < kParticleVol; i++)
 		{
-			m_pParticle = new Particle(m_hitPos, 40.0f, 4.0f, 5, 0);
+			m_pParticle = new Particle(m_hitPos, kParticleLange, kParticleSpeed, kParticleScale, static_cast<int>(Game::ParticleKind::kWhite));
 			m_pMain->AddParticle(m_pParticle);
 		}
 	}
@@ -511,7 +516,7 @@ void Enemy::HitMagic(MagicBase* magic)
 	//白いエフェクトを出す
 	for (int i = 0; i < kParticleVol; i++)
 	{
-		m_pParticle = new Particle(m_pos, 40.0f, 4.0f, 5, 0);
+		m_pParticle = new Particle(m_pos, kParticleLange, kParticleSpeed, kParticleScale, static_cast<int>(Game::ParticleKind::kWhite));
 		m_pMain->AddParticle(m_pParticle);
 	}
 	//もし魔法が炎魔法だったら

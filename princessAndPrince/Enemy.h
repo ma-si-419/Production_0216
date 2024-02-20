@@ -76,8 +76,6 @@ private:
 	float m_scale;
 	//当たり判定の大きさ
 	float m_colScale;
-	//重ならない当たり判定の大きさ
-	float m_coreColScale;
 	//使う画像のY座標を入れる
 	int m_srcY;
 	//弱点の当たり判定をとる

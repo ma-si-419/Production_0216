@@ -63,4 +63,10 @@ namespace Game
 		kTyphoon,
 		kDropBlood
 	};
+	enum class ParticleKind
+	{
+		kWhite,//”’
+		kRed,//Ô
+		kRainbow//“ø
+	};
 }

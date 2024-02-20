@@ -1,6 +1,7 @@
 #include "CircleCol.h"
 #include <DxLib.h>
-CircleCol::CircleCol()
+CircleCol::CircleCol():
+	m_radius(0)
 {
 
 }
