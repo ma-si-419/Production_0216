@@ -42,5 +42,7 @@ private:
 	float m_spd;
 	//白いパーティクルかどうか
 	bool m_isWhite;
+	//後ろに表示する黒いサークルの大きさ
+	int m_backCircleScale;
 };
 

@@ -50,6 +50,16 @@ namespace
 	constexpr float kParticleLange = 40.0f;
 	//パーティクルの速さ
 	constexpr float kParticleSpeed = 4.0f;
+	//生まれる場所の種類(0から数える)
+	constexpr int kBornPosKindNum = 3;
+	//ノックする時間
+	constexpr int kKnockBackTime = 5;
+	//基本的な大きさ
+	constexpr double kNormalRatio = 4.0;
+	//弱点に当たった時のノックバックの大きさ
+	constexpr float kWeakKnockBackRatio = 0.6f;
+	//血が出てくるステージ
+	constexpr int kBloodReleaseStageNum = 1;
 }
 Enemy::Enemy(SceneMain* pMain) :
 	m_targetPos(Game::kPlayScreenWidth / 2, Game::kPlayScreenHeight / 2),
@@ -80,7 +90,7 @@ Enemy::~Enemy()
 void Enemy::Init(int kinds)
 {
 	m_animFrame = 0;
-	int bornPos = GetRand(3);
+	int bornPos = GetRand(kBornPosKindNum);
 	m_radius = Game::kRadius;
 	////////////////////////////
 	/*エネミーのステータス設定*/
@@ -146,7 +156,7 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(snowman))
 	{
 		m_hp = 100;
-		m_atk = 5.0f;
+		m_atk = 6.0f;
 		m_spd = 0.1f;
 		m_scale = kEnemySize;
 		m_colScale = kEnemySize;
@@ -245,7 +255,7 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(bossSnowman))
 	{
 		m_hp = 400;
-		m_atk = 7.0f;
+		m_atk = 9.0f;
 		m_spd = 0.1f;
 		m_scale = kBossSize;
 		m_colScale = kBossSize;
@@ -340,7 +350,7 @@ void Enemy::Update()
 			//ノックバックする時間カウント
 			m_knockBackTime++;
 			//規定の時間を過ぎたら
-			if (m_knockBackTime > 5)
+			if (m_knockBackTime > kKnockBackTime)
 			{
 				//ノックバックの大きさを0にする
 				m_knockBack *= 0;
@@ -382,6 +392,7 @@ void Enemy::Update()
 					pGold->SetHandle(m_itemHandle);
 					if (m_isBoss)pGold->SetBossItem();
 					m_pMain->AddItem(pGold);
+					//確率を超えたら
 					if (GetRand(100) < kDropProb && !m_isBoss)
 					{
 						m_pTreasureBox = new TreasureBox(m_pMain);
@@ -464,7 +475,7 @@ void Enemy::Draw()
 		DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
 			srcX, srcY,
 			kGraphWidth, kGraphHeight,
-			4.0 * m_scale,
+			kNormalRatio * m_scale,
 			0.0,
 			m_handle, true, m_isLeftFlag);
 #ifdef _DEBUG
@@ -492,7 +503,7 @@ void Enemy::HitPlayer(Player& player, bool weak)
 			m_pParticle = new Particle(m_hitPos, kParticleLange, kParticleSpeed, kParticleScale, static_cast<int>(Game::ParticleKind::kRed));
 			m_pMain->AddParticle(m_pParticle);
 		}
-		m_knockBack *= 0.6f;
+		m_knockBack *= kWeakKnockBackRatio;
 	}
 	//当たっていなかったら
 	else
@@ -529,7 +540,7 @@ void Enemy::HitMagic(MagicBase* magic)
 	if (m_hp < 0)
 	{
 		//ステージ２までは血を落とさないようにする
-		if (m_pMain->GetSceneNum() > 1)
+		if (m_pMain->GetSceneNum() > kBloodReleaseStageNum)
 		{
 			//血のメモリの確保
 			std::shared_ptr<Blood> pBlood

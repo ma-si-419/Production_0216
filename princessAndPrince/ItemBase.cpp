@@ -12,6 +12,8 @@ namespace
 
 	//アイテムが動くスピード
 	constexpr int kSpeed = 35;
+	//アイテムをばらけさせる
+	constexpr int kShiftLange = 70;
 }
 ItemBase::ItemBase() :
 	m_handle(0),
@@ -35,8 +37,8 @@ ItemBase::~ItemBase()
 void ItemBase::Init(Vec2 pos)
 {
 	//全部同じ位置に出てしまわないように少しばらけさせる
-	m_pos.x = pos.x + GetRand(80) - 40;
-	m_pos.y = pos.y + GetRand(80) - 40;
+	m_pos.x = pos.x + GetRand(kShiftLange) - kShiftLange / 2;
+	m_pos.y = pos.y + GetRand(kShiftLange) - kShiftLange / 2;
 	//画面外に出てしまわないようにする
 	if (m_pos.x > Game::kPlayScreenWidth)
 	{
