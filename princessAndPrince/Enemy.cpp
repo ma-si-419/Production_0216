@@ -155,8 +155,8 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(snowman))
 	{
-		m_hp = 100;
-		m_atk = 6.0f;
+		m_hp = 250;
+		m_atk = 8.0f;
 		m_spd = 0.1f;
 		m_scale = kEnemySize;
 		m_colScale = kEnemySize;
@@ -254,8 +254,8 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(bossSnowman))
 	{
-		m_hp = 400;
-		m_atk = 9.0f;
+		m_hp = 800;
+		m_atk = 10.0f;
 		m_spd = 0.1f;
 		m_scale = kBossSize;
 		m_colScale = kBossSize;
