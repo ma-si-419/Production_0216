@@ -33,7 +33,7 @@ bool Application::Init()
 	SetWindowText("姫とサル");
 	m_isScreen = true;
 	SetChangeScreenModeGraphicsSystemResetFlag(false);
-	ChangeWindowMode(m_isScreen);	//非スクリーン
+	ChangeWindowMode(false);	//非スクリーン
 
 	m_isWindowSize = { kScreenWidth,kScreenHeight };
 
@@ -74,16 +74,6 @@ void Application::Run()
 			// このフレームの開始時刻を覚えておく
 			LONGLONG start = GetNowHiPerformanceCount();
 			ClearDrawScreen();
-			if (CheckHitKey(KEY_INPUT_F1) && m_isPush)
-			{
-				m_isScreen = !m_isScreen;
-				ChangeWindowMode(m_isScreen);
-				m_isPush = false;
-			}
-			else if (!CheckHitKey(KEY_INPUT_F1))
-			{
-				m_isPush = true;
-			}
 			pad.Update();
 			sceneManager.Update(pad);
 			sceneManager.Draw();

@@ -60,6 +60,12 @@ void SceneTitle::Update(Pad& pad)
 			m_isKeyDown = false;
 		}
 	}
+	//エスケープボタンが押されたら
+	if (CheckHitKey(KEY_INPUT_ESCAPE) || m_input.Buttons[XINPUT_BUTTON_B])
+	{
+		DxLib_End();
+		return;
+	}
 	m_count++;
 	if (m_count > kShowTime)
 	{
@@ -77,7 +83,6 @@ void SceneTitle::Draw()
 	DrawGraph(0, 0, m_bgGraph, true);
 	DrawGraph(0, 0, m_titleGraph, true);
 	DrawGraph(25, 20, m_changeWindowModeGraph, true);
-
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 170);
 	DrawBox(0, 800, Game::kScreenWidth, 850, GetColor(0, 0, 0), true);
