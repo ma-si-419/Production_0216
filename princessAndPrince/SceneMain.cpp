@@ -73,6 +73,24 @@ namespace
 	constexpr float kBoxRotaSpeed = 0.15f;
 	//ボックスの大きくなる速さ
 	constexpr float kBoxZoomSpeed = 0.4f;
+	//各ステージのボスの数
+	constexpr int kBossVol[8] = { 1,1,2,2,3,1,1,14 };
+	//黒いボックスの初期倍率
+	constexpr float kBoxInitialRatio = 25.0f;
+	//各ステージのチュートリアルの数
+	constexpr int kTutorialVol[4] = { 2,0,3,1 };
+	//各ステージのチュートリアルが何枚目から始まるか
+	constexpr int kStartTutorialNum[4] = { 0,0,3,6 };
+	//敵の種類
+	constexpr int kEnemyKindVol = 6;
+	//怒りゲージが貯まるようになるステージ数
+	constexpr int kSpecialGaugeChargeStageNum = 3;
+	//姫が殴られたときに貯まる怒りゲージの倍率
+	constexpr float kSpecialGaugeChargeRate = 1.5f;
+	//怒りゲージ発動時に減っていくゲージの量
+	constexpr float kSpecialGaugeSubRate = 0.3f;
+	//怒りゲージ発動時のパーティクルの情報
+	constexpr int kSpecialModeParticleInfo[4] = { 1000,10,3,2 };
 }
 SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int stageNum) :
 	Scene(sceneManager, DataManager),
@@ -117,7 +135,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	m_isLastKey(false),
 	m_isLastSe(true),
 	m_boxAngle(0),
-	m_boxRatio(25),
+	m_boxRatio(kBoxInitialRatio),
 	m_isMoveBox(true),
 	m_startTutorialNum(0),
 	m_isDeathTutorial(false),
@@ -237,21 +255,37 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	//怒りゲージが使えない時のUIを設定する
 	m_pUi->SetStoneAngryGaugeGraph(m_dataManager.SearchGraph("stoneAngryGaugeGraph"));
 	//選ばれたシーンによって表示するチュートリアルを設定する
+	if (m_selectScene < 4)
+	{
+		m_tutorialNum = kTutorialVol[m_selectScene];
+		m_startTutorialNum = kStartTutorialNum[m_selectScene];
+		m_nowShowTutorialNum = m_startTutorialNum;
+	}
+	//5ステージ目からはチュートリアルを表示しない
+	else
+	{
+		m_tutorialNum = 0;
+		m_nowShowTutorialNum = 0;
+	}
 	switch (m_selectScene)
 	{
-	case 0:
-		m_tutorialNum = 2;
-		m_startTutorialNum = 0;
+	case 0://1ステージ目のチュートリアル情報
+		m_tutorialNum = kTutorialVol[m_selectScene];
+		m_startTutorialNum = kStartTutorialNum[m_selectScene];
 		m_nowShowTutorialNum = m_startTutorialNum;
 		break;
+	case 1:
+		m_tutorialNum = kTutorialVol[m_selectScene];
+		m_nowShowTutorialNum = 0;
+		break;
 	case 2:
-		m_tutorialNum = 3;
-		m_startTutorialNum = 3;
+		m_tutorialNum = kTutorialVol[m_selectScene];
+		m_startTutorialNum = kStartTutorialNum[m_selectScene];
 		m_nowShowTutorialNum = m_startTutorialNum;
 		break;
 	case 3:
-		m_tutorialNum = 1;
-		m_startTutorialNum = 6;
+		m_tutorialNum = kTutorialVol[m_selectScene];
+		m_startTutorialNum = kStartTutorialNum[m_selectScene];
 		m_nowShowTutorialNum = m_startTutorialNum;
 		break;
 	default:
@@ -275,7 +309,7 @@ void SceneMain::Init()
 			m_isShowReady = true;
 		}
 		//出てくる敵の情報を設定する
-		SetBossVol(m_selectScene);
+		m_bossCount = kBossVol[m_selectScene];
 		SetEnemyInfo(m_selectScene);
 		//ファイルを開く
 		std::ifstream ifs("./data/expLevel.txt");
@@ -433,7 +467,7 @@ void SceneMain::Update(Pad& pad)
 					//エネミーを出現させる
 					CreateEnemy(m_nextEnemyKind);
 					//出てくる敵がボスだったら音楽を変える
-					if (m_nextEnemyKind > 6 && !m_isBossFlag)
+					if (m_nextEnemyKind > kEnemyKindVol && !m_isBossFlag)
 					{
 						m_isBossFlag = true;
 						m_isMusicFlag = true;
@@ -467,7 +501,7 @@ void SceneMain::Update(Pad& pad)
 							//プレイヤーのダメージ処理を行う
 							m_pPlayer->HitEnemy(*enemy, IsCollision(m_pPlayer->GetColCircle(), enemy->GetWeakCircle()));
 							//スペシャルゲージがマックスじゃなかったらゲージを上昇させる
-							if (!m_isSpecialMode && m_selectScene > 2)
+							if (!m_isSpecialMode && m_selectScene >= kSpecialGaugeChargeStageNum)
 							{
 								//敵の攻撃力に応じてゲージを上昇させる
 								AddSpecialGauge(enemy->GetAtk());
@@ -483,9 +517,10 @@ void SceneMain::Update(Pad& pad)
 							//魔女のダメージ処理を行う,エネミーのノックバックを行う
 							m_pPrincess->HitEnemy(*enemy);
 							PlaySoundMem(m_hitPrincessSe, DX_PLAYTYPE_BACK);
-							if (!m_isSpecialMode && m_selectScene > 2)
+							if (!m_isSpecialMode && m_selectScene > kSpecialGaugeChargeStageNum)
 							{
-								AddSpecialGauge(enemy->GetAtk() * 1.5f);
+								//姫が殴られたときは貯まるゲージ量を少し増やす
+								AddSpecialGauge(enemy->GetAtk() * kSpecialGaugeChargeRate);
 							}
 						}
 						//魔法の処理
@@ -633,14 +668,14 @@ void SceneMain::Update(Pad& pad)
 		if (m_isSpecialMode && !m_isStop)
 		{
 			//少しずつゲージを減らしていく
-			m_specialGauge -= 0.3f;
+			m_specialGauge -= kSpecialGaugeSubRate;
 			//カウントを進める
 			m_particleCount++;
 			//背景に表示するパーティクルを生成する
 			if (m_particleCount > kParticleInterval)
 			{
 				m_particleCount = 0;
-				m_pParticle = new Particle(m_pPrincess->GetPos(), 2000, 10, 3, 2);
+				m_pParticle = new Particle(m_pPrincess->GetPos(), static_cast<float>(kSpecialModeParticleInfo[0]), static_cast<float>(kSpecialModeParticleInfo[1]),kSpecialModeParticleInfo[2], kSpecialModeParticleInfo[3]);
 				AddParticle(m_pParticle);
 			}
 			//ゲージが0になったら
@@ -1170,42 +1205,6 @@ void SceneMain::SetEnemyInfo(int stageNum)
 	//ファイルを閉じる
 	ifs.close();
 
-}
-
-void SceneMain::SetBossVol(int stageNum)
-{
-	if (stageNum == 0)
-	{
-		m_bossCount = 1;
-	}
-	else if (stageNum == 1)
-	{
-		m_bossCount = 1;
-	}
-	else if (stageNum == 2)
-	{
-		m_bossCount = 2;
-	}
-	else if (stageNum == 3)
-	{
-		m_bossCount = 2;
-	}
-	else if (stageNum == 4)
-	{
-		m_bossCount = 3;
-	}
-	else if (stageNum == 5)
-	{
-		m_bossCount = 1;
-	}
-	else if (stageNum == 6)
-	{
-		m_bossCount = 1;
-	}
-	else if (stageNum == 7)
-	{
-		m_bossCount = 14;
-	}
 }
 bool SceneMain::AddMagic(MagicBase* pMagic)
 {

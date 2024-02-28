@@ -90,8 +90,6 @@ public:
 	int GetSceneNum() { return m_selectScene; }
 	//Uiを表示する背景を取得する
 	int GetUiBg() { return m_uiBgGraph; }
-	//出てくるボスの数を設定する
-	void SetBossVol(int stageNum);
 	//最初にプレイヤーが死んだときに使用する関数
 	void StopScene() { m_isStop = true; }
 	//レバガチャのチュートリアルを出す
