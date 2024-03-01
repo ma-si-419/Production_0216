@@ -55,7 +55,7 @@ public:
 	//聖剣モードのゲージのたまっている割合を返す
 	float GetSpecialGaugeRate() { return 100 / m_specialGauge; }
 	//聖剣モードを発動しているかどうかを返す
-	bool GetSpecialMode() { return m_isSpecialMode; }
+	bool GetAngryMode() { return m_isSpecialMode; }
 	//ポーズ画面かどうかを取得する
 	bool GetPause() { return m_isPause; }
 	//演出が終わったタイミング

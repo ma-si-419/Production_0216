@@ -59,6 +59,20 @@ namespace
 	constexpr float kShakeSpeed = 2.0f;
 	//パーティクルの数
 	constexpr int kParticleVol = 30;
+	//Hpと血の量を表示するボックスの色
+	const int kBoxColor = GetColor(75, 75, 75);
+	//Hpバーの色
+	const int kHpBarColor = GetColor(255, 255, 100);
+	//血の量バーの色
+	const int kBloodBarColor = GetColor(255, 0, 0);
+	//怒りモード発動中の攻撃力
+	constexpr float kAngryModeMagicAtk = kBaseAtk * 1.5f;
+	//怒りモードが発動中の大きさ
+	constexpr float kAngryModeMagicScale = kMagicScale * 2.0f;
+	//敵とぶつかった時に出すパーティクルの情報
+	constexpr int kWhiteParticleInfo[4] = { 40,4,5,0 };
+	//死んだときのアニメフレーム
+	constexpr int kDeathAnimFrame = 24;
 }
 Princess::Princess(SceneMain* pMain) :
 	m_hpBarWidth(0),
@@ -149,14 +163,14 @@ void Princess::Update()
 		XINPUT_STATE m_input;
 		GetJoypadXInputState(DX_INPUT_PAD1, &m_input);
 		//魔法を打っている最中
-		if (m_isMagic || m_pMain->GetSpecialMode())
+		if (m_isMagic || m_pMain->GetAngryMode())
 		{
 			//石の状態から直す
 			m_drawState = Game::WitchState::kMagic;
 			//アニメーションを動かす
 			m_animFrame++;
 			//スペシャルモード中だったら動きを早くする
-			if (m_pMain->GetSpecialMode())m_animFrame++;
+			if (m_pMain->GetAngryMode())m_animFrame++;
 			if (kAnimFrameCycle <= m_animFrame)	m_animFrame = 1;
 			//魔法を撃つ間隔を計る
 			m_MagicCount++;
@@ -250,11 +264,11 @@ void Princess::Update()
 		m_result *= kBarLen;
 		m_magicVec.x = m_pos.x + m_result.x;
 		m_magicVec.y = m_pos.y - m_result.y;
-		//聖剣モードの処理
-		if (m_pMain->GetSpecialMode())
+		//怒りモードの処理
+		if (m_pMain->GetAngryMode())
 		{
-			m_atk = kBaseAtk * 1.5f;
-			m_scale = kMagicScale * 2.0f;
+			m_atk = kAngryModeMagicAtk;
+			m_scale = kAngryModeMagicScale;
 		}
 		else
 		{
@@ -294,7 +308,7 @@ void Princess::Draw() const
 	int srcX = kGraphWidth * kUseFrame[animEle];
 	int srcY = kGraphHeight * static_cast<int>(m_drawState);
 	//魔法を打つ方向に線を表示する
-	if (m_isMagic || m_pMain->GetSpecialMode())
+	if (m_isMagic || m_pMain->GetAngryMode())
 	{
 		//魔法を撃つ方向を示す矢印を表示する
 		DrawRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y), 1.0, -m_angle, m_magicArrowGraph, true, 0, 0);
@@ -310,7 +324,7 @@ void Princess::Draw() const
 	DrawBox(static_cast<int>(m_hpBarPos.x) - kBoxSpace, static_cast<int>(m_hpBarPos.y) - kBoxSpace,//始点
 		static_cast<int>(m_bloodBarPos.x + kMaxBarWidth) + kBoxSpace,//始点の位置にバーの長さを足す
 		static_cast<int>(m_bloodBarPos.y + kBarHeight) + kBoxSpace,//終点
-		GetColor(75, 75, 75), true);
+		kBoxColor, true);
 	//Hpが見やすいようにHpの後ろに黒いBoxを出す
 	DrawBox(static_cast<int>(m_hpBarPos.x), static_cast<int>(m_hpBarPos.y),//始点
 		static_cast<int>(m_hpBarPos.x + kMaxBarWidth),//始点の位置にバーの長さを足す
@@ -320,7 +334,7 @@ void Princess::Draw() const
 	DrawBox(static_cast<int>(m_hpBarPos.x), static_cast<int>(m_hpBarPos.y),//始点
 		static_cast<int>(m_hpBarPos.x) + static_cast<int>(m_hpBarWidth),//始点の位置にバーの長さを足す
 		static_cast<int>(m_hpBarPos.y + kBarHeight),//終点
-		GetColor(255, 255, 100), true);
+		kHpBarColor, true);
 	//血の量が見やすいように血の量の後ろに白いBoxを出す
 	DrawBox(static_cast<int>(m_bloodBarPos.x), static_cast<int>(m_bloodBarPos.y),//始点
 		static_cast<int>(m_bloodBarPos.x + kMaxBarWidth),//始点の位置にバーの長さを足す
@@ -330,7 +344,7 @@ void Princess::Draw() const
 	DrawBox(static_cast<int>(m_bloodBarPos.x), static_cast<int>(m_bloodBarPos.y),//始点
 		static_cast<int>(m_bloodBarPos.x + m_bloodBarWidth),//始点の位置にバーの長さを足す
 		static_cast<int>(m_bloodBarPos.y + kBarHeight),//終点
-		GetColor(255, 0, 0), true);
+		kBloodBarColor, true);
 
 
 #ifdef _DEBUG
@@ -350,7 +364,8 @@ void Princess::HitEnemy(Enemy& enemy)
 	//白いエフェクトを出す
 	for (int i = 0; i < kParticleVol; i++)
 	{
-		m_pParticle = new Particle(m_hitPos, 40.0f, 4.0f, 5, 0);
+		m_pParticle = new Particle(m_hitPos, //パーティクルの情報を入れる
+			static_cast<float>(kWhiteParticleInfo[0]),static_cast<float>(kWhiteParticleInfo[1]), kWhiteParticleInfo[2], kWhiteParticleInfo[3]);
 		m_pMain->AddParticle(m_pParticle);
 	}
 	m_nowHp -= enemy.GetAtk() - m_def;
@@ -378,7 +393,7 @@ bool Princess::IsDeath()
 		m_nowHp = 0;
 		m_nowState = Game::State::kDelete;
 		m_drawState = Game::WitchState::kBreak;
-		m_animFrame = 24;
+		m_animFrame = kDeathAnimFrame;
 		return true;
 	}
 	return false;

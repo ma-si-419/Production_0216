@@ -14,6 +14,8 @@ namespace
 	constexpr int kSpeed = 35;
 	//アイテムをばらけさせる
 	constexpr int kShiftLange = 70;
+	//アイテムを表示するUIのポジション
+	constexpr int kUiPos = Game::kScreenWidth - 300;
 }
 ItemBase::ItemBase() :
 	m_handle(0),
@@ -64,7 +66,8 @@ void ItemBase::Update()
 {
 	m_circleCol.SetCenter(m_pos, m_colScale);
 	m_pos += m_moveVec;
-	if (m_pos.x > Game::kScreenWidth - 300)
+	//ゴールドと経験値は右上のUIまで動かす
+	if (m_pos.x > kUiPos)
 	{
 		m_nowState = Game::State::kDelete;
 		if (m_kind == Game::ItemKinds::kGold)

@@ -19,8 +19,6 @@ public:
 	void MoveScene(bool up);
 	//シーンを選んでいる時に出てくる三角形
 	void DrawSceneSrideTriangle();
-	//表示するボスを決める
-	int GetShowBossKind(int num);
 	//変えるアイテムがあるかどうか
 	bool GetCanBuyItem();
 	//セーブシーンに戻るときにセーブする

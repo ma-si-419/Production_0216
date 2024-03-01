@@ -18,6 +18,14 @@ namespace
 	constexpr int kGraphSize = 32;
 	//魔法の大きさ
 	constexpr float kMagicSize = 2.0f;
+	//炎魔法の基礎攻撃力
+	constexpr float kInitialFireAtk = 3.0f;
+	//風魔法の基礎攻撃力
+	constexpr float kInitialWindAtk = 0.15f;
+	//炎魔法のレベルボーナス
+	constexpr float kFireLevelBonus = 1.5f;
+	//風魔法のレベルボーナス
+	constexpr float kWindLevelBonus = 0.15f;
 
 }
 
@@ -32,9 +40,9 @@ MagicBase::MagicBase(Princess* pPrincess, float scale) :
 	m_princessPos(m_pPrincess->GetPos()),
 	m_magicPos(m_princessPos),
 	//炎魔法の攻撃力の初期化
-	m_fireAtk(UserData::userFireLevel * 1.5f + 3.0f),
+	m_fireAtk(UserData::userFireLevel * kFireLevelBonus + kInitialFireAtk),
 	//風魔法の攻撃力の初期化
-	m_windAtk(UserData::userWindLevel * 0.15f + 0.15f),
+	m_windAtk(UserData::userWindLevel * kWindLevelBonus + kInitialWindAtk),
 	//魔法の大きさの初期化
 	m_scale(scale),
 	//最初に撃っている魔法を炎にする

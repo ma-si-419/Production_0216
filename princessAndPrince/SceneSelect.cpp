@@ -94,6 +94,10 @@ namespace
 	constexpr float kExclamationMarkZoomSpeed = 0.02f;
 	//三角形を動かす長さ
 	constexpr float kShakeTriangleLange = 15.0f;
+	//各ステージのボスの順番
+	constexpr int kStageBossKind[8] = { 0,5,1,3,6,2,4,7 };
+	//姫のアニメフレーム
+	constexpr int kPrincessAnimFrame = 24;
 }
 SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
 	Scene(sceneManager, DataManager),
@@ -404,8 +408,8 @@ void SceneSelect::Draw()
 		0.0,
 		m_playerGraph, true, false);
 	DrawRectRotaGraph(kPrincessPosX, kPrincessPosY + m_charPosY,
-		0, 24,
-		24, 24,
+		0, kPrincessAnimFrame,
+		kPrincessAnimFrame, kPrincessAnimFrame,
 		5.0,
 		0.0,
 		m_princessGraph, true, false);
@@ -415,7 +419,7 @@ void SceneSelect::Draw()
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_bossAlpha);
 		//各ステージのボス表示
 		DrawRectRotaGraph(Game::kScreenWidth / 2, kBossPosY,
-			m_bossSrcX, GetShowBossKind(m_bossSrcY) * kBossGraphSize,
+			m_bossSrcX, kStageBossKind[m_bossSrcY] * kBossGraphSize,
 			kBossGraphSize, kBossGraphSize,
 			8.0, 0.0, m_enemyGraph, true, 0, 0);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -504,46 +508,6 @@ void SceneSelect::DrawSceneSrideTriangle()
 			GetColor(255, 255, 255), true);
 	}
 
-}
-
-int SceneSelect::GetShowBossKind(int num)
-{
-	if (num == 0)
-	{
-		return 0;
-	}
-	else if (num == 1)
-	{
-		return 5;
-	}
-	else if (num == 2)
-	{
-		return 1;
-	}
-	else if (num == 3)
-	{
-		return 3;
-	}
-	else if (num == 4)
-	{
-		return 6;
-	}
-	else if (num == 5)
-	{
-		return 2;
-	}
-	else if (num == 6)
-	{
-		return 4;
-	}
-	else if (num == 7)
-	{
-		return 7;
-	}
-	else
-	{
-		return 0;
-	}
 }
 
 bool SceneSelect::GetCanBuyItem()

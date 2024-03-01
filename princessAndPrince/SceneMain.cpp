@@ -91,6 +91,21 @@ namespace
 	constexpr float kSpecialGaugeSubRate = 0.3f;
 	//怒りゲージ発動時のパーティクルの情報
 	constexpr int kSpecialModeParticleInfo[4] = { 1000,10,3,2 };
+	//白いパーティクルの情報
+	constexpr int kWhiteParticleInfo[4] = { 40,4,5,0 };
+	//背景の横幅
+	constexpr int kBgWidth = 965;
+	//LEVELUPと表示する座標
+	constexpr int kLevelupPosX = 430;
+	//LEVELUPの色
+	const int kLevelUpColor = GetColor(255, 255, 0);
+	//チュートリアルを表示する座標
+	constexpr int kTutorialPosX = 85;
+	constexpr int kTutorialPosY = 290;
+	//ポーズ画面のUI座標
+	constexpr int kPauseUiPosX = Game::kPlayScreenWidth * 0.5 - 50;
+	constexpr int kPauseUiPosY[2] = { 700,800 };
+
 }
 SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int stageNum) :
 	Scene(sceneManager, DataManager),
@@ -638,6 +653,7 @@ void SceneMain::Update(Pad& pad)
 				}
 			}
 		}
+		//怒りモードが発動可能だったら
 		if (m_specialGauge >= kMaxSpecialGauge && m_pPrincess->m_nowState != Game::State::kDelete)
 		{
 			if (m_lastSpace && !m_isStop)
@@ -654,6 +670,7 @@ void SceneMain::Update(Pad& pad)
 				}
 			}
 		}
+		//怒りモードの演出を入れる
 		if (m_isSpecialMode && m_isStop)
 		{
 			m_specialModeStartCount++;
@@ -675,7 +692,7 @@ void SceneMain::Update(Pad& pad)
 			if (m_particleCount > kParticleInterval)
 			{
 				m_particleCount = 0;
-				m_pParticle = new Particle(m_pPrincess->GetPos(), static_cast<float>(kSpecialModeParticleInfo[0]), static_cast<float>(kSpecialModeParticleInfo[1]),kSpecialModeParticleInfo[2], kSpecialModeParticleInfo[3]);
+				m_pParticle = new Particle(m_pPrincess->GetPos(), static_cast<float>(kSpecialModeParticleInfo[0]), static_cast<float>(kSpecialModeParticleInfo[1]), kSpecialModeParticleInfo[2], kSpecialModeParticleInfo[3]);
 				AddParticle(m_pParticle);
 			}
 			//ゲージが0になったら
@@ -778,7 +795,8 @@ void SceneMain::Update(Pad& pad)
 		{
 			for (int i = 0; i < kParticleVol; i++)
 			{
-				m_pParticle = new Particle(m_pPrincess->GetPos(), 40.0f, 4.0f, 5, 0);
+				m_pParticle = new Particle(m_pPrincess->GetPos(), //パーティクルの情報を入れる
+					static_cast<float>(kWhiteParticleInfo[0]), static_cast<float>(kWhiteParticleInfo[1]), kWhiteParticleInfo[2], kWhiteParticleInfo[3]);
 				AddParticle(m_pParticle);
 			}
 			m_isWitchParticle = true;
@@ -797,7 +815,8 @@ void SceneMain::Update(Pad& pad)
 				//白いエフェクトを出す
 				for (int i = 0; i < kParticleVol; i++)
 				{
-					m_pParticle = new Particle(temp, 40.0f, 4.0f, 5, 0);
+					m_pParticle = new Particle(m_pPrincess->GetPos(), //パーティクルの情報を入れる
+						static_cast<float>(kWhiteParticleInfo[0]), static_cast<float>(kWhiteParticleInfo[1]), kWhiteParticleInfo[2], kWhiteParticleInfo[3]);;
 					AddParticle(m_pParticle);
 				}
 			}
@@ -914,14 +933,13 @@ void SceneMain::Draw()
 {
 
 	//プレイ画面の背景
-	DrawRectExtendGraph(0, 0, 965, 965, 0, kAllStageSize - (kStageGraphSize * m_selectScene), kStageGraphSize, kStageGraphSize, m_bgHandle, true);
+	DrawRectExtendGraph(0, 0, kBgWidth, Game::kPlayScreenHeight, 0, kAllStageSize - (kStageGraphSize * m_selectScene), kStageGraphSize, kStageGraphSize, m_bgHandle, true);
 	if (m_isSpecialMode)
 	{
 		//怒りモードに入ったら背景を暗くする
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-		DrawBox(0, 0, Game::kPlayScreenWidth + 5, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
+		DrawBox(0, 0, kBgWidth, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-		//	DrawGraph(GetRand(15), GetRand(15), m_angryMarkGraph, true);
 	}
 
 
@@ -1006,32 +1024,35 @@ void SceneMain::Draw()
 	//レベルアップしていたらレベルアップと表示する
 	if (m_isUpLevel)
 	{
-		DrawString(430, m_levelUpPosY, "LEVEL UP", GetColor(255, 255, 0));
+		DrawString(kLevelupPosX, m_levelUpPosY, "LEVEL UP", kLevelUpColor);
 	}
 	//ポーズ画面を開いていたら
 	if (m_isPause)
 	{
+		//黒いボックスを表示する
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 170);
-		DrawBox(0, 0, Game::kPlayScreenWidth + 5, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
+		DrawBox(0, 0, kBgWidth, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-		int stringWidth = GetStringLength("つづける") * kFontHalfSize;
-		DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2 - 50, 700,
+		//白い文字を表示する
+		int stringWidth = GetStringLength("つづける") * kFontHalfSize / 2;
+		DrawString(kPauseUiPosX - stringWidth, kPauseUiPosY[0],
 			"つづける", GetColor(255, 255, 255));
-		stringWidth = GetStringLength("やめる") * kFontHalfSize;
-		DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2 - 50, 800,
+		stringWidth = GetStringLength("やめる") * kFontHalfSize / 2;
+		DrawString(kPauseUiPosX - stringWidth, kPauseUiPosY[1],
 			"やめる", GetColor(255, 255, 255));
 		DrawGraph(0, 0, m_pauseGraph, true);
 
+		//選ばれている文字を赤く表示する
 		switch (m_pauseSelectNum)
 		{
 		case 0:
-			stringWidth = GetStringLength("つづける") * kFontHalfSize;
-			DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2 - 50, 700,
+			stringWidth = GetStringLength("つづける") * kFontHalfSize / 2;
+			DrawString(kPauseUiPosX - stringWidth, kPauseUiPosY[0],
 				"つづける", GetColor(255, 0, 0));
 			break;
 		case 1:
-			stringWidth = GetStringLength("やめる") * kFontHalfSize;
-			DrawString(Game::kPlayScreenWidth / 2 - stringWidth / 2 - 50, 800,
+			stringWidth = GetStringLength("やめる") * kFontHalfSize / 2;
+			DrawString(kPauseUiPosX - stringWidth, kPauseUiPosY[1],
 				"やめる", GetColor(255, 0, 0));
 			break;
 
@@ -1045,14 +1066,14 @@ void SceneMain::Draw()
 	//ステージの最初にチュートリアルが表示する
 	if (m_isShowTutorial)
 	{
-		DrawGraph(85, 290, m_tutorialGraph[m_nowShowTutorialNum], true);
+		DrawGraph(kTutorialPosX, kTutorialPosY, m_tutorialGraph[m_nowShowTutorialNum], true);
 	}
 	//最初に死んだときのチュートリアルを表示する
 	if (m_isDeathTutorial)
 	{
-		DrawGraph(85, 290, m_tutorialGraph[2], true);
+		DrawGraph(kTutorialPosX, kTutorialPosY, m_tutorialGraph[2], true);
 	}
-	//黒いボックスを表示する
+	//回転する黒いボックスを表示する
 	DrawRotaGraph(Game::kScreenWidth / 2, Game::kPlayScreenHeight / 2,//座標
 		m_boxRatio, m_boxAngle, m_boxGraph, true, 0, 0);
 }

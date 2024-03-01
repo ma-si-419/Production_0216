@@ -42,6 +42,12 @@ namespace
 	constexpr float kBarHeight = 5;
 	//Hpバーのポジション
 	constexpr int kHpBarPosY = 50;
+	//Hpと血の量を表示するボックスの色
+	const int kBoxColor = GetColor(75, 75, 75);
+	//Hpバーの色
+	const int kHpBarColor = GetColor(255, 255, 100);
+	//血の量バーの色
+	const int kBloodBarColor = GetColor(255, 0, 0);
 	//復活した後の硬直時間
 	constexpr int kRevivalTime = 30;
 	//持てる血の量の最大値
@@ -54,6 +60,8 @@ namespace
 	constexpr int kDanceTIme = 5;
 	//クリア時の回る回数
 	constexpr int kTurnCount = 16;
+	//リザルトを表示する時間
+	constexpr int kResultShowTime = 22;
 	//初期座標
 	constexpr int kInitialPosX = Game::kPlayScreenWidth / 2 + 100;
 	constexpr int kInitialPosY = Game::kPlayScreenHeight / 2;
@@ -63,7 +71,30 @@ namespace
 	constexpr float kItemBonusArray[4] = { 0.0f,0.5f,0.1f,0.5f };
 	//レベルアップした時のステータスの上り幅
 	constexpr float kLevelUpBonusArray[4] = { 2.0f,0.1f,0.02f,0.05f };
-
+	//レバガチャした時に回復する量
+	constexpr int kMoveHealVol = 3;
+	//ノックバックする時間
+	constexpr int kKnockBackTime = 5;
+	//怒りモード時に表示する炎のアニメーションフレーム
+	constexpr int kAngryFireAnimFrame = 24;
+	//怒りモード時に表示する炎の大きさ
+	constexpr double kAngryFireScale = 4.0;
+	//怒りモード時に表示する炎のポジション(プレイヤーのポジションから少しずらす)
+	constexpr int kAngryFirePos = 10;
+	//怒りモード時のステータス
+	const float kAngryModeAtk = (2.0f + (UserData::userAtkLevel * 0.5f)) * 0.7f + (UserData::userMainLevel * 0.1f);
+	constexpr float kAngryModeSpd = 4.0f;
+	//弱点に当たった時の受けるダメージの倍率
+	constexpr float kWeakHitDamageVol = 0.75f;
+	//弱点に当たった時のノックバックの倍率
+	constexpr float kWeakKnockBackScale = 0.6f;
+	//倒れた時のノックバックの時間
+	constexpr int kDeathKnockBackTime[5] = { 20,40,60,80,100 };
+	//通常時のステータス
+	const float kNormalHp = kInitialStatusArray[static_cast<int>(Status::main)] + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::main)]);
+	const float kNormalAtk = kInitialStatusArray[static_cast<int>(Status::atk)] + (UserData::userAtkLevel * kItemBonusArray[static_cast<int>(Status::atk)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::atk)]);
+	const float kNormalSpd = kInitialStatusArray[static_cast<int>(Status::spd)] + (UserData::userSpdLevel * kItemBonusArray[static_cast<int>(Status::spd)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::spd)]);
+	const float kNormalDef = kInitialStatusArray[static_cast<int>(Status::def)] + (UserData::userDefLevel * kItemBonusArray[static_cast<int>(Status::def)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::def)]);
 }
 
 Player::Player(SceneMain* pMain) :
@@ -116,10 +147,10 @@ Player::~Player()
 void Player::Init()
 {
 	//ステータスを設定する
-	m_hp = kInitialStatusArray[static_cast<int>(Status::main)] + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::main)]);
-	m_atk = kInitialStatusArray[static_cast<int>(Status::atk)] + (UserData::userAtkLevel * kItemBonusArray[static_cast<int>(Status::atk)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::atk)]);
-	m_spd = kInitialStatusArray[static_cast<int>(Status::spd)] + (UserData::userSpdLevel * kItemBonusArray[static_cast<int>(Status::spd)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::spd)]);
-	m_def = kInitialStatusArray[static_cast<int>(Status::def)] + (UserData::userDefLevel * kItemBonusArray[static_cast<int>(Status::def)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::def)]);
+	m_hp = kNormalHp;
+	m_atk = kNormalAtk;
+	m_spd = kNormalSpd;
+	m_def = kNormalDef;
 	m_nowHp = m_hp;
 	//座標を参考にHpバーの位置を設定
 	m_hpBarPos.x = m_pos.x - kMaxBarWidth / 2;
@@ -164,7 +195,7 @@ void Player::Update()
 					//今入力したkeyを保存する
 					m_lastPad = 0;
 					//回復する
-					m_nowHp += GetHealRate() * 3;
+					m_nowHp += GetHealRate() * kMoveHealVol;
 					//ランダムにプレイヤーを動かす
 					m_pos.x = m_deathPos.x + GetRand(2) - 1;
 					m_pos.y = m_deathPos.y + GetRand(2) - 1;
@@ -178,7 +209,7 @@ void Player::Update()
 					//今入力したkeyを保存する
 					m_lastPad = 1;
 					//回復する
-					m_nowHp += GetHealRate() * 3;
+					m_nowHp += GetHealRate() * kMoveHealVol;
 					//ランダムにプレイヤーを動かす
 					m_pos.x = GetRand(10) + m_deathPos.x;
 					m_pos.y = GetRand(10) + m_deathPos.y;
@@ -191,7 +222,7 @@ void Player::Update()
 					//今入力したkeyを保存する
 					m_lastPad = 2;
 					//回復する
-					m_nowHp += GetHealRate() * 3;
+					m_nowHp += GetHealRate() * kMoveHealVol;
 					//ランダムにプレイヤーを動かす
 					m_pos.x = GetRand(10) + m_deathPos.x;
 					m_pos.y = GetRand(10) + m_deathPos.y;
@@ -204,7 +235,7 @@ void Player::Update()
 					//今入力したkeyを保存する
 					m_lastPad = 3;
 					//回復する
-					m_nowHp += GetHealRate() * 3;
+					m_nowHp += GetHealRate() * kMoveHealVol;
 					//ランダムにプレイヤーを動かす
 					m_pos.x = GetRand(10) + m_deathPos.x;
 					m_pos.y = GetRand(10) + m_deathPos.y;
@@ -230,7 +261,7 @@ void Player::Update()
 			bool isAnimEnd = false;
 			if (m_animFrame / kAnimFrameNum == 2)
 			{
-				if (m_pMain->GetSpecialMode())
+				if (m_pMain->GetAngryMode())
 				{
 					m_revivalCount += kRevivalTime;
 				}
@@ -326,7 +357,7 @@ void Player::Update()
 		{
 			m_knockBackTime++;
 			//一定時間ノックバックしたら
-			if (m_knockBackTime > 5)
+			if (m_knockBackTime > kKnockBackTime)
 			{
 				m_nowState = Game::State::kNormal;
 				m_knockBack *= 0;
@@ -379,19 +410,19 @@ void Player::Update()
 		m_nowBlood = 0;
 	}
 	//怒りモード状態のステータス変化
-	if (m_pMain->GetSpecialMode())
+	if (m_pMain->GetAngryMode())
 	{
 		m_nowHp = m_hp;
-		m_atk = (2.0f + (UserData::userAtkLevel * 0.5f)) * 0.7f + (UserData::userMainLevel * 0.1f);
-		m_spd = 4.0f;
+		m_atk = kAngryModeAtk;
+		m_spd = kAngryModeSpd;
 	}
 	else
 	{
-		m_atk = 2.0f + (UserData::userAtkLevel * 0.5f) + (UserData::userMainLevel * 0.1f);
-		m_spd = 1.5f + (UserData::userSpdLevel * 0.1f) + (UserData::userMainLevel * 0.02f);
+		m_atk = kNormalAtk;
+		m_spd = kNormalSpd;
 	}
 	//炎を揺らす演出
-	if (m_animFrame % 24 == 0)
+	if (m_animFrame % kAngryFireAnimFrame == 0)
 	{
 		m_isAngryFireReverseFlag = !m_isAngryFireReverseFlag;
 	}
@@ -410,7 +441,7 @@ void Player::Draw() const
 	int srcY = kGraphHeight * static_cast<int>(m_dir);
 	//描画処理
 	//怒りモードかどうかでグラフィックを変える
-	if (!m_pMain->GetSpecialMode())
+	if (!m_pMain->GetAngryMode())
 	{
 		//プレイヤーを表示
 		DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
@@ -423,8 +454,8 @@ void Player::Draw() const
 	else
 	{
 		//炎を表示
-		DrawRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y) - 10,
-			4.0, 0.0, m_angryFireGraph, true, m_isAngryFireReverseFlag, false);
+		DrawRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y) - kAngryFirePos,
+			kAngryFireScale, 0.0, m_angryFireGraph, true, m_isAngryFireReverseFlag, false);
 		//プレイヤーを表示
 		DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
 			srcX, srcY,
@@ -441,7 +472,7 @@ void Player::Draw() const
 		DrawBox(static_cast<int>(m_hpBarPos.x - kBoxSpace), static_cast<int>(m_hpBarPos.y - kBoxSpace),//始点
 			static_cast<int>(m_bloodBarPos.x + kMaxBarWidth + kBoxSpace),//始点の位置にバーの長さを足す
 			static_cast<int>(m_bloodBarPos.y + kBarHeight + kBoxSpace),//終点
-			GetColor(75, 75, 75), true);
+			kBoxColor, true);
 		//Hpが見やすいようにHpの後ろに黒いBoxを出す
 		DrawBox(static_cast<int>(m_hpBarPos.x), static_cast<int>(m_hpBarPos.y),//始点
 			static_cast<int>(m_hpBarPos.x + kMaxBarWidth),//始点の位置にバーの長さを足す
@@ -451,7 +482,7 @@ void Player::Draw() const
 		DrawBox(static_cast<int>(m_hpBarPos.x), static_cast<int>(m_hpBarPos.y),//始点
 			static_cast<int>(m_hpBarPos.x + m_hpBarWidth),//始点の位置にバーの長さを足す
 			static_cast<int>(m_hpBarPos.y + kBarHeight),//終点
-			GetColor(255, 255, 100), true);
+			kHpBarColor, true);
 		//血の量が見やすいように血の量の後ろに白いBoxを出す
 		DrawBox(static_cast<int>(m_bloodBarPos.x), static_cast<int>(m_bloodBarPos.y),//始点
 			static_cast<int>(m_bloodBarPos.x + kMaxBarWidth),//始点の位置にバーの長さを足す
@@ -461,7 +492,7 @@ void Player::Draw() const
 		DrawBox(static_cast<int>(m_bloodBarPos.x), static_cast<int>(m_bloodBarPos.y),//始点
 			static_cast<int>(m_bloodBarPos.x + m_bloodBarWidth),//始点の位置にバーの長さを足す
 			static_cast<int>(m_bloodBarPos.y + kBarHeight),//終点
-			GetColor(255, 0, 0), true);
+			kBloodBarColor, true);
 	}
 
 #ifdef _DEBUG
@@ -481,7 +512,7 @@ void Player::HitEnemy(Enemy enemy, bool weak)
 	if (weak)
 	{
 		//受けるダメージを半分にする
-		damage = static_cast<float>((enemy.GetAtk() - m_def) * 0.75);
+		damage = static_cast<float>((enemy.GetAtk() - m_def) * kWeakHitDamageVol);
 		//最低でも0.5ダメージは食らうようにする
 		if (damage < 1)
 		{
@@ -490,7 +521,7 @@ void Player::HitEnemy(Enemy enemy, bool weak)
 		//エネミーの移動速度に応じてノックバックする
 		m_knockBack *= enemy.GetKnockBackPow() * kKnockBackScale;
 		//弱点に当たっていたらノックバックの大きさを減らす
-		m_knockBack *= 0.6f;
+		m_knockBack *= kWeakKnockBackScale;
 
 	}
 	else//弱点に当たっていなかったらそのまま
@@ -504,7 +535,7 @@ void Player::HitEnemy(Enemy enemy, bool weak)
 		//エネミーの移動速度に応じてノックバックする
 		m_knockBack *= enemy.GetKnockBackPow() * kKnockBackScale;
 	}
-	if (!m_pMain->GetSpecialMode())
+	if (!m_pMain->GetAngryMode())
 	{
 		m_nowHp -= damage;
 	}
@@ -585,13 +616,13 @@ void Player::DeathMove()
 	//ノックバック処理
 	if (m_knockBack.x != 0 || m_knockBack.y != 0)
 	{
-		if (m_pMain->GetSpecialMode())
+		if (m_pMain->GetAngryMode())
 		{
-			m_knockBackTime += 100;
+			m_knockBackTime += kDeathKnockBackTime[4];
 		}
 		m_knockBackTime++;
 		//死亡演出
-		if (m_knockBackTime < 20)
+		if (m_knockBackTime < kDeathKnockBackTime[0])
 		{
 			if (!CheckSoundMem(m_playerTurnSe))
 			{
@@ -600,22 +631,22 @@ void Player::DeathMove()
 			m_dir = Game::Dir::kDirDown;
 			m_animFrame = 0;
 		}
-		else if (m_knockBackTime < 40)
+		else if (m_knockBackTime < kDeathKnockBackTime[1])
 		{
 			m_dir = Game::Dir::kDirLeft;
 		}
-		else if (m_knockBackTime < 60)
+		else if (m_knockBackTime < kDeathKnockBackTime[2])
 		{
 			m_dir = Game::Dir::kDirUp;
 		}
-		else if (m_knockBackTime < 80)
+		else if (m_knockBackTime < kDeathKnockBackTime[3])
 		{
 			m_dir = Game::Dir::kDirRight;
 
 		}
 		else
 		{
-			if (!m_pMain->GetSpecialMode())
+			if (!m_pMain->GetAngryMode())
 			{
 				if (!CheckSoundMem(m_playerDeathSe))
 				{
@@ -625,7 +656,7 @@ void Player::DeathMove()
 			}
 		}
 		//一定時間ノックバックしたら
-		if (m_knockBackTime > 100)
+		if (m_knockBackTime > kDeathKnockBackTime[4])
 		{
 
 			m_knockBack *= 0;
@@ -683,6 +714,7 @@ void Player::ClearDance()
 		default:
 			break;
 		}
+		//回っている時間をカウントする
 		m_turnCount++;
 	}
 	if (m_turnCount > kTurnCount)
@@ -690,7 +722,7 @@ void Player::ClearDance()
 		m_dir = Game::Dir::kDirDeath;
 		m_animFrame = kAnimFrameNum * 2;
 	}
-	if (m_turnCount > kTurnCount + 6)
+	if (m_turnCount > kResultShowTime)
 	{
 		m_pMain->ShowResult();
 	}

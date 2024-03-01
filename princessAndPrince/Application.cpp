@@ -16,6 +16,7 @@ namespace
 	constexpr int kScreenWidth = 1600;
 	constexpr int kScreenHeight = 960;
 	constexpr int kArraySize = 81;
+	constexpr int kColorBiteDepth = 32;
 }
 
 void Application::Terminate()
@@ -39,7 +40,7 @@ bool Application::Init()
 
 	m_isPush = true;
 
-	SetGraphMode(m_isWindowSize.w, m_isWindowSize.h, 32);
+	SetGraphMode(m_isWindowSize.w, m_isWindowSize.h, kColorBiteDepth);
 	SetWindowIconID(111);
 
 	if (DxLib_Init() == -1) {	//‰Šú‰»‚É¸”s‚µ‚½‚çƒAƒvƒŠ‚ğ—‚Æ‚·
