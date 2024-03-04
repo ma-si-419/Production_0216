@@ -73,6 +73,10 @@ namespace
 	constexpr int kWhiteParticleInfo[4] = { 40,4,5,0 };
 	//死んだときのアニメフレーム
 	constexpr int kDeathAnimFrame = 24;
+	//減っていく血の量
+	constexpr float kSubBloodVol = 0.02f;
+	//回転するスピード
+	constexpr float kRotaSpeed = 0.03f;
 }
 Princess::Princess(SceneMain* pMain) :
 	m_hpBarWidth(0),
@@ -179,14 +183,14 @@ void Princess::Update()
 			if (m_input.Buttons[XINPUT_BUTTON_RIGHT_SHOULDER] || CheckHitKey(KEY_INPUT_L))
 			{
 				//回転させる処理を入れる
-				m_angle -= 0.03f;
+				m_angle -= kRotaSpeed;
 
 			}
 			//LBボタンが押されていたら
 			if (m_input.Buttons[XINPUT_BUTTON_LEFT_SHOULDER] || CheckHitKey(KEY_INPUT_J))
 			{
 				//回転させる処理を入れる
-				m_angle += 0.03f;
+				m_angle += kRotaSpeed;
 			}
 			//炎魔法を選択している場合
 			if (m_isFire)
@@ -226,7 +230,7 @@ void Princess::Update()
 			}
 
 			//持っている血の量を減らしていく
-			m_nowBlood -= 0.02f;
+			m_nowBlood -= kSubBloodVol;
 
 		}
 		else

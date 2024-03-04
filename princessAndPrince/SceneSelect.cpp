@@ -30,7 +30,8 @@ namespace
 	//背景画像の大きさ
 	constexpr int kBgGraphSize = 640;
 	//キャラクターの大きさ
-	constexpr float kCharcterScale = 6.0f;
+	constexpr float kPlayerScale = 6.0f;
+	constexpr float kPrincessScale = 5.0f;
 	//アニメーションの使う場所
 	constexpr int kUseFrame[] = { 1,2,3,2 };
 	//アニメーション１コマのフレーム数
@@ -97,7 +98,18 @@ namespace
 	//各ステージのボスの順番
 	constexpr int kStageBossKind[8] = { 0,5,1,3,6,2,4,7 };
 	//姫のアニメフレーム
-	constexpr int kPrincessAnimFrame = 24;
+	constexpr int kPrincessAnimFrame = 24; 
+	//シーン移動時のプレイヤーのアニメフレーム
+	constexpr int kPlayerAnimFrame = 24;
+	//ステージのタイトルを表示する座標
+	constexpr int kStageTitleStartPosX = 70;
+	constexpr int kStageTitleStartPosY = 90;
+	constexpr int kStageTitleEndPosX = 730;
+	constexpr int kStageTitleEndPosY = 180;
+	//シーン移動時の黒いボックスの回転速度
+	constexpr float kBoxRotaSpeed = 0.15f;
+	//シーン移動時の黒いボックスのズームの速度
+	constexpr float kBoxZoomSpeed = 0.4f;
 }
 SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
 	Scene(sceneManager, DataManager),
@@ -245,7 +257,7 @@ void SceneSelect::Update(Pad& pad)
 					StopSoundMem(m_bgm);
 					//別の音に変える
 					PlaySoundMem(m_moveMainSceneSe, DX_PLAYTYPE_BACK);
-					m_animFrame = 24;
+					m_animFrame = kPlayerAnimFrame;
 					m_dir = Game::Dir::kDirDeath;
 					m_isMoveMainScene = true;
 					m_isKeyDown = false;
@@ -266,7 +278,7 @@ void SceneSelect::Update(Pad& pad)
 				{
 					PlaySoundMem(m_appSe, DX_PLAYTYPE_BACK);
 					//ショップに入る演出を入れる
-					m_shopSrcY = 64;
+					m_shopSrcY = kShopGraphSize;
 					m_isShopButton = true;
 					m_isSelectScene = true;
 
@@ -379,8 +391,8 @@ void SceneSelect::Update(Pad& pad)
 	//メインシーンに移動する
 	if (m_isMoveMainScene)
 	{
-		m_boxAngle += 0.15f;
-		m_boxRatio += 0.4f;
+		m_boxAngle += kBoxRotaSpeed;
+		m_boxRatio += kBoxZoomSpeed;
 		//音が鳴りやんだらフェードしていく
 		if (!CheckSoundMem(m_moveMainSceneSe))
 		{
@@ -404,13 +416,13 @@ void SceneSelect::Draw()
 	DrawRectRotaGraph(kPlayerPosX, kPlayerPosY + m_charPosY,
 		srcX, srcY,
 		kGraphWidth, kGraphHeight,
-		kCharcterScale,
+		kPlayerScale,
 		0.0,
 		m_playerGraph, true, false);
 	DrawRectRotaGraph(kPrincessPosX, kPrincessPosY + m_charPosY,
 		0, kPrincessAnimFrame,
 		kPrincessAnimFrame, kPrincessAnimFrame,
-		5.0,
+		kPrincessScale,
 		0.0,
 		m_princessGraph, true, false);
 	//ステージを移動中じゃなかったら
@@ -432,7 +444,7 @@ void SceneSelect::Draw()
 	//三角形の表示
 	DrawSceneSrideTriangle();
 	//ステージ名の表示
-	DrawExtendGraph(70, 90, 730, 180, m_backBoxGraph, true);
+	DrawExtendGraph(kStageTitleStartPosX, kStageTitleStartPosY, kStageTitleEndPosX, kStageTitleEndPosY, m_backBoxGraph, true);
 	//左上にストーリー表示
 	DrawGraph(130, 200, m_storyGraph[m_stageSelectNum], true);
 	//左下に操作方法表示

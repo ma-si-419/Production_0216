@@ -97,8 +97,8 @@ void Enemy::Init(int kinds)
 	////////////////////////////
 	if (kinds == static_cast<int>(goblin))
 	{
-		m_hp = 10;
-		m_atk = 3.0f;
+		m_hp = 8;
+		m_atk = 2.5f;
 		m_spd = 0.2f;
 		m_scale = kEnemySize;
 		m_colScale = kEnemySize;
@@ -112,8 +112,8 @@ void Enemy::Init(int kinds)
 	else if (kinds == static_cast<int>(boar))
 	{
 		m_hp = 5;
-		m_atk = 2.0f;
-		m_spd = 0.75f;
+		m_atk = 1.5f;
+		m_spd = 0.7f;
 		m_scale = kEnemySize;
 		m_colScale = kEnemySize;
 		m_srcY = 1;
@@ -169,8 +169,8 @@ void Enemy::Init(int kinds)
 	}
 	else if (kinds == static_cast<int>(redGoblin))
 	{
-		m_hp = 15;
-		m_atk = 3.5f;
+		m_hp = 13;
+		m_atk = 3.0f;
 		m_spd = 0.25f;
 		m_scale = kEnemySize;
 		m_colScale = kEnemySize;
