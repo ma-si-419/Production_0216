@@ -24,10 +24,26 @@ public:
 	int ArrRight(int num);
 	//桁数を取得する
 	int GetDigits(int num);
-	//帰るアイテムに赤丸を付ける
+	//買えるアイテムに赤丸を付ける
 	void DrawRedCircle();
+	//フレームを表示する
+	void DrawFrame(int selectNum);
+	//アイテムのレベル表示
+	void DrawLevel();
+	//店主のセリフを表示する
+	void DrawWords();
 
 private:
+
+	
+	enum ShopItem : int
+	{
+		kSword,
+		kArmor,
+		kBoots,
+		kFire,
+		kWind
+	};
 	//今選択している項目を保存する
 	int m_itemSelectNum;
 	//連続でキーが押されてないように

@@ -459,7 +459,7 @@ void SceneSelect::Draw()
 	DrawStageName(m_stageSelectNum);
 	//ショップの表示
 	DrawRectExtendGraph(static_cast<int>(m_shopStartPosX), static_cast<int>(m_shopStartPosY),
-		m_shopEndPosX, m_shopEndPosY, m_shopSrcX, m_shopSrcY, 64, 64, m_shopGraph, true);
+		m_shopEndPosX, m_shopEndPosY, m_shopSrcX, m_shopSrcY, kShopGraphSize, kShopGraphSize, m_shopGraph, true);
 	//メインシーンに移動時に出てくるボックス
 	DrawRotaGraph(Game::kScreenWidth / 2, Game::kPlayScreenHeight / 2,//座標
 		static_cast<double>(m_boxRatio), static_cast<double>(m_boxAngle), m_boxGraph, true, 0, 0);

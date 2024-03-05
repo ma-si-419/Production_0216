@@ -152,7 +152,7 @@ void MagicBase::Draw()
 	else if (!m_isFire)
 	{
 		DrawRectRotaGraph(static_cast<int>(m_magicPos.x), static_cast<int>(m_magicPos.y),
-			0, static_cast<int>(Game::ItemGraph::kTyphoon) * kGraphSize,
+			0, static_cast<int>(Game::ItemGraph::kWind) * kGraphSize,
 			kGraphSize, kGraphSize,
 			kMagicSize,
 			0,

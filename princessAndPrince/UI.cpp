@@ -142,7 +142,7 @@ void UI::Draw()
 	DrawRectRotaGraph(1318, 855, 0, static_cast<int>(Game::ItemGraph::kFire) * kItemGraphScale, kItemGraphScale, kItemGraphScale,
 		2.7, 4.72, m_magicGraph, true, false, false);
 	//•—–‚–@‚ÌUi•\Ž¦
-	DrawRectRotaGraph(1495, 855, 0, static_cast<int>(Game::ItemGraph::kTyphoon) * kItemGraphScale, kItemGraphScale, kItemGraphScale,
+	DrawRectRotaGraph(1495, 855, 0, static_cast<int>(Game::ItemGraph::kWind) * kItemGraphScale, kItemGraphScale, kItemGraphScale,
 		2.7, 0.0, m_magicGraph, true, false, false);
 	if (m_pMain->GetSceneNum() > 1)
 	{

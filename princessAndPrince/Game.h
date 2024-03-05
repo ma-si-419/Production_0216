@@ -60,7 +60,7 @@ namespace Game
 		kBoots,
 		kDropTreasure,
 		kFire,
-		kTyphoon,
+		kWind,
 		kDropBlood
 	};
 	enum class ParticleKind
