@@ -30,6 +30,10 @@ namespace
 	constexpr int kShiftShadowLange = 3;
 	//アイテムグラフの大きさ
 	constexpr int kItemGraphScale = 32;
+	//プレイヤーのアニメフレーム
+	constexpr int kPlayerClearAnimFrame = 48;
+	//プレイヤーの画像の大きさ
+	constexpr int kPlayerGraphSize = 16;
 	//Uiを揺らす幅
 	constexpr int kShakeLange = 1;
 	//Uiを表示する座標
@@ -40,6 +44,30 @@ namespace
 	constexpr double kAngryButtonMinRatio = 0.4;
 	//ボタンが大きくなるスピード
 	constexpr double kAngryButtonZoomSpeed = 0.01;
+	//魔法のアイコンを表示する座標
+	constexpr int kMagicUiPosX[2] = { 1320,1495 };
+	constexpr int kMagicUiPosY = 855;
+	//魔法のアイコンを表示する背景画像のサイズ
+	constexpr int kMagicUiBgSize = 106;
+	//魔法のアイコンの大きさ倍率
+	constexpr double kMagicUiRatio = 2.7;
+	//ファイアのアイコンの角度
+	constexpr double kFireUiAngle = 4.72;
+	//怒りゲージの座標
+	constexpr int kAngryGaugePosX = 1060;
+	constexpr int kAngryGaugePosY = 805;
+	//怒りゲージのフレームの座標
+	constexpr int kAngryGaugeFramePosX = 1050;
+	constexpr int kAngryGaugeFramePosY = 800;
+	//魔法のUIを表示するときに出す円の大きさ
+	constexpr int kMagicUiCircleRadius = 50;
+	//ゲームクリアと表示する座標
+	constexpr int kGameClearPosX[2] = { 230,530 };
+	//ゲームクリアの文字の中に出すプレイヤーの座標
+	constexpr int kGameClearPlayerPos = 475;
+	//ゲームクリア時のリザルトを表示する座標
+	constexpr int kResultPosX[2] = {100,700};
+	constexpr int kResultPosY[7] = { 200,400,500,600,700,800,900 };
 }
 UI::UI(Player* pPlayer, Princess* pPrincess, SceneMain* pMain) :
 	m_pPlayer(pPlayer),
@@ -122,41 +150,41 @@ void UI::Draw()
 	//今どちらの魔法を打っているかを表示する
 	if (m_pPrincess->GetMagicKind())
 	{
-		DrawRectRotaGraph(1320, 855, 106, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
-		DrawRectRotaGraph(1495, 855, 0, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+		DrawRectRotaGraph(kMagicUiPosX[0], kMagicUiPosY, kMagicUiBgSize, 0, kMagicUiBgSize, kMagicUiBgSize, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+		DrawRectRotaGraph(kMagicUiPosX[1], kMagicUiPosY, 0, 0, kMagicUiBgSize, kMagicUiBgSize, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
 
 	}
 	else
 	{
-		DrawRectRotaGraph(1320, 855, 0, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
-		DrawRectRotaGraph(1495, 855, 106, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+		DrawRectRotaGraph(kMagicUiPosX[0], kMagicUiPosY, 0, 0, kMagicUiBgSize, kMagicUiBgSize, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+		DrawRectRotaGraph(kMagicUiPosX[1], kMagicUiPosY, kMagicUiBgSize, 0, kMagicUiBgSize, kMagicUiBgSize, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
 
 	}
 	//シーン3まではどちらも光らせないようにする
 	if (m_pMain->GetSceneNum() < 2)
 	{
-		DrawRectRotaGraph(1320, 855, 0, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
-		DrawRectRotaGraph(1495, 855, 0, 0, 106, 106, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+		DrawRectRotaGraph(kMagicUiPosX[0], kMagicUiPosY, 0, 0, kMagicUiBgSize, kMagicUiBgSize, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
+		DrawRectRotaGraph(kMagicUiPosX[1], kMagicUiPosY, 0, 0, kMagicUiBgSize, kMagicUiBgSize, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
 	}
 	//炎魔法のUi表示
-	DrawRectRotaGraph(1318, 855, 0, static_cast<int>(Game::ItemGraph::kFire) * kItemGraphScale, kItemGraphScale, kItemGraphScale,
-		2.7, 4.72, m_magicGraph, true, false, false);
+	DrawRectRotaGraph(kMagicUiPosX[0], kMagicUiPosY, 0, static_cast<int>(Game::ItemGraph::kFire) * kItemGraphScale, kItemGraphScale, kItemGraphScale,
+		kMagicUiRatio, kFireUiAngle, m_magicGraph, true, false, false);
 	//風魔法のUi表示
-	DrawRectRotaGraph(1495, 855, 0, static_cast<int>(Game::ItemGraph::kWind) * kItemGraphScale, kItemGraphScale, kItemGraphScale,
-		2.7, 0.0, m_magicGraph, true, false, false);
+	DrawRectRotaGraph(kMagicUiPosX[1], kMagicUiPosY, 0, static_cast<int>(Game::ItemGraph::kWind) * kItemGraphScale, kItemGraphScale, kItemGraphScale,
+		kMagicUiRatio, 0.0, m_magicGraph, true, false, false);
 	if (m_pMain->GetSceneNum() > 1)
 	{
-
+		//使っている魔法をわかりやすくする
 		if (m_pPrincess->GetMagicKind())
 		{
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
-			DrawCircle(1495, 855, 50, GetColor(0, 0, 0));
+			DrawCircle(kMagicUiPosX[1], kMagicUiPosY, kMagicUiCircleRadius, GetColor(0, 0, 0));
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
 		else
 		{
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
-			DrawCircle(1320, 855, 50, GetColor(0, 0, 0));
+			DrawCircle(kMagicUiPosX[0], kMagicUiPosY, kMagicUiCircleRadius, GetColor(0, 0, 0));
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
 	}
@@ -164,24 +192,25 @@ void UI::Draw()
 	else
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
-		DrawCircle(1320, 855, 50, GetColor(0, 0, 0));
-		DrawCircle(1495, 855, 50, GetColor(0, 0, 0));
+		DrawCircle(kMagicUiPosX[0], kMagicUiPosY, kMagicUiCircleRadius, GetColor(0, 0, 0));
+		DrawCircle(kMagicUiPosX[1], kMagicUiPosY, kMagicUiCircleRadius, GetColor(0, 0, 0));
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
-	//聖剣モードのゲージを表示する
+	//怒りモードのゲージを表示する
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-	DrawBox(1060, 805,//始点
-		1060 + (int)(kMaxBarWidth / m_pMain->GetSpecialGaugeRate()),//始点の位置にバーの長さを足す
-		805 + (int)kBarHeight, GetColor(255, 0, 0), true);
+	DrawBox(kAngryGaugePosX, kAngryGaugePosY,//始点
+		kAngryGaugePosX + (int)(kMaxBarWidth / m_pMain->GetSpecialGaugeRate()),//始点の位置にバーの長さを足す
+		kAngryGaugePosY + (int)kBarHeight, GetColor(255, 0, 0), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	DrawGraph(1050 + m_angryGaugeUiShiftPosX, 800, m_angryGaugeUiGraph, true);
+	//怒りモードのゲージのフレームを表示する
+	DrawGraph(kAngryGaugeFramePosX + m_angryGaugeUiShiftPosX, kAngryGaugeFramePosY, m_angryGaugeUiGraph, true);
 	if (m_pMain->GetSceneNum() < 3)
 	{
-		DrawGraph(1050 + m_angryGaugeUiShiftPosX, 800, m_stoneAngryGaugeGraph, true);
+		DrawGraph(kAngryGaugeFramePosX + m_angryGaugeUiShiftPosX, kAngryGaugeFramePosY, m_stoneAngryGaugeGraph, true);
 	}
 	if (m_pMain->GetSpecialGaugeRate() == 1)
 	{
-		DrawRotaGraph(1050, 800, m_angryButtonRatio, 0.0, m_angryButtonGraph, true, 0, 0);
+		DrawRotaGraph(kAngryGaugeFramePosX, kAngryGaugeFramePosY, m_angryButtonRatio, 0.0, m_angryButtonGraph, true, 0, 0);
 	}
 }
 void UI::SceneClearUI()
@@ -194,39 +223,40 @@ void UI::SceneClearUI()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	if (m_timeCount > kShowTime)
 	{
-		int stringWidth = GetDrawStringWidth("ゲームクリア", -1);
-		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 - 150, 200, "ゲ ー ム", GetColor(255, 255, 255));
-		DrawRectRotaGraph((Game::kPlayScreenWidth - stringWidth) / 2 + 100, 200,
-			48, static_cast<int>(Game::Dir::kDirDeath) * 16,
-			16, 16,
+		
+		DrawString(kGameClearPosX[0], kResultPosY[0], "ゲ ー ム", GetColor(255, 255, 255));
+		//プレイヤーの画像を表示する
+		DrawRectRotaGraph(kGameClearPlayerPos, kResultPosY[0],
+			kPlayerClearAnimFrame, static_cast<int>(Game::Dir::kDirDeath) * kPlayerGraphSize,
+			kPlayerGraphSize, kPlayerGraphSize,
 			6.0,
 			0.0,
 			m_pPlayer->GetHandle(), true, false);
-		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 + 150, 200, "ク リ ア", GetColor(255, 255, 255));
+		DrawString(kGameClearPosX[1], kResultPosY[0], "ク リ ア", GetColor(255, 255, 255));
 		//現在のレベルを表示する
-		DrawString(100, 400, "現在のレベル", GetColor(255, 255, 255));
-		DrawFormatString(700 - AlignmentRight(UserData::userMainLevel + 1), 400, GetColor(255, 255, 255), "%d", UserData::userMainLevel + 1);
+		DrawString(100, kResultPosY[1], "現在のレベル", GetColor(255, 255, 255));
+		DrawFormatString(700 - AlignmentRight(UserData::userMainLevel + 1), kResultPosY[1], GetColor(255, 255, 255), "%d", UserData::userMainLevel + 1);
 		//獲得したゴールドと経験値を表示する
-		DrawString(100, 500, "獲得経験値", GetColor(255, 255, 255));
-		DrawString(100, 600, "次のレベルまで", GetColor(255, 255, 255));
-		DrawString(100, 700, "獲得ゴールド", GetColor(255, 255, 255));
-		DrawString(100, 800, "所持ゴールド", GetColor(255, 255, 255));
+		DrawString(100, kResultPosY[2], "獲得経験値", GetColor(255, 255, 255));
+		DrawString(100, kResultPosY[3], "次のレベルまで", GetColor(255, 255, 255));
+		DrawString(100, kResultPosY[4], "獲得ゴールド", GetColor(255, 255, 255));
+		DrawString(100, kResultPosY[5], "所持ゴールド", GetColor(255, 255, 255));
 		m_pMain->SetEnd();
 	}
 	if (m_timeCount > kExpShowTime)
 	{
-		DrawFormatString(700 - AlignmentRight(m_pPlayer->GetExp()), 500, GetColor(255, 255, 255), "%d", m_pPlayer->GetExp());
-		DrawFormatString(700 - AlignmentRight(m_pMain->GetNextExp()), 600, GetColor(255, 255, 255), "%d", m_pMain->GetNextExp());
+		DrawFormatString(700 - AlignmentRight(m_pPlayer->GetExp()), kResultPosY[2], GetColor(255, 255, 255), "%d", m_pPlayer->GetExp());
+		DrawFormatString(700 - AlignmentRight(m_pMain->GetNextExp()), kResultPosY[3], GetColor(255, 255, 255), "%d", m_pMain->GetNextExp());
 		m_pMain->StartExpLoop();
 	}
 	if (m_isShowGold)
 	{
-		DrawFormatString(700 - AlignmentRight(m_pPlayer->GetGold()), 700, GetColor(255, 255, 255), "%d", m_pPlayer->GetGold());
-		DrawFormatString(700 - AlignmentRight(UserData::userGold), 800, GetColor(255, 255, 255), "%d", UserData::userGold);
+		DrawFormatString(700 - AlignmentRight(m_pPlayer->GetGold()), kResultPosY[4], GetColor(255, 255, 255), "%d", m_pPlayer->GetGold());
+		DrawFormatString(700 - AlignmentRight(UserData::userGold), kResultPosY[5], GetColor(255, 255, 255), "%d", UserData::userGold);
 	}
 	if (m_isLeaveButton)
 	{
-		DrawRectRotaGraph(440, 900, 0, 0, 32, 32, 2.4, 0.0, m_buttonsGraph, true, 0, 0);
+		DrawRotaGraph(440, kResultPosY[6], 2.5, 0,m_buttonsGraph, true, 0, 0);
 		DrawString(480, 880, "で戻る", GetColor(255, 255, 255));
 	}
 }
@@ -241,38 +271,38 @@ void UI::GameOverUI()
 	if (m_timeCount > kShowTime)
 	{
 		int stringWidth = GetDrawStringWidth("ゲームオーバー", -1);
-		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 - 150, 200, "ゲ ー ム", GetColor(255, 255, 255));
+		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 - 150, kResultPosY[0], "ゲ ー ム", GetColor(255, 255, 255));
 		DrawRectRotaGraph((Game::kPlayScreenWidth - stringWidth) / 2 + 100, 220,
 			16, static_cast<int>(Game::Dir::kDirDeath) * 16,
 			16, 16,
 			6.0,
 			0.0,
 			m_pPlayer->GetHandle(), true, false);
-		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 + 150, 200, "オ ー バ ー", GetColor(255, 255, 255));
+		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 + 150, kResultPosY[0], "オ ー バ ー", GetColor(255, 255, 255));
 		//現在のレベルを表示する
-		DrawString(100, 400, "現在のレベル", GetColor(255, 255, 255));
-		DrawFormatString(700 - AlignmentRight(UserData::userMainLevel + 1), 400, GetColor(255, 255, 255), "%d", UserData::userMainLevel + 1);
+		DrawString(kResultPosX[0], kResultPosY[1], "現在のレベル", GetColor(255, 255, 255));
+		DrawFormatString(700 - AlignmentRight(UserData::userMainLevel + 1), kResultPosY[1], GetColor(255, 255, 255), "%d", UserData::userMainLevel + 1);
 		//獲得したゴールドと経験値を表示する
-		DrawString(100, 500, "獲得経験値", GetColor(255, 255, 255));
-		DrawString(100, 600, "次のレベルまで", GetColor(255, 255, 255));
-		DrawString(100, 700, "獲得ゴールド", GetColor(255, 255, 255));
-		DrawString(100, 800, "所持ゴールド", GetColor(255, 255, 255));
+		DrawString(kResultPosX[0], kResultPosY[2], "獲得経験値", GetColor(255, 255, 255));
+		DrawString(kResultPosX[0], kResultPosY[3], "次のレベルまで", GetColor(255, 255, 255));
+		DrawString(kResultPosX[0], kResultPosY[4], "獲得ゴールド", GetColor(255, 255, 255));
+		DrawString(kResultPosX[0], kResultPosY[5], "所持ゴールド", GetColor(255, 255, 255));
 		m_pMain->SetEnd();
 	}
 	if (m_timeCount > kExpShowTime)
 	{
-		DrawFormatString(700 - AlignmentRight(m_pPlayer->GetExp()), 500, GetColor(255, 255, 255), "%d", m_pPlayer->GetExp());
-		DrawFormatString(700 - AlignmentRight(m_pMain->GetNextExp()), 600, GetColor(255, 255, 255), "%d", m_pMain->GetNextExp());
+		DrawFormatString(kResultPosX[1] - AlignmentRight(m_pPlayer->GetExp()), kResultPosY[2], GetColor(255, 255, 255), "%d", m_pPlayer->GetExp());
+		DrawFormatString(kResultPosX[1] - AlignmentRight(m_pMain->GetNextExp()), kResultPosY[3], GetColor(255, 255, 255), "%d", m_pMain->GetNextExp());
 		m_pMain->StartExpLoop();
 	}
 	if (m_isShowGold)
 	{
-		DrawFormatString(700 - AlignmentRight(m_pPlayer->GetGold()), 700, GetColor(255, 255, 255), "%d", m_pPlayer->GetGold());
-		DrawFormatString(700 - AlignmentRight(UserData::userGold), 800, GetColor(255, 255, 255), "%d", UserData::userGold);
+		DrawFormatString(kResultPosX[1] - AlignmentRight(m_pPlayer->GetGold()), kResultPosY[4], GetColor(255, 255, 255), "%d", m_pPlayer->GetGold());
+		DrawFormatString(kResultPosX[1] - AlignmentRight(UserData::userGold), kResultPosY[5], GetColor(255, 255, 255), "%d", UserData::userGold);
 	}
 	if (m_isLeaveButton)
 	{
-		DrawRectRotaGraph(440, 900, 0, 0, 32, 32, 2.4, 0.0, m_buttonsGraph, true, 0, 0);
+		DrawRotaGraph(440, kResultPosY[6], 3.0, 0, m_buttonsGraph, true, 0, 0);
 		DrawString(480, 880, "で戻る", GetColor(255, 255, 255));
 	}
 }

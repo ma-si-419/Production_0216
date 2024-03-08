@@ -618,7 +618,7 @@ void SceneShop::DrawFrame(int selectNum)
 		DrawExtendGraph(kFramePosX[kBoots], kPlayerItemFramePosY,
 			kFramePosX[kBoots] + kFrameSize, kPlayerItemFramePosY + kFrameSize, m_itemFrameGraph, true);
 		DrawExtendGraph(kFramePosX[kFire], kPrincessItemFramePosY,
-			kFramePosX[kFire + kFrameSize, kPrincessItemFramePosY + kFrameSize, m_itemFrameGraph, true);
+			kFramePosX[kFire] + kFrameSize, kPrincessItemFramePosY + kFrameSize, m_itemFrameGraph, true);
 		DrawExtendGraph(kFramePosX[kWind], kPrincessItemFramePosY,
 			kFramePosX[kWind] + kFrameSize, kPrincessItemFramePosY + kFrameSize, m_itemFrameGraph, true);
 		break;

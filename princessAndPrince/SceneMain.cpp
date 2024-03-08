@@ -103,7 +103,7 @@ namespace
 	constexpr int kTutorialPosX = 85;
 	constexpr int kTutorialPosY = 290;
 	//ポーズ画面のUI座標
-	constexpr int kPauseUiPosX = Game::kPlayScreenWidth * 0.5 - 50;
+	constexpr int kPauseUiPosX = 430;
 	constexpr int kPauseUiPosY[2] = { 700,800 };
 
 }
