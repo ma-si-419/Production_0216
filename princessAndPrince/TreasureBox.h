@@ -41,6 +41,13 @@ public:
 
 
 private:
+	enum Dropkind  
+	{
+		kPortion,
+		kExp,
+		kGold,
+		kBlood
+	};
 	//SceneMainのポインタ
 	SceneMain* m_pMain;
 	//表示位置

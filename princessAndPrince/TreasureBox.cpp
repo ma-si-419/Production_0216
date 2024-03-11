@@ -27,6 +27,10 @@ namespace
 	constexpr int kParticleVol = 30;
 	//ノックバックの大きさ
 	constexpr float kKnockBackPow = 3;
+	//ノックバックする時間
+	constexpr int kKnockBackTime = 5;
+	//血を落とさないシーン
+	constexpr int kNotDropBloodScene = 2;
 }
 TreasureBox::TreasureBox(SceneMain* sceneMain) :
 	m_pMain(sceneMain),
@@ -87,7 +91,7 @@ void TreasureBox::Update()
 			//ノックバックする時間カウント
 			m_knockBackTime++;
 			//規定の時間を過ぎたら
-			if (m_knockBackTime > 5)
+			if (m_knockBackTime > kKnockBackTime)
 			{
 				//ノックバックの大きさを0にする
 				m_knockBackVec *= 0;
@@ -99,13 +103,29 @@ void TreasureBox::Update()
 		if (m_hp < 0)
 		{
 			//どの処理が行われるか設定する
-			int randomNumber = GetRand(2);
+			int randomNumber;
 			//2ステージまでは血を落とさないようにする
-			if (m_pMain->GetSceneNum() > 1)
+			if (m_pMain->GetSceneNum() < kNotDropBloodScene)
 			{
-				randomNumber--;
+				randomNumber = GetRand(2);
 			}
-			if (randomNumber == -1)
+			else
+			{
+				randomNumber = GetRand(3);
+			}
+			if (randomNumber == static_cast<int>(Dropkind::kPortion))
+			{
+				//体力回復アイテムを落とす処理を作る
+				//ポーションのメモリ確保
+				std::shared_ptr<Portion> pPortion
+					= std::make_shared<Portion>();
+				//ポーションの初期化処理
+				pPortion->Init(m_pos);
+				pPortion->SetHandle(m_handle);
+				//ポーションを落とす処理
+				m_pMain->AddItem(pPortion);
+			}
+			else if (randomNumber == static_cast<int>(Dropkind::kBlood))
 			{
 				for (int i = 0; i < kDropBlood; i++)
 				{
@@ -119,7 +139,7 @@ void TreasureBox::Update()
 					m_pMain->AddItem(pBlood);
 				}
 			}
-			else if (randomNumber == 0)
+			else if (randomNumber == static_cast<int>(Dropkind::kExp))
 			{
 				for (int i = 0; i < kDropExp; i++)
 				{
@@ -134,7 +154,7 @@ void TreasureBox::Update()
 					m_pMain->AddItem(pExp);
 				}
 			}
-			else if (randomNumber == 1)
+			else if (randomNumber == static_cast<int>(Dropkind::kGold))
 			{
 				for (int i = 0; i < kDropGold; i++)
 				{
@@ -149,18 +169,6 @@ void TreasureBox::Update()
 					//お金を落とす処理
 					m_pMain->AddItem(pGold);
 				}
-			}
-			else if (randomNumber == 2)
-			{
-				//体力回復アイテムを落とす処理を作る
-				//ポーションのメモリ確保
-				std::shared_ptr<Portion> pPortion
-					= std::make_shared<Portion>();
-				//ポーションの初期化処理
-				pPortion->Init(m_pos);
-				pPortion->SetHandle(m_handle);
-				//ポーションを落とす処理
-				m_pMain->AddItem(pPortion);
 			}
 			//状態を変化させる
 			m_nowState = Game::State::kDelete;
@@ -180,7 +188,7 @@ void TreasureBox::Update()
 
 void TreasureBox::Draw()
 {
-	
+
 	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
 		0, static_cast<int>(Game::ItemGraph::kDropTreasure) * 32,
 		32, 32,
@@ -225,7 +233,19 @@ void TreasureBox::HitMagic()
 		//どの処理が行われるか設定する
 		int randomNumber = GetRand(3);
 
-		if (randomNumber == 0)
+		if (randomNumber == static_cast<int>(Dropkind::kPortion))
+		{
+			//体力回復アイテムを落とす処理を作る
+			//ポーションのメモリ確保
+			std::shared_ptr<Portion> pPortion
+				= std::make_shared<Portion>();
+			//ポーションの初期化処理
+			pPortion->Init(m_pos);
+			pPortion->SetHandle(m_handle);
+			//ポーションを落とす処理
+			m_pMain->AddItem(pPortion);
+		}
+		else if (randomNumber == static_cast<int>(Dropkind::kBlood))
 		{
 			for (int i = 0; i < kDropBlood; i++)
 			{
@@ -239,7 +259,7 @@ void TreasureBox::HitMagic()
 				m_pMain->AddItem(pBlood);
 			}
 		}
-		else if (randomNumber == 1)
+		else if (randomNumber == static_cast<int>(Dropkind::kExp))
 		{
 			for (int i = 0; i < kDropExp; i++)
 			{
@@ -254,7 +274,7 @@ void TreasureBox::HitMagic()
 				m_pMain->AddItem(pExp);
 			}
 		}
-		else if (randomNumber == 2)
+		else if (randomNumber == static_cast<int>(Dropkind::kGold))
 		{
 			for (int i = 0; i < kDropGold; i++)
 			{
@@ -268,18 +288,6 @@ void TreasureBox::HitMagic()
 				//お金を落とす処理
 				m_pMain->AddItem(pGold);
 			}
-		}
-		else if (randomNumber == 3)
-		{
-			//体力回復アイテムを落とす処理を作る
-			//ポーションのメモリ確保
-			std::shared_ptr<Portion> pPortion
-				= std::make_shared<Portion>();
-			//ポーションの初期化処理
-			pPortion->Init(m_pos);
-			pPortion->SetHandle(m_handle);
-			//ポーションを落とす処理
-			m_pMain->AddItem(pPortion);
 		}
 		//状態を変化させる
 		m_nowState = Game::State::kDelete;

@@ -25,17 +25,23 @@ namespace
 	//メインレベルの数を表示する座標
 	constexpr int kMainLevelPos = 1325;
 	//取得したアイテムを表示する座標
-	constexpr int kGetItemPos = 1350;
+	constexpr int kGetItemPosX = 1350;
 	//フォントの後ろに表示する影のずらす大きさ
 	constexpr int kShiftShadowLange = 3;
 	//アイテムグラフの大きさ
 	constexpr int kItemGraphScale = 32;
-	//プレイヤーのアニメフレーム
+	//ゲームクリア時のプレイヤーのアニメフレーム
 	constexpr int kPlayerClearAnimFrame = 48;
+	//ゲームオーバー時のプレイヤーのアニメフレーム
+	constexpr int kPlayerDeathAnimFrame = 16;
 	//プレイヤーの画像の大きさ
 	constexpr int kPlayerGraphSize = 16;
+	//プレイヤーの拡大率
+	constexpr double kPlayerScale = 6.0;
 	//Uiを揺らす幅
 	constexpr int kShakeLange = 1;
+	//入手した経験値とゴールドを表示する座標
+	constexpr int kGetItemPosY[2] = { 105,175 };
 	//Uiを表示する座標
 	constexpr int kUiPosYArr[6] = { 315,390,465,540,615,690 };
 	//ボタンがどこまで大きくなるか
@@ -63,11 +69,29 @@ namespace
 	constexpr int kMagicUiCircleRadius = 50;
 	//ゲームクリアと表示する座標
 	constexpr int kGameClearPosX[2] = { 230,530 };
+	//ゲームオーバーと表示する座標
+	constexpr int kGameOverPosX[2] = { 200,500 };
+	//ゲームオーバーの文字の中に出すプレイヤーの座標
+	constexpr int kGameOverPlayerPos = 450;
 	//ゲームクリアの文字の中に出すプレイヤーの座標
-	constexpr int kGameClearPlayerPos = 475;
+	constexpr int kGameClearPlayerPos = 480;
 	//ゲームクリア時のリザルトを表示する座標
-	constexpr int kResultPosX[2] = {100,700};
-	constexpr int kResultPosY[7] = { 200,400,500,600,700,800,900 };
+	constexpr int kResultPosX[2] = {200,750};
+	constexpr int kResultPosY[8] = { 210,380,480,580,680,780,900,880 };
+	//ボタンのサイズ
+	constexpr double kButtonSize = 2.5;
+	//ボタンを表示するポジション
+	constexpr int kButtonPosX = 440;
+	//戻るを表示するポジション
+	constexpr int kLeavePosX = 480;
+	//黒いボックスの大きさ
+	constexpr int kBlackBoxScale = 965;
+	//魔法が使えないシーン
+	constexpr int kCantMagicScene = 2;
+	//怒りモードが使えないシーン
+	constexpr int kCantAngryModeScene = 3;
+	//魔法が使えないときのUIの色
+	const int CantMagicUiColor = GetColor(128, 128, 128);
 }
 UI::UI(Player* pPlayer, Princess* pPrincess, SceneMain* pMain) :
 	m_pPlayer(pPlayer),
@@ -142,10 +166,9 @@ void UI::Draw()
 {
 	//UIの背景(右側)表示
 	DrawGraph(Game::kPlayScreenWidth, 0, m_pMain->GetUiBg(), true);
-
-
+	//入手したアイテムを表示する
 	DrawGetItem();
-
+	//ステータスを表示する
 	DrawStatus();
 	//今どちらの魔法を打っているかを表示する
 	if (m_pPrincess->GetMagicKind())
@@ -161,7 +184,7 @@ void UI::Draw()
 
 	}
 	//シーン3まではどちらも光らせないようにする
-	if (m_pMain->GetSceneNum() < 2)
+	if (m_pMain->GetSceneNum() < kCantMagicScene)
 	{
 		DrawRectRotaGraph(kMagicUiPosX[0], kMagicUiPosY, 0, 0, kMagicUiBgSize, kMagicUiBgSize, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
 		DrawRectRotaGraph(kMagicUiPosX[1], kMagicUiPosY, 0, 0, kMagicUiBgSize, kMagicUiBgSize, 1.0, 0.0, m_magicUiBgGraph, true, false, false);
@@ -204,7 +227,8 @@ void UI::Draw()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	//怒りモードのゲージのフレームを表示する
 	DrawGraph(kAngryGaugeFramePosX + m_angryGaugeUiShiftPosX, kAngryGaugeFramePosY, m_angryGaugeUiGraph, true);
-	if (m_pMain->GetSceneNum() < 3)
+	//ステージ３までは怒りモードのゲージを表示しない
+	if (m_pMain->GetSceneNum() < kCantAngryModeScene)
 	{
 		DrawGraph(kAngryGaugeFramePosX + m_angryGaugeUiShiftPosX, kAngryGaugeFramePosY, m_stoneAngryGaugeGraph, true);
 	}
@@ -218,7 +242,7 @@ void UI::SceneClearUI()
 	m_timeCount++;
 	//黒い少し透明なボックスを表示する
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-	DrawBox(0, 0, Game::kPlayScreenWidth + 5, Game::kPlayScreenHeight,
+	DrawBox(0, 0, kBlackBoxScale, Game::kPlayScreenHeight,
 		GetColor(0, 0, 0), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	if (m_timeCount > kShowTime)
@@ -229,35 +253,38 @@ void UI::SceneClearUI()
 		DrawRectRotaGraph(kGameClearPlayerPos, kResultPosY[0],
 			kPlayerClearAnimFrame, static_cast<int>(Game::Dir::kDirDeath) * kPlayerGraphSize,
 			kPlayerGraphSize, kPlayerGraphSize,
-			6.0,
+			kPlayerScale,
 			0.0,
 			m_pPlayer->GetHandle(), true, false);
 		DrawString(kGameClearPosX[1], kResultPosY[0], "ク リ ア", GetColor(255, 255, 255));
 		//現在のレベルを表示する
-		DrawString(100, kResultPosY[1], "現在のレベル", GetColor(255, 255, 255));
-		DrawFormatString(700 - AlignmentRight(UserData::userMainLevel + 1), kResultPosY[1], GetColor(255, 255, 255), "%d", UserData::userMainLevel + 1);
+		DrawString(kResultPosX[0], kResultPosY[1], "現在のレベル", GetColor(255, 255, 255));
+		DrawFormatString(kResultPosX[1] - AlignmentRight(UserData::userMainLevel + 1), kResultPosY[1], GetColor(255, 255, 255), "%d", UserData::userMainLevel + 1);
 		//獲得したゴールドと経験値を表示する
-		DrawString(100, kResultPosY[2], "獲得経験値", GetColor(255, 255, 255));
-		DrawString(100, kResultPosY[3], "次のレベルまで", GetColor(255, 255, 255));
-		DrawString(100, kResultPosY[4], "獲得ゴールド", GetColor(255, 255, 255));
-		DrawString(100, kResultPosY[5], "所持ゴールド", GetColor(255, 255, 255));
+		DrawString(kResultPosX[0], kResultPosY[2], "獲得経験値", GetColor(255, 255, 255));
+		DrawString(kResultPosX[0], kResultPosY[3], "次のレベルまで", GetColor(255, 255, 255));
+		DrawString(kResultPosX[0], kResultPosY[4], "獲得ゴールド", GetColor(255, 255, 255));
+		DrawString(kResultPosX[0], kResultPosY[5], "所持ゴールド", GetColor(255, 255, 255));
 		m_pMain->SetEnd();
 	}
+	//経験値のリザルトを表示する
 	if (m_timeCount > kExpShowTime)
 	{
-		DrawFormatString(700 - AlignmentRight(m_pPlayer->GetExp()), kResultPosY[2], GetColor(255, 255, 255), "%d", m_pPlayer->GetExp());
-		DrawFormatString(700 - AlignmentRight(m_pMain->GetNextExp()), kResultPosY[3], GetColor(255, 255, 255), "%d", m_pMain->GetNextExp());
+		DrawFormatString(kResultPosX[1] - AlignmentRight(m_pPlayer->GetExp()), kResultPosY[2], GetColor(255, 255, 255), "%d", m_pPlayer->GetExp());
+		DrawFormatString(kResultPosX[1] - AlignmentRight(m_pMain->GetNextExp()), kResultPosY[3], GetColor(255, 255, 255), "%d", m_pMain->GetNextExp());
 		m_pMain->StartExpLoop();
 	}
+	//ゴールドのリザルトを表示する
 	if (m_isShowGold)
 	{
-		DrawFormatString(700 - AlignmentRight(m_pPlayer->GetGold()), kResultPosY[4], GetColor(255, 255, 255), "%d", m_pPlayer->GetGold());
-		DrawFormatString(700 - AlignmentRight(UserData::userGold), kResultPosY[5], GetColor(255, 255, 255), "%d", UserData::userGold);
+		DrawFormatString(kResultPosX[1] - AlignmentRight(m_pPlayer->GetGold()), kResultPosY[4], GetColor(255, 255, 255), "%d", m_pPlayer->GetGold());
+		DrawFormatString(kResultPosX[1] - AlignmentRight(UserData::userGold), kResultPosY[5], GetColor(255, 255, 255), "%d", UserData::userGold);
 	}
+	//Aボタンで戻るを表示する
 	if (m_isLeaveButton)
 	{
-		DrawRotaGraph(440, kResultPosY[6], 2.5, 0,m_buttonsGraph, true, 0, 0);
-		DrawString(480, 880, "で戻る", GetColor(255, 255, 255));
+		DrawRotaGraph(kButtonPosX, kResultPosY[6], kButtonSize, 0,m_buttonsGraph, true, 0, 0);
+		DrawString(kLeavePosX, kResultPosY[7], "で戻る", GetColor(255, 255, 255));
 	}
 }
 void UI::GameOverUI()
@@ -265,23 +292,23 @@ void UI::GameOverUI()
 	m_timeCount++;
 	//黒い少し透明なボックスを表示する
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-	DrawBox(0, 0, Game::kPlayScreenWidth + 3, Game::kPlayScreenHeight,
+	DrawBox(0, 0, kBlackBoxScale, Game::kPlayScreenHeight,
 		GetColor(0, 0, 0), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	if (m_timeCount > kShowTime)
 	{
 		int stringWidth = GetDrawStringWidth("ゲームオーバー", -1);
-		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 - 150, kResultPosY[0], "ゲ ー ム", GetColor(255, 255, 255));
-		DrawRectRotaGraph((Game::kPlayScreenWidth - stringWidth) / 2 + 100, 220,
-			16, static_cast<int>(Game::Dir::kDirDeath) * 16,
-			16, 16,
-			6.0,
+		DrawString(kGameOverPosX[0], kResultPosY[0], "ゲ ー ム", GetColor(255, 255, 255));
+		DrawRectRotaGraph(kGameOverPlayerPos, kResultPosY[0],
+			kPlayerDeathAnimFrame, static_cast<int>(Game::Dir::kDirDeath) * kPlayerGraphSize,
+			kPlayerGraphSize, kPlayerGraphSize,
+			kPlayerScale,
 			0.0,
 			m_pPlayer->GetHandle(), true, false);
-		DrawString((Game::kPlayScreenWidth - stringWidth) / 2 + 150, kResultPosY[0], "オ ー バ ー", GetColor(255, 255, 255));
+		DrawString(kGameOverPosX[1], kResultPosY[0], "オ ー バ ー", GetColor(255, 255, 255));
 		//現在のレベルを表示する
 		DrawString(kResultPosX[0], kResultPosY[1], "現在のレベル", GetColor(255, 255, 255));
-		DrawFormatString(700 - AlignmentRight(UserData::userMainLevel + 1), kResultPosY[1], GetColor(255, 255, 255), "%d", UserData::userMainLevel + 1);
+		DrawFormatString(kResultPosX[1] - AlignmentRight(UserData::userMainLevel + 1), kResultPosY[1], GetColor(255, 255, 255), "%d", UserData::userMainLevel + 1);
 		//獲得したゴールドと経験値を表示する
 		DrawString(kResultPosX[0], kResultPosY[2], "獲得経験値", GetColor(255, 255, 255));
 		DrawString(kResultPosX[0], kResultPosY[3], "次のレベルまで", GetColor(255, 255, 255));
@@ -302,8 +329,8 @@ void UI::GameOverUI()
 	}
 	if (m_isLeaveButton)
 	{
-		DrawRotaGraph(440, kResultPosY[6], 3.0, 0, m_buttonsGraph, true, 0, 0);
-		DrawString(480, 880, "で戻る", GetColor(255, 255, 255));
+		DrawRotaGraph(kButtonPosX, kResultPosY[6], kButtonSize, 0, m_buttonsGraph, true, 0, 0);
+		DrawString(kLeavePosX, kResultPosY[7], "で戻る", GetColor(255, 255, 255));
 	}
 }
 int UI::AlignmentRight(int num)
@@ -388,13 +415,13 @@ void UI::DrawStatus()
 	else
 	{
 		//風魔法のレベルを表示する
-		DrawString(kStatusPos, kUiPosYArr[4], "ファイアLv", GetColor(128, 128, 128));
+		DrawString(kStatusPos, kUiPosYArr[4], "ファイアLv", CantMagicUiColor);
 		DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userFireLevel + 1), kUiPosYArr[4],//座標
-			GetColor(128, 128, 128), "%d", UserData::userFireLevel + 1);
+			CantMagicUiColor, "%d", UserData::userFireLevel + 1);
 		//炎魔法のレベルを表示する
-		DrawString(kStatusPos, kUiPosYArr[5], "ウィンドLv", GetColor(128, 128, 128));
+		DrawString(kStatusPos, kUiPosYArr[5], "ウィンドLv", CantMagicUiColor);
 		DrawFormatString(kStatusLevelPos - AlignmentRight(UserData::userWindLevel + 1), kUiPosYArr[5],//座標
-			GetColor(128, 128, 128), "%d", UserData::userWindLevel + 1);
+			CantMagicUiColor, "%d", UserData::userWindLevel + 1);
 	}
 }
 void UI::DrawGetItem()
@@ -402,19 +429,19 @@ void UI::DrawGetItem()
 	//影を表示する
 	{
 		//入手したゴールドの量をプレイヤーから取得して表示する
-		DrawFormatString(kGetItemPos + kShiftShadowLange - AlignmentRight(m_pPlayer->GetGold()), 105 + kShiftShadowLange,//座標
+		DrawFormatString(kGetItemPosX + kShiftShadowLange - AlignmentRight(m_pPlayer->GetGold()), kGetItemPosY[0] + kShiftShadowLange,//座標
 			GetColor(0, 0, 0), "%d", m_pPlayer->GetGold());
 
 		//入手した経験値の量をプレイヤーから取得して表示する	
-		DrawFormatString(kGetItemPos + kShiftShadowLange - AlignmentRight(m_pPlayer->GetExp()), 175 + kShiftShadowLange,//座標
+		DrawFormatString(kGetItemPosX + kShiftShadowLange - AlignmentRight(m_pPlayer->GetExp()), kGetItemPosY[1] + kShiftShadowLange,//座標
 			GetColor(0, 0, 0), "%d", m_pPlayer->GetExp());
 	}
 
 	//入手したゴールドの量をプレイヤーから取得して表示する
-	DrawFormatString(kGetItemPos - AlignmentRight(m_pPlayer->GetGold()), 105,//座標
+	DrawFormatString(kGetItemPosX - AlignmentRight(m_pPlayer->GetGold()), kGetItemPosY[0],//座標
 		GetColor(255, 255, 255), "%d", m_pPlayer->GetGold());
 
 	//入手した経験値の量をプレイヤーから取得して表示する	
-	DrawFormatString(kGetItemPos - AlignmentRight(m_pPlayer->GetExp()), 175,//座標
+	DrawFormatString(kGetItemPosX - AlignmentRight(m_pPlayer->GetExp()), kGetItemPosY[1],//座標
 		GetColor(255, 255, 255), "%d", m_pPlayer->GetExp());
 }
