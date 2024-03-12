@@ -17,6 +17,7 @@ namespace
 	constexpr int kScreenHeight = 960;
 	constexpr int kArraySize = 81;
 	constexpr int kColorBiteDepth = 32;
+	constexpr int kFontSize = 48;
 }
 
 void Application::Terminate()
@@ -55,7 +56,7 @@ bool Application::Init()
 		MessageBox(NULL, "ÉtÉHÉìÉgì«çûé∏îs", "", MB_OK);
 	}
 	ChangeFont("PixelMplus12");
-	SetFontSize(48);
+	SetFontSize(kFontSize);
 	return true;
 }
 

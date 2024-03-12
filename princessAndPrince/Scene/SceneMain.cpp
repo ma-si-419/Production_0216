@@ -105,6 +105,14 @@ namespace
 	//ポーズ画面のUI座標
 	constexpr int kPauseUiPosX = 430;
 	constexpr int kPauseUiPosY[2] = { 700,800 };
+	//チュートリアルをどこまで表示するか
+	constexpr int kTutorialStage = 4;
+	//敵のポップする間隔
+	constexpr int kEnemyPopFrame = 40;
+	//ポーズした時の黒い背景の透明度
+	constexpr int kPauseBlackBoxAlphe = 170;
+	//怒りモード時に入った時の黒い背景の透明度
+	constexpr int kAngryModeBlackBoxAlphe = 150;
 
 }
 SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int stageNum) :
@@ -270,7 +278,7 @@ SceneMain::SceneMain(SceneManager& sceneManager, DataManager& DataManager, int s
 	//怒りゲージが使えない時のUIを設定する
 	m_pUi->SetStoneAngryGaugeGraph(m_dataManager.SearchGraph("stoneAngryGaugeGraph"));
 	//選ばれたシーンによって表示するチュートリアルを設定する
-	if (m_selectScene < 4)
+	if (m_selectScene < kTutorialStage)
 	{
 		m_tutorialNum = kTutorialVol[m_selectScene];
 		m_startTutorialNum = kStartTutorialNum[m_selectScene];
@@ -475,7 +483,7 @@ void SceneMain::Update(Pad& pad)
 					m_enemyPopTimeCount++;
 				}
 				//設定した時間になったら
-				if (m_enemyPopTimeCount > m_nextEnemyPopTime * 40)
+				if (m_enemyPopTimeCount > m_nextEnemyPopTime * kEnemyPopFrame)
 				{
 					//カウントを初期化
 					m_enemyPopTimeCount = 0;
@@ -937,7 +945,7 @@ void SceneMain::Draw()
 	if (m_isSpecialMode)
 	{
 		//怒りモードに入ったら背景を暗くする
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, kAngryModeBlackBoxAlphe);
 		DrawBox(0, 0, kBgWidth, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
@@ -1030,7 +1038,7 @@ void SceneMain::Draw()
 	if (m_isPause)
 	{
 		//黒いボックスを表示する
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 170);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, kPauseBlackBoxAlphe);
 		DrawBox(0, 0, kBgWidth, Game::kPlayScreenHeight, GetColor(0, 0, 0), true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		//白い文字を表示する

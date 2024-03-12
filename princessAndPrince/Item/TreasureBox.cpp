@@ -31,10 +31,28 @@ namespace
 	constexpr int kKnockBackTime = 5;
 	//血を落とさないシーン
 	constexpr int kNotDropBloodScene = 2;
+	//基本的なHP
+	constexpr int kBaseHp = 5;;
+	//HPの振れ幅
+	constexpr int kHpLange = 3;
+	//プレイヤーとぶつかった時の基本的なダメージ
+	constexpr int kBaseDamage = 2;
+	//プレイヤーとぶつかった時のダメージの振れ幅
+	constexpr int kDamageLange = 5;
+	//基本的な落とすものの種類数
+	constexpr int kBaseDropKind = 3;
+	//宝箱の画像サイズ
+	constexpr int kGraphSize = 32;
+	//宝箱の拡大率
+	constexpr double kGraphScale = 2.0;
+	//アイテムを落とす時の落とす範囲
+	constexpr int kDropPosLange = 30;
+	//ぶつかった時に出すパーティクルの情報
+	constexpr int kParticleInfo[4] = { 40, 4, 5, 0 };
 }
 TreasureBox::TreasureBox(SceneMain* sceneMain) :
 	m_pMain(sceneMain),
-	m_hp(GetRand(3) + 5),
+	m_hp(GetRand(kHpLange) + kBaseHp),
 	m_colScale(kColScale),
 	m_handle(-1),
 	m_isExist(true),
@@ -57,8 +75,8 @@ void TreasureBox::Init(Vec2 pos)
 {
 	m_nowState = Game::State::kNormal;
 	//全部同じ位置に出てしまわないように少しばらけさせる
-	m_pos.x = pos.x + GetRand(30) - 15;
-	m_pos.y = pos.y + GetRand(30) - 15;
+	m_pos.x = pos.x + GetRand(kDropPosLange) - kDropPosLange / 2;
+	m_pos.y = pos.y + GetRand(kDropPosLange) - kDropPosLange / 2;
 
 	//画面外に出てしまわないようにする
 	if (m_pos.x > Game::kPlayScreenWidth)
@@ -107,11 +125,12 @@ void TreasureBox::Update()
 			//2ステージまでは血を落とさないようにする
 			if (m_pMain->GetSceneNum() < kNotDropBloodScene)
 			{
-				randomNumber = GetRand(2);
+				//血を落とさないように1減らす
+				randomNumber = GetRand(kBaseDropKind -1 );
 			}
 			else
 			{
-				randomNumber = GetRand(3);
+				randomNumber = GetRand(kBaseDropKind);
 			}
 			if (randomNumber == static_cast<int>(Dropkind::kPortion))
 			{
@@ -190,9 +209,9 @@ void TreasureBox::Draw()
 {
 
 	DrawRectRotaGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
-		0, static_cast<int>(Game::ItemGraph::kDropTreasure) * 32,
-		32, 32,
-		2.0,
+		0, static_cast<int>(Game::ItemGraph::kDropTreasure) * kGraphSize,
+		kGraphSize, kGraphSize,
+		kGraphScale,
 		0.0,
 		m_handle, true, false);
 	//当たり判定の表示
@@ -203,17 +222,17 @@ void TreasureBox::Draw()
 
 void TreasureBox::HitPlayer(Player* player)
 {
-	m_hp -= GetRand(5) + 2;
+	m_hp -= GetRand(kDamageLange) + kBaseDamage;
 	//ノックバック処理を入れる
 	m_knockBackVec = player->GetMoveVec() * -1;
 	m_knockBackVec.Normalize();
 	m_knockBackVec *= kKnockBackScale;
-	//衝突点の座標
+	//衝突点の座標を出す
 	m_hitPos = (player->GetPos() + m_pos) / 2;
 	//白いエフェクトを出す
 	for (int i = 0; i < kParticleVol; i++)
 	{
-		m_pParticle = new Particle(m_hitPos, 40.0f, 4.0f, 5, 0);
+		m_pParticle = new Particle(m_hitPos, static_cast<float>(kParticleInfo[0]), static_cast<float>(kParticleInfo[1]), kParticleInfo[2], kParticleInfo[3]);
 		m_pMain->AddParticle(m_pParticle);
 	}
 }
@@ -224,14 +243,14 @@ void TreasureBox::HitMagic()
 	//白いエフェクトを出す
 	for (int i = 0; i < kParticleVol; i++)
 	{
-		m_pParticle = new Particle(m_pos, 40.0f, 4.0f, 5, 0);
+		m_pParticle = new Particle(m_pos, static_cast<float>(kParticleInfo[0]), static_cast<float>(kParticleInfo[1]), kParticleInfo[2], kParticleInfo[3]);
 		m_pMain->AddParticle(m_pParticle);
 	}
 	m_hp--;
 	if (m_hp < 0)
 	{
 		//どの処理が行われるか設定する
-		int randomNumber = GetRand(3);
+		int randomNumber = GetRand(kBaseDropKind);
 
 		if (randomNumber == static_cast<int>(Dropkind::kPortion))
 		{

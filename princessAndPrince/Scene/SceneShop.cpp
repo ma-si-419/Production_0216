@@ -81,6 +81,8 @@ namespace
 	constexpr int kItemPosX[5] = { 800,1075,1350,930,1200 };
 	//フレームのX座標
 	constexpr int kFramePosX[5] = { 700,975,1250,835,1100 };
+	//フレームの拡縮のスピード
+	constexpr float kFrameZoomSpeed = 0.4f;
 	//店主の説明を表示する座標
 	constexpr int kExplanationPosX = 250;
 	constexpr int kExplanationPosY = 250;
@@ -89,6 +91,29 @@ namespace
 	//商品の後ろにあるボックスを表示する座標
 	constexpr int kItemBackBoxPosX[5] = { 710,985,1260,845,1110 };
 	constexpr int kItemBackBoxPosY[2] = { 240,565 };
+	//所持金を揺らす幅
+	constexpr int kGoldShakeLange = 8;
+	//プレイヤーの画像サイズ
+	constexpr int kPlayerGraphSize = 16;
+	//プレイヤーのアニメフレーム
+	constexpr int kPlayerAnimFrame = 64;
+	//プレイヤーの拡大率
+	constexpr double kPlayerScale = 8.0;
+	//プリンセスの画像サイズ
+	constexpr int kPrincessGraphSize = 24;
+	//プリンセスのアニメフレーム
+	constexpr int kPrincessAnimFrame = 48;
+	//プリンセスの拡大率
+	constexpr double kPrincessScale = 6.0;
+	//アイテムの拡大率
+	constexpr double kItemScale = 4.0;
+	//ファイアの回転率(横に向かすため)
+	constexpr double kFireAngle = 4.72;
+	//戻ると表示する座標
+	constexpr int kLeaveButtonPosX = 115;
+	constexpr int kLeaveButtonPosY = 800;
+	//上下キーを押したときに移動する量
+	constexpr int kMoveUpDownLange = 3;
 }
 SceneShop::SceneShop(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
 	Scene(sceneManager, DataManager),
@@ -168,7 +193,8 @@ void SceneShop::Update(Pad& pad)
 		//右キーが押されたら
 		if (m_input.Buttons[XINPUT_BUTTON_DPAD_RIGHT] || CheckHitKey(KEY_INPUT_D) || CheckHitKey(KEY_INPUT_RIGHT))
 		{
-			if (m_itemSelectNum != 2 && m_itemSelectNum != 4)
+			//右に行けない場所じゃなければ
+			if (m_itemSelectNum != kSword && m_itemSelectNum != kWind)
 			{
 				m_itemSelectNum++;
 				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
@@ -185,7 +211,8 @@ void SceneShop::Update(Pad& pad)
 		//左キーが入力されたら
 		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_LEFT] || CheckHitKey(KEY_INPUT_A) || CheckHitKey(KEY_INPUT_LEFT))
 		{
-			if (m_itemSelectNum != 0 && m_itemSelectNum != 3)
+			//左に行けない場所でなければ
+			if (m_itemSelectNum != kSword && m_itemSelectNum != kFire)
 			{
 				m_itemSelectNum--;
 				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
@@ -204,9 +231,10 @@ void SceneShop::Update(Pad& pad)
 		//下キーが入力されたら
 		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_DOWN] || CheckHitKey(KEY_INPUT_S) || CheckHitKey(KEY_INPUT_DOWN))
 		{
-			if (m_itemSelectNum < 3)
+			//上の行にいたら
+			if (m_itemSelectNum < kFire)
 			{
-				m_itemSelectNum += 3;
+				m_itemSelectNum += kMoveUpDownLange;
 				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
 			}
 			if (m_itemSelectNum > kMaxItemNum)
@@ -223,9 +251,10 @@ void SceneShop::Update(Pad& pad)
 		//上キーが入力されたら
 		else if (m_input.Buttons[XINPUT_BUTTON_DPAD_UP] || CheckHitKey(KEY_INPUT_W) || CheckHitKey(KEY_INPUT_UP))
 		{
-			if (m_itemSelectNum > 2)
+			//下の行にいたら
+			if (m_itemSelectNum > kBoots)
 			{
-				m_itemSelectNum -= 3;
+				m_itemSelectNum -= kMoveUpDownLange;
 				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);
 			}
 			if (m_itemSelectNum > kMaxItemNum)
@@ -424,11 +453,11 @@ void SceneShop::Update(Pad& pad)
 	}
 	if (m_isFrameRatio)
 	{
-		m_itemFrameRatio += 0.4f;
+		m_itemFrameRatio += kFrameZoomSpeed;
 	}
 	else
 	{
-		m_itemFrameRatio -= 0.4f;
+		m_itemFrameRatio -= kFrameZoomSpeed;
 	}
 	//表示しているゴールドを減らしていく
 	if (m_subGold > 0)
@@ -437,7 +466,7 @@ void SceneShop::Update(Pad& pad)
 		int temp = GetDigits(m_subGold);
 		m_showGold -= temp;
 		m_subGold -= temp;
-		m_shakeGoldPosY = GetRand(6) - 4;
+		m_shakeGoldPosY = GetRand(kGoldShakeLange) - kGoldShakeLange / 2;
 	}
 	else
 	{
@@ -450,7 +479,7 @@ void SceneShop::Draw()
 	//背景を表示する
 	DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kPlayScreenHeight, m_bgGraph, true);
 	//戻るボタンを押す
-	DrawString(115, 800, "B：戻る", GetColor(0, 0, 0));
+	DrawString(kLeaveButtonPosX, kLeaveButtonPosY, "B：戻る", GetColor(0, 0, 0));
 	//商品の後ろにボックスを表示
 	DrawBox(kItemBackBoxPosX[kSword], kItemBackBoxPosY[0],
 		kItemBackBoxPosX[kSword] + kItemBackBoxSize, kPlayerItemFramePosY + kItemBackBoxSize, kItemBackBoxColor, true);
@@ -466,15 +495,15 @@ void SceneShop::Draw()
 	DrawExtendGraph(kGraphPosX, kGraphPosY, kGraphPosX + kGraphSize, kGraphPosY + kGraphSize, m_traderGraph, true);
 	//プレイヤーの背中を表示
 	DrawRectRotaGraph(kPlayerPosX, kPlayerPosY,
-		0, 64,
-		16, 16,
-		8.0,
+		0, kPlayerAnimFrame,
+		kPlayerGraphSize, kPlayerGraphSize,
+		kPlayerScale,
 		0.0,
 		m_playerGraph, true, false);
 	DrawRectRotaGraph(kPrincessPosX, kPrincessPosY,
-		0, 48,
-		24, 24,
-		6.0,
+		0, kPrincessAnimFrame,
+		kPrincessGraphSize, kPrincessGraphSize,
+		kPrincessScale,
 		0.0,
 		m_princessGraph, true, false);
 	
@@ -489,31 +518,31 @@ void SceneShop::Draw()
 	DrawRectRotaGraph(kItemPosX[kSword], kItemPosY,
 		0, static_cast<int>(Game::ItemGraph::kSword) * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
-		4.0,
+		kItemScale,
 		0.0,
 		m_itemGraph, true, false);
 	DrawRectRotaGraph(kItemPosX[kArmor], kItemPosY,
 		0, static_cast<int>(Game::ItemGraph::kArmor) * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
-		4.0,
+		kItemScale,
 		0.0,
 		m_itemGraph, true, false);
 	DrawRectRotaGraph(kItemPosX[kBoots], kItemPosY,
 		0, static_cast<int>(Game::ItemGraph::kBoots) * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
-		4.0,
+		kItemScale,
 		0.0,
 		m_itemGraph, true, false);
 	DrawRectRotaGraph(kItemPosX[kFire], kMagicPosY,
 		0, static_cast<int>(Game::ItemGraph::kFire) * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
-		4.0,
-		4.72,
+		kItemScale,
+		kFireAngle,
 		m_itemGraph, true, false);
 	DrawRectRotaGraph(kItemPosX[kWind], kMagicPosY,
 		0, static_cast<int>(Game::ItemGraph::kWind) * kItemGraphSize,
 		kItemGraphSize, kItemGraphSize,
-		4.0,
+		kItemScale,
 		0.0,
 		m_itemGraph, true, false);
 	//レベルを表示する

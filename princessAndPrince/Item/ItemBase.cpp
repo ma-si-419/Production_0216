@@ -1,6 +1,6 @@
 #include "ItemBase.h"
-#include"DxLib.h"
-#include"Player.h"
+#include "DxLib.h"
+#include "Player.h"
 namespace
 {
 	//ƒAƒCƒeƒ€‚Ì‘å‚«‚³

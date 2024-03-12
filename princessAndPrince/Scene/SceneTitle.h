@@ -14,8 +14,6 @@ public:
 	void Update(Pad& pad);
 	//描画処理
 	void Draw();
-	//タイトルの後ろでキャラクターを動かす
-	void ShowTitleMovie();
 private:
 	//タイトル画像
 	int m_handle;

@@ -110,6 +110,19 @@ namespace
 	constexpr float kBoxRotaSpeed = 0.15f;
 	//シーン移動時の黒いボックスのズームの速度
 	constexpr float kBoxZoomSpeed = 0.4f;
+	//各ステージのボスの大きさ
+	constexpr double kBossScale = 8.0;
+	//ストーリーを表示する座標
+	constexpr int kStoryPosX = 130;
+	constexpr int kStoryPosY = 200;
+	//操作説明を表示する座標
+	constexpr int kExplanationPosX = 130;
+	constexpr int kExplanationPosY = 650;
+	//フレームの座標
+	constexpr int kFrameStartPosX = 480;
+	constexpr int kFrameStartPosY = 180;
+	constexpr int kFrameEndPosX = 1090;
+	constexpr int kFrameEndPosY = 795;
 }
 SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
 	Scene(sceneManager, DataManager),
@@ -433,22 +446,22 @@ void SceneSelect::Draw()
 		DrawRectRotaGraph(Game::kScreenWidth / 2, kBossPosY,
 			m_bossSrcX, kStageBossKind[m_bossSrcY] * kBossGraphSize,
 			kBossGraphSize, kBossGraphSize,
-			8.0, 0.0, m_enemyGraph, true, 0, 0);
+			kBossScale, 0.0, m_enemyGraph, true, 0, 0);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 	//背景の表示
 	DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kPlayScreenHeight, m_bgGraph, true);
 	//選んでいるシーンのフレーム
-	DrawExtendGraph(kSelectSceneStartPosX, kSelectSceneStartPosY, kSelectSceneEndPosX, kSelectSceneEndPosY - 50,
+	DrawExtendGraph(kFrameStartPosX, kFrameStartPosY, kFrameEndPosX, kFrameEndPosY,
 		m_selectSceneFrame, true);
 	//三角形の表示
 	DrawSceneSrideTriangle();
 	//ステージ名の表示
 	DrawExtendGraph(kStageTitleStartPosX, kStageTitleStartPosY, kStageTitleEndPosX, kStageTitleEndPosY, m_backBoxGraph, true);
 	//左上にストーリー表示
-	DrawGraph(130, 200, m_storyGraph[m_stageSelectNum], true);
+	DrawGraph(kStoryPosX, kStoryPosY, m_storyGraph[m_stageSelectNum], true);
 	//左下に操作方法表示
-	DrawGraph(130, 650, m_buttonsUiGraph, true);
+	DrawGraph(kExplanationPosX, kExplanationPosY, m_buttonsUiGraph, true);
 	//変えるアイテムがあったら
 	if (m_isBuy)
 	{

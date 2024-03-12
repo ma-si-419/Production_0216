@@ -88,6 +88,8 @@ namespace
 	constexpr float kWeakHitDamageVol = 0.75f;
 	//弱点に当たった時のノックバックの倍率
 	constexpr float kWeakKnockBackScale = 0.6f;
+	//倒れた時にレバガチャして動く大きさ
+	constexpr int kDeathMoveLange = 10;
 	//倒れた時のノックバックの時間
 	constexpr int kDeathKnockBackTime[5] = { 20,40,60,80,100 };
 	//通常時のステータス
@@ -197,8 +199,8 @@ void Player::Update()
 					//回復する
 					m_nowHp += GetHealRate() * kMoveHealVol;
 					//ランダムにプレイヤーを動かす
-					m_pos.x = m_deathPos.x + GetRand(2) - 1;
-					m_pos.y = m_deathPos.y + GetRand(2) - 1;
+					m_pos.x = GetRand(kDeathMoveLange) + m_deathPos.x;
+					m_pos.y = GetRand(kDeathMoveLange) + m_deathPos.y;
 				}
 
 			}
@@ -211,8 +213,8 @@ void Player::Update()
 					//回復する
 					m_nowHp += GetHealRate() * kMoveHealVol;
 					//ランダムにプレイヤーを動かす
-					m_pos.x = GetRand(10) + m_deathPos.x;
-					m_pos.y = GetRand(10) + m_deathPos.y;
+					m_pos.x = GetRand(kDeathMoveLange) + m_deathPos.x;
+					m_pos.y = GetRand(kDeathMoveLange) + m_deathPos.y;
 				}
 			}
 			else if (pad & PAD_INPUT_LEFT || CheckHitKey(KEY_INPUT_A))
@@ -224,8 +226,8 @@ void Player::Update()
 					//回復する
 					m_nowHp += GetHealRate() * kMoveHealVol;
 					//ランダムにプレイヤーを動かす
-					m_pos.x = GetRand(10) + m_deathPos.x;
-					m_pos.y = GetRand(10) + m_deathPos.y;
+					m_pos.x = GetRand(kDeathMoveLange) + m_deathPos.x;
+					m_pos.y = GetRand(kDeathMoveLange) + m_deathPos.y;
 				}
 			}
 			else if (pad & PAD_INPUT_RIGHT || CheckHitKey(KEY_INPUT_D))
@@ -237,8 +239,8 @@ void Player::Update()
 					//回復する
 					m_nowHp += GetHealRate() * kMoveHealVol;
 					//ランダムにプレイヤーを動かす
-					m_pos.x = GetRand(10) + m_deathPos.x;
-					m_pos.y = GetRand(10) + m_deathPos.y;
+					m_pos.x = GetRand(kDeathMoveLange) + m_deathPos.x;
+					m_pos.y = GetRand(kDeathMoveLange) + m_deathPos.y;
 				}
 			}
 			if (!(pad & PAD_INPUT_UP) && !CheckHitKey(KEY_INPUT_W) && !(pad & PAD_INPUT_DOWN) && !CheckHitKey(KEY_INPUT_S)
@@ -552,6 +554,7 @@ void Player::HitTreasure(TreasureBox* treasureBox)
 {
 	m_knockBack = m_moveVec;
 	m_knockBack.Normalize();
+	//ノックバックの大きさを三段階に分ける
 	m_knockBack *= kKnockBackScale * treasureBox->GetKnockBackPow() * (GetRand(2) + 1);
 	m_nowState = Game::State::kHitEnemy;
 }

@@ -12,6 +12,18 @@ namespace
 	constexpr int kShowTime = 48;
 	//消している時間
 	constexpr int kEraseTime = 8;
+	//ゲームをやめると表示しているところ
+	constexpr int kLeaveGameStringPosX = 25;
+	constexpr int kLeaveGameStringPosY = 20;
+	//PRESS	START BUTTONの後ろに表示するボックスの座標
+	constexpr int kBackBoxStartPosY = 800;
+	constexpr int kBackBoxEndPosY = 850;
+	//PRESS	START BUTTONの後ろに表示するボックスの透明度
+	constexpr int kBackBoxAlpha = 170;
+	//PRESS	START BUTTONと表示する座標
+	constexpr int kStartButtonPosX = 580;
+	constexpr int kStartButtonPosY = 800;
+
 }
 SceneTitle::SceneTitle(SceneManager& sceneManager, DataManager& DataManager, int selectSceneNum) :
 	Scene(sceneManager, DataManager),
@@ -82,19 +94,14 @@ void SceneTitle::Draw()
 {
 	DrawGraph(0, 0, m_bgGraph, true);
 	DrawGraph(0, 0, m_titleGraph, true);
-	DrawGraph(25, 20, m_changeWindowModeGraph, true);
+	DrawGraph(kLeaveGameStringPosX, kLeaveGameStringPosY, m_changeWindowModeGraph, true);
 
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 170);
-	DrawBox(0, 800, Game::kScreenWidth, 850, GetColor(0, 0, 0), true);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, kBackBoxAlpha);
+	DrawBox(0, kBackBoxStartPosY, Game::kScreenWidth, kBackBoxEndPosY, GetColor(0, 0, 0), true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	if (m_isString)
 	{
-		int stringWidth = GetStringLength("PRESS START BUTTON") * kFontHalfSize;
-		DrawString((Game::kScreenWidth - stringWidth) / 2, 800,
-			"PRESS START BUTTON", GetColor(255, 255, 255), true);
+		//PRESS START BUTTONと表示する
+		DrawString(kStartButtonPosX,kStartButtonPosY,"PRESS START BUTTON", GetColor(255, 255, 255), true);
 	}
-}
-
-void SceneTitle::ShowTitleMovie()
-{
 }
