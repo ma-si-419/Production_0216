@@ -194,7 +194,7 @@ void SceneShop::Update(Pad& pad)
 		if (m_input.Buttons[XINPUT_BUTTON_DPAD_RIGHT] || CheckHitKey(KEY_INPUT_D) || CheckHitKey(KEY_INPUT_RIGHT))
 		{
 			//âEÇ…çsÇØÇ»Ç¢èÍèäÇ∂Ç·Ç»ÇØÇÍÇŒ
-			if (m_itemSelectNum != kSword && m_itemSelectNum != kWind)
+			if (m_itemSelectNum != kBoots && m_itemSelectNum != kWind)
 			{
 				m_itemSelectNum++;
 				PlaySoundMem(m_cursorSe, DX_PLAYTYPE_BACK);

@@ -17,8 +17,6 @@ class Application
 private:
 	Size m_isWindowSize = {};
 
-	bool m_isScreen = false;
-	bool m_isPush = false;
 	//ƒVƒ“ƒOƒ‹ƒgƒ“‚Ì‚½‚ß‚Éprivate‚É
 	Application() {};
 

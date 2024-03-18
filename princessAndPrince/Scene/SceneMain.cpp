@@ -57,9 +57,9 @@ namespace
 	//クリア時の演出の時間
 	constexpr int kDanceTime = 60 + kResultTime;
 	//レベルアップの文字を出すY座標
-	constexpr int kLevelUpPosY = 400;
+	constexpr int kLevelUpPosY = 380;
 	//レベルアップの文字が上がる限界Y座標
-	constexpr int kLevelUpPosYMax = 350;
+	constexpr int kLevelUpPosYMax = 330;
 	//聖剣モードを始めるまでの時間
 	constexpr int kSpecialModeStartTime = 30;
 	//フォントの半分の大きさ
@@ -96,7 +96,7 @@ namespace
 	//背景の横幅
 	constexpr int kBgWidth = 965;
 	//LEVELUPと表示する座標
-	constexpr int kLevelupPosX = 430;
+	constexpr int kLevelupPosX = 530;
 	//LEVELUPの色
 	const int kLevelUpColor = GetColor(255, 255, 0);
 	//チュートリアルを表示する座標

@@ -34,11 +34,10 @@ bool Application::Init()
 {
 	SetWindowText("姫とサル");
 	SetChangeScreenModeGraphicsSystemResetFlag(false);
-	ChangeWindowMode(true);	//非スクリーン
+	ChangeWindowMode(false);	//非スクリーン
 
 	m_isWindowSize = { kScreenWidth,kScreenHeight };
 
-	m_isPush = true;
 
 	SetGraphMode(m_isWindowSize.w, m_isWindowSize.h, kColorBiteDepth);
 	SetWindowIconID(111);
