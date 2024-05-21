@@ -77,6 +77,8 @@ namespace
 	constexpr float kSubBloodVol = 0.02f;
 	//回転するスピード
 	constexpr float kRotaSpeed = 0.03f;
+	//魔法が使えるようになるステージ
+	constexpr int kUseMagicStage = 1;
 }
 Princess::Princess(SceneMain* pMain) :
 	m_hpBarWidth(0),
@@ -138,6 +140,8 @@ void Princess::Init()
 	//炎魔法の効果音を入れる
 	m_fireMagicSe = m_pMain->GetFireMagicSe();
 	m_passBloodSe = m_pMain->GetPassBloodSe();
+	//魔法を切り替えた時の効果音を入れる
+	m_changeMagicSe = m_pMain->GetChangeMagicSe();
 }
 
 void Princess::Update()
@@ -240,15 +244,17 @@ void Princess::Update()
 		//Aボタンが押されたら
 		if (m_input.Buttons[XINPUT_BUTTON_A] && !m_isLastKeyFlag || CheckHitKey(KEY_INPUT_Z) && !m_isLastKeyFlag)
 		{
-			//連続で切り替わらないように
-			m_isLastKeyFlag = true;
-			//魔法の種類を変更する
-			m_isFire = !m_isFire;
-			//魔法を撃つ間隔をリセットする
-			m_MagicCount = 0;
-#ifdef _DEBUG
-			m_nowHp -= 10;
-#endif
+			if (m_pMain->GetSceneNum() > kUseMagicStage)
+			{
+				//連続で切り替わらないように
+				m_isLastKeyFlag = true;
+				//魔法の種類を変更する
+				m_isFire = !m_isFire;
+				//魔法を撃つ間隔をリセットする
+				m_MagicCount = 0;
+				//効果音を鳴らす
+				PlaySoundMem(m_changeMagicSe, DX_PLAYTYPE_BACK);
+			}
 		}
 		else if (!m_input.Buttons[XINPUT_BUTTON_A] && !CheckHitKey(KEY_INPUT_Z))
 		{
@@ -369,7 +375,7 @@ void Princess::HitEnemy(Enemy& enemy)
 	for (int i = 0; i < kParticleVol; i++)
 	{
 		m_pParticle = new Particle(m_hitPos, //パーティクルの情報を入れる
-			static_cast<float>(kWhiteParticleInfo[0]),static_cast<float>(kWhiteParticleInfo[1]), kWhiteParticleInfo[2], kWhiteParticleInfo[3]);
+			static_cast<float>(kWhiteParticleInfo[0]), static_cast<float>(kWhiteParticleInfo[1]), kWhiteParticleInfo[2], kWhiteParticleInfo[3]);
 		m_pMain->AddParticle(m_pParticle);
 	}
 	m_nowHp -= enemy.GetAtk() - m_def;

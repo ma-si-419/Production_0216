@@ -76,6 +76,8 @@ public:
 	int GetWindMagicSe() { return m_windMagicSe; }
 	//炎魔法の効果音を返す
 	int GetFireMagicSe() { return m_fireMagicSe; }
+	//魔法を切り替えた時の効果音を返す
+	int GetChangeMagicSe() { return m_cursorSe; }
 	//ポーションの効果音を返す
 	int GetPortionSe() { return m_portionSe; }
 	//血を拾った時の効果音を返す

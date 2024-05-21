@@ -103,6 +103,8 @@ private:
 	int m_passBloodSe;
 	//炎魔法の効果音
 	int m_fireMagicSe;
+	//魔法を切り替えた時の効果音
+	int m_changeMagicSe;
 	//回転の矢印
 	int m_arrowGraph;
 	//魔法を撃つ方向に出す矢印

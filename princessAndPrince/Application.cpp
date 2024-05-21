@@ -34,7 +34,7 @@ bool Application::Init()
 {
 	SetWindowText("姫とサル");
 	SetChangeScreenModeGraphicsSystemResetFlag(false);
-	ChangeWindowMode(false);	//非スクリーン
+	ChangeWindowMode(false);	
 
 	m_isWindowSize = { kScreenWidth,kScreenHeight };
 

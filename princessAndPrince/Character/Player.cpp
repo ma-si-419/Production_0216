@@ -92,11 +92,6 @@ namespace
 	constexpr int kDeathMoveLange = 10;
 	//倒れた時のノックバックの時間
 	constexpr int kDeathKnockBackTime[5] = { 20,40,60,80,100 };
-	//通常時のステータス
-	const float kNormalHp = kInitialStatusArray[static_cast<int>(Status::main)] + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::main)]);
-	const float kNormalAtk = kInitialStatusArray[static_cast<int>(Status::atk)] + (UserData::userAtkLevel * kItemBonusArray[static_cast<int>(Status::atk)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::atk)]);
-	const float kNormalSpd = kInitialStatusArray[static_cast<int>(Status::spd)] + (UserData::userSpdLevel * kItemBonusArray[static_cast<int>(Status::spd)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::spd)]);
-	const float kNormalDef = kInitialStatusArray[static_cast<int>(Status::def)] + (UserData::userDefLevel * kItemBonusArray[static_cast<int>(Status::def)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::def)]);
 }
 
 Player::Player(SceneMain* pMain) :
@@ -149,10 +144,10 @@ Player::~Player()
 void Player::Init()
 {
 	//ステータスを設定する
-	m_hp = kNormalHp;
-	m_atk = kNormalAtk;
-	m_spd = kNormalSpd;
-	m_def = kNormalDef;
+	m_hp = kInitialStatusArray[static_cast<int>(Status::main)] + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::main)]);
+	m_atk = kInitialStatusArray[static_cast<int>(Status::atk)] + (UserData::userAtkLevel * kItemBonusArray[static_cast<int>(Status::atk)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::atk)]);
+	m_spd = kInitialStatusArray[static_cast<int>(Status::spd)] + (UserData::userSpdLevel * kItemBonusArray[static_cast<int>(Status::spd)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::spd)]);
+	m_def = kInitialStatusArray[static_cast<int>(Status::def)] + (UserData::userDefLevel * kItemBonusArray[static_cast<int>(Status::def)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::def)]);
 	m_nowHp = m_hp;
 	//座標を参考にHpバーの位置を設定
 	m_hpBarPos.x = m_pos.x - kMaxBarWidth / 2;
@@ -420,8 +415,8 @@ void Player::Update()
 	}
 	else
 	{
-		m_atk = kNormalAtk;
-		m_spd = kNormalSpd;
+		m_atk = kInitialStatusArray[static_cast<int>(Status::atk)] + (UserData::userAtkLevel * kItemBonusArray[static_cast<int>(Status::atk)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::atk)]);
+		m_spd = kInitialStatusArray[static_cast<int>(Status::spd)] + (UserData::userSpdLevel * kItemBonusArray[static_cast<int>(Status::spd)]) + (UserData::userMainLevel * kLevelUpBonusArray[static_cast<int>(Status::spd)]);
 	}
 	//炎を揺らす演出
 	if (m_animFrame % kAngryFireAnimFrame == 0)
